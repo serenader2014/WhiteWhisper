@@ -10,7 +10,7 @@ module.exports = function (passport) {
     passport.deserializeUser(function (id, done) {
         userApi.getById(id).then(function (result) {
             if (result.total) {
-                done(null, result.data);
+                done(null, result.data[0]);
             } else {
                 done('user not found');
             }
@@ -44,7 +44,7 @@ module.exports = function (passport) {
     }, function (email, password, done) {
         userApi.getByEmail(email).then(function (result) {
             if (result.total) {
-                var user = result.data;
+                var user = result.data[0];
                 if (userApi.validatePassword(password, user.auth.local.password)) {
                     done(null, user);
                 } else {

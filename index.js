@@ -44,6 +44,7 @@ mongoose.connectAsync(config.db).then(function () {
         minWaitTime: 5*1000,
     }));
 
+    app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use(validator());
     app.use(cookieParser());
@@ -67,13 +68,11 @@ mongoose.connectAsync(config.db).then(function () {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    require('./core/server/helper/passport')(passport);
-
     app.use(responseTime());
     app.use(setCookie());
 
     app.use(assets());
-    route(app);
+    app.use(route());
     app.use(notFound());
 
     app.listen(app.get('port'), config.host, function () {

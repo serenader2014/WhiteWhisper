@@ -1,3 +1,20 @@
+/**
+ * UserSchema log:
+ * log: [{
+ *     date: TIMESTAMP,
+ *     type: => class Type,
+ *     user: 执行操作的用户,
+ *     data: 额外的数据
+ * }]
+ * Type {
+ *     1: 用户创建,
+ *     2: 登陆
+ *     3: 资料修改,
+ *     4: 状态修改
+ * }
+ */
+
+
 var mongoose   = Promise.promisifyAll(require('mongoose'));
 var _          = require('lodash');
 var Schema     = mongoose.Schema;

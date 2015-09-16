@@ -16,6 +16,18 @@ module.exports = {
     create: function (data) {
         return User.create(data);
     },
+    login: function (email, ip) {
+        return User.get({email: email}, 1, 1).then(function (data) {
+            var user = data.data[0];
+            user.log.push({
+                date: new Date(),
+                type: 2,
+                user: user.email,
+                data: ip
+            });
+            return user.saveAsync();
+        });
+    },
     generatePassword: function (password) {
         return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
     },
