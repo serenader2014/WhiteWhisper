@@ -15,6 +15,7 @@ global.Promise   = Promise;
 var app          = express();
 var config       = require('./config');
 var log          = require('./core/server/helper/log');
+var initDB       = require('./core/server/helper/init-db');
 var route        = require('./core/server/route');
 var brute        = require('./core/server/middleware/brute');
 var assets       = require('./core/server/middleware/assets');
@@ -24,6 +25,8 @@ var responseTime = require('./core/server/middleware/response-time');
 
 
 mongoose.connectAsync(config.db).then(function () {
+    return initDB();
+}).then(function () {
     // 设置模板引擎为 jade
     app.set('view engine', 'jade');
     app.set('port', config.port);

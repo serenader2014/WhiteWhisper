@@ -4,33 +4,33 @@ var PermissionSchema = new Schema({
     name: {type: String, unique: true},
     editable: Boolean,
     post: {
-        create: Boolean,
-        read: Boolean,
-        update: Boolean,
+        get   : Boolean,
+        post  : Boolean,
+        put   : Boolean,
         delete: Boolean
     },
     gallery: {
-        create: Boolean,
-        read: Boolean,
-        update: Boolean,
+        get   : Boolean,
+        post  : Boolean,
+        put   : Boolean,
         delete: Boolean
     },
     attachment: {
-        create: Boolean,
-        read: Boolean,
-        update: Boolean,
+        get   : Boolean,
+        post  : Boolean,
+        put   : Boolean,
         delete: Boolean
     },
     user: {
-        create: Boolean,
-        read: Boolean,
-        update: Boolean,
+        get   : Boolean,
+        post  : Boolean,
+        put   : Boolean,
         delete: Boolean
     },
     setting: {
-        create: Boolean,
-        read: Boolean,
-        update: Boolean,
+        get   : Boolean,
+        post  : Boolean,
+        put   : Boolean,
         delete: Boolean
     },
 });

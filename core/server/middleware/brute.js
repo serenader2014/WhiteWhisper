@@ -47,7 +47,7 @@ module.exports = function (options) {
     var reset         = function (clear) {
         // clear 参数表示是否强制重置。强制重置会清除当前IP的失败次数
         if (clear) {
-            return brute.update({
+            return brute.update(ip, {
                 ip            : ip,
                 count         : 0,
                 lastVisit     : now,
@@ -57,7 +57,7 @@ module.exports = function (options) {
                 resetCountDate: now
             });
         } else {
-            return brute.update({
+            return brute.update(ip, {
                 ip           : ip,
                 count        : 0,
                 lastVisit    : now,
@@ -103,7 +103,7 @@ module.exports = function (options) {
         if (target.remainingTime - timeGap > 0) {
             remainingTime = target.remainingTime - timeGap;
             failedCount   = target.failedCount + 1;
-            return brute.update({ip:ip, count: count, lastVisit: now, remainingTime: remainingTime}).then(function () {
+            return brute.update(ip, {ip:ip, count: count, lastVisit: now, remainingTime: remainingTime}).then(function () {
                 return true;
             });
         } else {
@@ -117,7 +117,7 @@ module.exports = function (options) {
         // 若是，则开始判断访问次数是否达到最大限制。反之，则表示开始进入新地时间间隔，此时访问次数则重置为0.
         if (now.getTime() - firstVisit.getTime() < obj.limitTime) {
             if (count < obj.limitCount) {
-                return brute.update({ip: ip, count: count, lastVisit: now, remainingTime: 0}).then(function () {
+                return brute.update(ip, {ip: ip, count: count, lastVisit: now, remainingTime: 0}).then(function () {
                     return false;
                 });
             } else {
@@ -125,7 +125,7 @@ module.exports = function (options) {
                 remainingTime = target.remainingTime ?
                                     (target.remainingTime - timeGap) :
                                     getWaitingTime(obj.minWaitTime, obj.maxWaitTime, failedCount);
-                return brute.update({
+                return brute.update(ip, {
                     ip           : ip,
                     count        : count,
                     lastVisit    : now,
@@ -136,7 +136,7 @@ module.exports = function (options) {
                 });
             }
         } else {
-            return brute.update({
+            return brute.update(ip, {
                 ip           : ip,
                 count        : 0,
                 lastVisit    : now,

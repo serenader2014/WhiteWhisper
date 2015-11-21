@@ -23,6 +23,7 @@
       "indent": 4,
       "white": true,
       "globals": {
-            "Promise": false
+            "Promise": false,
+            "config": false
       }
 }

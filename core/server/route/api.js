@@ -1,7 +1,8 @@
-var express = require('express');
-var api = express();
-var apiController = require('../controller/api');
-var brute = require('../middleware/brute');
+var express         = require('express');
+var api             = express();
+var apiController   = require('../controller/api');
+var brute           = require('../middleware/brute');
+var checkPermission = require('../middleware/check-permission');
 
 api.route('/login')
     .post(brute({
@@ -14,11 +15,18 @@ api.route('/register')
     .post(apiController.register);
 
 api.route('/logout')
-    .get(apiController.logout);
+    .all(apiController.logout);
 
 api.route('/user')
     .get(function (req, res) {
         res.send(req.user);
     });
+
+api.route('/post')
+    .get(checkPermission('post', 'get'), apiController.post.list)
+    .post(checkPermission('post', 'post'), apiController.post.create)
+    .put(checkPermission('post', 'put'), apiController.post.update)
+    .delete(checkPermission('post', 'delete'), apiController.post.delete);
+
 
 module.exports = api;

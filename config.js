@@ -7,7 +7,7 @@ var config = {
     port         : 10010,
     appRoot      : __dirname,
     trustProxy   : true,
-    blogConfig   : {
+    defaultBlogConfig   : {
         blogName       : 'White Whisper',
         blogDescription: 'Another blog system',
         blogLogo       : 'logo.png',
@@ -17,7 +17,80 @@ var config = {
         requestAmount  : 10,
         update         : new Date(),
         background     : ''
-    }
+    },
+    defaultCategory: {
+        name: '默认分类',
+        count: 0
+    },
+    defaultPermission: {
+        name: 'admin',
+        editable: false,
+        post: {
+            get: true,
+            post: true,
+            put: true,
+            delete: true
+        },
+        gallery: {
+            get: true,
+            post: true,
+            put: true,
+            delete: true
+        },
+        attachment: {
+            get: true,
+            post: true,
+            put: true,
+            delete: true
+        },
+        user: {
+            get: true,
+            post: true,
+            put: true,
+            delete: true
+        },
+        setting: {
+            get: true,
+            post: true,
+            put: true,
+            delete: true
+        }
+    },
+    guestPermission: {
+        name: 'guest',
+        editable: true,
+        post: {
+            get: true,
+            post: false,
+            put: false,
+            delete: false
+        },
+        gallery: {
+            get: true,
+            post: false,
+            put: false,
+            delete: false
+        },
+        attachment: {
+            get: true,
+            post: false,
+            put: false,
+            delete: false
+        },
+        user: {
+            get: true,
+            post: false,
+            put: false,
+            delete: false
+        },
+        setting: {
+            get: true,
+            post: false,
+            put: false,
+            delete: false
+        }
+    },
+    defaultUserPermission: 'admin'
 };
 
 module.exports = global.config = config;
