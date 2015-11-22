@@ -36,12 +36,12 @@ module.exports = {
         });
     },
     getById: function (id) {
-        return Category.get({_id: id}, 1, 1);
+        return this.get({_id: id}, 1, 1);
     },
     getByName: function (name) {
-        return Category.get({name: name}, 1,1);
+        return this.get({name: name}, 1,1);
     },
     getAll: function () {
-        return Category.get({}, 10, 1);
+        return this.get({}, 10, 1);
     }
 };

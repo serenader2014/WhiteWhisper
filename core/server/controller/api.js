@@ -15,6 +15,7 @@ var permissionApi = require('../api').permission;
 var passport      = require('passport');
 var _             = require('lodash');
 var post          = require('./post');
+var category      = require('./category');
 
 require('../helper/passport')(passport);
 
@@ -31,33 +32,33 @@ var login = function (req, res, next) {
 
     if (errors) {
         res.json({code: -3, msg: '表单数据有误。', data: errors});
-    } else {
-        if (req.user) {
-            res.json({code: -1, msg: '已经登陆。', data: _.pick(req.user, ['_id', 'email', 'username'])});
+        return;
+    }
+    if (req.user) {
+        res.json({code: -1, msg: '已经登陆。', data: _.pick(req.user, ['_id', 'email', 'username'])});
+        return;
+    }
+    passport.authenticate('local-login', function (err, user) {
+        if (err) {
+            res.json({code: 1, msg: err.message});
+            console.log(err.stack);
             return;
         }
-        passport.authenticate('local-login', function (err, user) {
+        if (!user) {
+            res.json({code: -5, msg: '该Email未注册。'});
+            return;
+        }
+        req.login(user, function (err) {
             if (err) {
                 res.json({code: 1, msg: err.message});
-                console.log(err.stack);
                 return;
             }
-            if (!user) {
-                res.json({code: -5, msg: '该Email未注册。'});
-                return;
-            }
-            req.login(user, function (err) {
-                if (err) {
-                    res.json({code: 1, msg: err.message});
-                    return;
-                }
-                userApi.login(user.email, req.ip).then(function () {
-                    res.json({code: 0, msg: '登陆成功。'});
-                });
+            userApi.login(user.email, req.ip).then(function () {
+                res.json({code: 0, msg: '登陆成功。'});
             });
+        });
 
-        })(req, res, next);
-    }
+    })(req, res, next);
 };
 
 var register = function (req, res) {
@@ -76,49 +77,49 @@ var register = function (req, res) {
 
     if (errors) {
         res.json({code: -3, msg: '表单数据有误。', data: errors});
-    } else {
-        (function (id) {
-            if (id) {
-                return permissionApi.getById(id);
-            } else {
-                return permissionApi.get({name: config.defaultUserPermission}, 1, 1);
-            }
-        })(permissionId).then(function (data) {
-            if (!data.total) {
-                res.json({code: -5, msg: '获取权限数据失败！'});
+        return;
+    }
+    (function (id) {
+        if (id) {
+            return permissionApi.getById(id);
+        } else {
+            return permissionApi.get({name: config.defaultUserPermission}, 1, 1);
+        }
+    })(permissionId).then(function (data) {
+        if (!data.total) {
+            res.json({code: -5, msg: '获取权限数据失败！'});
+            return;
+        }
+        var permission = data.data[0];
+        userApi.getByEmail(email).then(function (data) {
+            if (data.total) {
+                res.json({code: -4, msg: '该Email已注册。'});
                 return;
             }
-            var permission = data.data[0];
-            userApi.getByEmail(email).then(function (data) {
-                if (data.total) {
-                    res.json({code: -4, msg: '该Email已注册。'});
-                    return;
-                }
-                userApi.create({
-                    username: email,
-                    email: email,
-                    auth: {
-                        local: {
-                            email: email,
-                            password: userApi.generatePassword(password)
-                        }
-                    },
-                    status: 'active',
-                    permission: {
-                        profileName: permission.name,
-                        id: permission._id
-                    },
-                    log: [{
-                        date: new Date(),
-                        type: 1,
-                        user: email
-                    }]
-                }).then(function (user) {
-                    res.json({code: 0, msg: '注册成功。', data: _.pick(user, ['_id', 'email', 'username'])});
-                });
+            userApi.create({
+                username: email,
+                email: email,
+                auth: {
+                    local: {
+                        email: email,
+                        password: userApi.generatePassword(password)
+                    }
+                },
+                status: 'active',
+                permission: {
+                    profileName: permission.name,
+                    id: permission._id
+                },
+                log: [{
+                    date: new Date(),
+                    type: 1,
+                    user: email
+                }]
+            }).then(function (user) {
+                res.json({code: 0, msg: '注册成功。', data: _.pick(user, ['_id', 'email', 'username'])});
             });
         });
-    }
+    });
 };
 
 var logout = function (req, res) {
@@ -130,7 +131,8 @@ var logout = function (req, res) {
     }
 };
 
-module.exports.login = login;
+module.exports.login    = login;
 module.exports.register = register;
-module.exports.logout = logout;
-module.exports.post = post;
+module.exports.logout   = logout;
+module.exports.post     = post;
+module.exports.category = category;
