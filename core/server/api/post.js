@@ -12,7 +12,13 @@ module.exports = {
         _.extend(post, options);
 
         return post.saveAsync().spread(function (post) {
-            return post;
+            if (post.status === 'published') {
+                return categoryApi.increaseCount(post.category.id).then(function () {
+                    return post;
+                });
+            } else {
+                return post;
+            }
         });
     },
     update: function (id, options) {
@@ -27,7 +33,7 @@ module.exports = {
                 return categoryApi.increaseCount(obj.category.id);
             }
             if (post.status === 'published' && obj.status === 'published' &&
-                post.category.name !== obj.category.name) {
+                post.category.id !== obj.category.id) {
                 return categoryApi.decreaseCount(post.category.id).then(function () {
                     return categoryApi.increaseCount(obj.category.id);
                 });
@@ -41,5 +47,8 @@ module.exports = {
     },
     getByAuthor: function (username, amount, page) {
         return this.get({'author.name': username}, amount, page);
+    },
+    getBySlug: function (slug) {
+        return this.get({slug: slug}, 1, 1);
     }
 };

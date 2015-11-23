@@ -49,7 +49,13 @@ mongoose.connectAsync(config.db).then(function () {
 
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-    app.use(validator());
+    app.use(validator({
+        customValidators:{
+            isPostStatus: function (value) {
+                return ['published', 'unpublished', 'deleted', 'draft'].indexOf(value) !== -1;
+            }
+        }
+    }));
     app.use(cookieParser());
 
     if (global.env === 'production') {

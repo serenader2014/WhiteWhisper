@@ -9,12 +9,12 @@ var PostSchema = new Schema({
         id      : ObjectId,
         avatar  : String
     },
-    slug    : {type: String, unique: true},
+    slug    : String,
     markdown: String,
     html    : String,
     tags    : Array, // [{name: String, id: ObjectId}, ...]
     excerpt : String,
-    status  : String, // 'published', 'unpublished', 'deleted'
+    status  : String, // 'published', 'unpublished', 'deleted', 'draft'
     category: {
         name: String,
         id  : ObjectId
