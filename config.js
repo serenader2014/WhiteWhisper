@@ -31,6 +31,12 @@ var config = {
             put: true,
             delete: true
         },
+        category: {
+            get: true,
+            post: true,
+            put: true,
+            delete: true
+        },
         gallery: {
             get: true,
             post: true,
@@ -60,6 +66,12 @@ var config = {
         name: 'guest',
         editable: true,
         post: {
+            get: true,
+            post: false,
+            put: false,
+            delete: false
+        },
+        category: {
             get: true,
             post: false,
             put: false,

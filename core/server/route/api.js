@@ -29,7 +29,10 @@ api.route('/post')
     .delete(checkPermission('post', 'delete'), apiController.post.delete);
 
 api.route('/category')
-    .get(apiController.category.list);
+    .get(checkPermission('category', 'get') ,apiController.category.list)
+    .post(checkPermission('category', 'post'), apiController.category.create)
+    .put(checkPermission('category', 'put'), apiController.category.update)
+    .delete(checkPermission('category', 'delete'), apiController.category.delete);
 
 
 module.exports = api;

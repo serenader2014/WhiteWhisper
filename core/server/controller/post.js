@@ -3,6 +3,7 @@ var htmlToText  = require('html-to-text');
 var postApi     = require('../api').post;
 var categoryApi = require('../api').category;
 var log         = require('../helper/log');
+var checkBodyError   = require('../middleware/check-body-error');
 
 var list        = function (req, res) {
     var page   = req.query.page || 1;
@@ -22,7 +23,6 @@ var update = function (req, res) {
     var tags     = req.body.tags;
     var status   = req.body.status;
     var category = req.body.category;
-    var errors;
 
     req.checkBody('id', '文章ID为空')
         .notEmpty();
@@ -33,15 +33,11 @@ var update = function (req, res) {
     req.checkBody('status', '文章状态有误。')
         .isPostStatus();
 
-    errors = req.validationErrors();
-    if (errors) {
-        res.json({code: -3, msg: '表单数据有误。', data: errors});
-        return;
-    }
+    if (checkBodyError(req, res)) { return; }
+    
     categoryApi.getById(category).then(function (data) {
         if (!data.total) {
-            res.json({code: -5, msg: '找不到该文章分类。'});
-            return;
+            throw {code: -5, message: '找不到该文章分类。'};
         }
         return data.data[0];
     }).then(function (category) {
@@ -105,9 +101,8 @@ var update = function (req, res) {
         }).then(function (post) {
             res.json({code: 0, data: post});
         }).catch(function (err) {
-            res.json({code: 1, error: err});
+            res.json({code: err.code || 1, error: err.message});
             log.error(err);
-            throw err;
         });
     });
 };
@@ -121,7 +116,6 @@ var create = function (req, res) {
     var tags     = req.body.tags;
     var status   = req.body.status;
     var category = req.body.category;
-    var errors;
 
     req.checkBody('title', '文章标题为空。')
         .notEmpty();
@@ -130,15 +124,11 @@ var create = function (req, res) {
     req.checkBody('status', '文章状态有误。')
         .isPostStatus();
 
-    errors = req.validationErrors();
-    if (errors) {
-        res.json({code: -3, msg: '表单数据有误。', data: errors});
-        return;
-    }
+    if (checkBodyError(req, res)) { return; }
+    
     categoryApi.getById(category).then(function (data) {
         if (!data.total) {
-            res.json({code: -5, msg: '找不到该文章分类。'});
-            return;
+            throw ({code: -5, message: '找不到该文章分类。'});
         }
         var category = data.data[0];
         return postApi.create({
@@ -163,12 +153,28 @@ var create = function (req, res) {
     }).then(function (post) {
         res.json({code: 0, data: post});
     }).catch(function (err) {
-        res.json({code: 1, msg: err.message});
+        res.json({code: err.code || 1, error: err.message});
         log.error(err);
     });
 };
 
-var del = function () {
+var del = function (req, res) {
+    var id = req.body.id;
+
+    req.checkBody('id', '文章ID为空。')
+        .notEmpty();
+
+    if (checkBodyError(req, res)) { return; }
+
+    postApi.getById(id).then(function (data) {
+        if (!data.total) { throw {code: -4, message: '文章不存在。'}; }
+        return postApi.delete(id);
+    }).then(function () {
+        res.json({code: 0});
+    }).catch(function (err) {
+        res.json({code: err.code || 1, error: err.message});
+        log.error(err);
+    });
 
 };
 

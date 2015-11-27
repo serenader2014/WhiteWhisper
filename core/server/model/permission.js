@@ -9,6 +9,12 @@ var PermissionSchema = new Schema({
         put   : Boolean,
         delete: Boolean
     },
+    category: {
+        get   : Boolean,
+        post  : Boolean,
+        put   : Boolean,
+        delete: Boolean
+    },
     gallery: {
         get   : Boolean,
         post  : Boolean,

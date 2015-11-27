@@ -50,5 +50,8 @@ module.exports = {
     },
     getBySlug: function (slug) {
         return this.get({slug: slug}, 1, 1);
+    },
+    delete: function (id) {
+        return this.update(id, {status: 'deleted'});
     }
 };
