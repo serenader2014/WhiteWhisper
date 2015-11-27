@@ -5,9 +5,12 @@ module.exports = function (conditions, amount, page) {
     var tmpObj = {};
     var total  = 0;
     conditions = conditions || {};
-    amount     = amount || 1;
-    page       = page || 1;
-
+    if ((+amount).toString() === 'NaN') {
+        amount = 10;
+    }
+    if ((+page).toString() === 'NaN') {
+        page = 1;
+    }
     tmpObj = _.pick(conditions, function (value) {
         return value != null;
     });
