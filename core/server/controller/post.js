@@ -23,7 +23,7 @@ var list           = function (req, res) {
         if (type === 'mine') { 
             author = req.user.username; 
         } else if (type === 'others') { 
-            author = {$not: req.user.username};
+            author = {$nin: [req.user.username]};
         }
     }
     status = req.user ? status : 'published';
