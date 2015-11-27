@@ -1,15 +1,50 @@
-var _           = require('lodash');
-var htmlToText  = require('html-to-text');
-var postApi     = require('../api').post;
-var categoryApi = require('../api').category;
-var log         = require('../helper/log');
-var checkBodyError   = require('../middleware/check-body-error');
+var _              = require('lodash');
+var htmlToText     = require('html-to-text');
+var postApi        = require('../api').post;
+var categoryApi    = require('../api').category;
+var log            = require('../helper/log');
+var checkBodyError = require('../middleware/check-body-error');
 
-var list        = function (req, res) {
-    var page   = req.query.page || 1;
-    var amount = req.query.amount || 20;
-    postApi.get({status: 'published'}, amount, page).then(function (data) {
+var list           = function (req, res) {
+    var page      = req.query.page || 1;
+    var amount    = req.query.amount || 20;
+    var author    = req.query.author;
+    var status    = req.query.status;
+    var type      = req.query.type;
+    var startTime = new Date(+req.query.startTime || req.query.startTime);
+    var endTime   = new Date(+req.query.endTime || req.query.endTime);
+    var search    = req.query.search ? new RegExp(req.query.search, 'ig') : null;
+    var category  = req.query.category;
+    var dateQuery = {};
+    if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
+    if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
+    if (_.isEmpty(dateQuery)) { dateQuery = null; }
+    if (req.user && type) {
+        if (type === 'mine') { 
+            author = req.user.username; 
+        } else if (type === 'others') { 
+            author = {$not: req.user.username};
+        }
+    }
+    status = req.user ? status : 'published';
+    if (status === 'all') {
+        author = req.user.username;
+        status = {$in: ['published', 'unpublished', 'draft']};
+    } else {
+        status = 'published';
+    }
+
+    postApi.get({
+        status: status, 
+        'author.username': author,
+        create: dateQuery,
+        title: search,
+        'category.name': category
+    }, amount, page).then(function (data) {
         res.json(data);
+    }).catch(function (err) {
+        res.json({code: 1, error: err.message});
+        log.error(err);
     });
 };
 
