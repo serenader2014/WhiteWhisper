@@ -1,3 +1,4 @@
+var _           = require('lodash');
 var htmlToText  = require('html-to-text');
 var postApi     = require('../api').post;
 var categoryApi = require('../api').category;
@@ -37,37 +38,32 @@ var update = function (req, res) {
         res.json({code: -3, msg: '表单数据有误。', data: errors});
         return;
     }
-
-    postApi.getById(id).then(function (data) {
+    categoryApi.getById(category).then(function (data) {
         if (!data.total) {
-            res.json({code: -5, msg: '找不到该文章。'});
+            res.json({code: -5, msg: '找不到该文章分类。'});
             return;
         }
-        var post = data.data[0];
-        if (['published', 'unpublished'].indexOf(status) !== -1) {
-            return postApi.update(id, {
-                title : title,
-                create: new Date(),
-                author: {
-                    username: author.username,
-                    id      : author._id,
-                    avatar  : author.avatar
-                },
-                slug    : slug,
-                markdown: markdown,
-                html    : html,
-                tags    : (tags || '').split(','),
-                status  : status,
-                category: {
-                    name: category.name,
-                    id  : category._id
-                },
-                excerpt : htmlToText.fromString(html).substring(0, 350),
-                draft: post.draft.push(post)
-            });
-        } else {
-            return postApi.update(id, {
-                draft: post.draft.push({
+        return data.data[0];
+    }).then(function (category) {
+        postApi.getById(id).then(function (data) {
+            if (!data.total) {
+                res.json({code: -5, msg: '找不到该文章。'});
+                return;
+            }
+            var post = data.data[0];
+            var draft = post.draft;
+            if (['published', 'unpublished'].indexOf(status) !== -1) {
+                draft.push(_.pick(post, [
+                    'title', 
+                    'slug', 
+                    'create',
+                    'markdown', 
+                    'html', 
+                    'tags', 
+                    'status', 
+                    'category',
+                    'excerpt']));
+                return postApi.update(id, {
                     title : title,
                     create: new Date(),
                     author: {
@@ -85,16 +81,35 @@ var update = function (req, res) {
                         id  : category._id
                     },
                     excerpt : htmlToText.fromString(html).substring(0, 350),
-                })
-            });
-        }
-    }).then(function (post) {
-        res.json({code: 0, data: post});
-    }).catch(function (err) {
-        res.json({code: 1, error: err});
-        log.error(err);
+                    draft: draft
+                });
+            } else {
+                draft.push({
+                    title   : title,
+                    create  : new Date(),
+                    slug    : slug,
+                    markdown: markdown,
+                    html    : html,
+                    tags    : (tags || '').split(','),
+                    status  : status,
+                    category: {
+                        name: category.name,
+                        id  : category._id
+                    },
+                    excerpt : htmlToText.fromString(html).substring(0, 350),
+                });
+                return postApi.update(id, {
+                    draft: draft
+                });
+            }
+        }).then(function (post) {
+            res.json({code: 0, data: post});
+        }).catch(function (err) {
+            res.json({code: 1, error: err});
+            log.error(err);
+            throw err;
+        });
     });
-
 };
 
 var create = function (req, res) {

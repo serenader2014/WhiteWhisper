@@ -33,7 +33,7 @@ module.exports = {
                 return categoryApi.increaseCount(obj.category.id);
             }
             if (post.status === 'published' && obj.status === 'published' &&
-                post.category.id !== obj.category.id) {
+                post.category.id.toString() !== obj.category.id.toString()) {
                 return categoryApi.decreaseCount(post.category.id).then(function () {
                     return categoryApi.increaseCount(obj.category.id);
                 });
