@@ -39,7 +39,7 @@ module.exports = {
                 });
             }
         }).then(function () {
-            return Post.findByIdAndUpdateAsync(id, obj);
+            return Post.findByIdAndUpdateAsync(id, obj, {new: true});
         });
     },
     getById: function (id) {

@@ -35,10 +35,45 @@ module.exports = {
             log.error(err);
         });
     },
-    update: function () {
+    update: function (req, res) {
+        var id = req.body.id;
+        var name = req.body.name;
 
+        req.checkBody('id', '分类ID为空。')
+            .notEmpty();
+
+        req.checkBody('name', '分类名称为空。')
+            .notEmpty();
+
+        if (checkBodyError(req, res)) { return ; }
+
+        categoryApi.update(id, {name: name}).then(function (category) {
+            res.json({code: 0, data: category});
+        }).catch(function (err) {
+            res.json({ code: err.code || 1, error: err});
+            log.error(err);
+        });
     },
-    delete: function () {
+    delete: function (req, res) {
+        var id = req.body.id;
 
+        req.checkBody('id', '分类ID为空。')
+            .notEmpty();
+
+        if (checkBodyError(req, res)) {return ;}
+
+        categoryApi.getById(id).then(function (data) {
+            if (!data.total) { throw { code: -5, message: '分类不存在。'};}
+            var category = data.data[0];
+            if (category.count > 0) { 
+                throw { code: 1, message: '无法删除仍有文章的分类。'};
+            }
+            return categoryApi.delete(id);
+        }).then(function () {
+            res.json({ code: 0 });
+        }).catch(function (err) {
+            res.json({ code: err.code || 1, error: err.message || err});
+            log.error(err);
+        });
     }
 };
