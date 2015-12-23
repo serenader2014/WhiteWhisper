@@ -1,6 +1,8 @@
-var mongoose         = Promise.promisifyAll(require('mongoose'));
-var Schema           = mongoose.Schema;
-var PermissionSchema = new Schema({
+import Promise  from 'bluebird';
+import mongoose from 'mongoose'
+const mongo            = Promise.promisifyAll(mongoose);
+const Schema           = mongo.Schema;
+const PermissionSchema = new Schema({
     name: {type: String, unique: true},
     editable: Boolean,
     post: {
@@ -40,4 +42,4 @@ var PermissionSchema = new Schema({
         delete: Boolean
     },
 });
-module.exports = mongoose.model('Permission', PermissionSchema);
+export default mongo.model('Permission', PermissionSchema);

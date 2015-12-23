@@ -1,7 +1,9 @@
-var mongoose   = Promise.promisifyAll(require('mongoose'));
-var Schema     = mongoose.Schema;
-var ObjectId   = Schema.Types.ObjectId;
-var PostSchema = new Schema({
+import Promise  from 'bluebird';
+import mongoose from 'mongoose';
+const mongo      = Promise.promisifyAll(mongoose);
+const Schema     = mongo.Schema;
+const ObjectId   = Schema.Types.ObjectId;
+const PostSchema = new Schema({
     title : String,
     create: Date,
     author: {
@@ -21,4 +23,4 @@ var PostSchema = new Schema({
     },
     draft: Array
 });
-module.exports = mongoose.model('Post', PostSchema);
+export default mongo.model('Post', PostSchema);

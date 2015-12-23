@@ -1,6 +1,8 @@
-var mongoose      = Promise.promisifyAll(require('mongoose'));
-var Schema        = mongoose.Schema;
-var SettingSchema = new Schema({
+import Promise  from 'bluebird';
+import mongoose from 'mongoose';
+const mongo         = Promise.promisifyAll(mongoose);
+const Schema        = mongo.Schema;
+const SettingSchema = new Schema({
     blogName       : String,
     blogDescription: String,
     blogLogo       : String,
@@ -12,4 +14,4 @@ var SettingSchema = new Schema({
     background     : String
 });
 
-module.exports = mongoose.model('Setting', SettingSchema);
+export default mongo.model('Setting', SettingSchema);

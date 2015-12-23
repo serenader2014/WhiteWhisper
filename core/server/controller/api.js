@@ -10,17 +10,18 @@
  */
 
 
-var userApi       = require('../api').user;
-var permissionApi = require('../api').permission;
-var passport      = require('passport');
-var _             = require('lodash');
-var post          = require('./post');
-var category      = require('./category');
+import userApi        from '../api/user';
+import permissionApi  from '../api/permission';
+import passport       from 'passport';
+import _              from 'lodash';
+import post           from './post';
+import category       from './category';
+import passportHelper from '../helper/passport';
 
-require('../helper/passport')(passport);
+passportHelper(passport);
 
-var login = function (req, res, next) {
-    var errors;
+const login = (req, res, next) => {
+    let errors;
     req.checkBody('email', 'Email 不是合格的邮箱地址。')
         .notEmpty().withMessage('Email 为空。')
         .isEmail();
@@ -38,7 +39,7 @@ var login = function (req, res, next) {
         res.json({code: -1, msg: '已经登陆。', data: _.pick(req.user, ['_id', 'email', 'username'])});
         return;
     }
-    passport.authenticate('local-login', function (err, user) {
+    passport.authenticate('local-login', (err, user) => {
         if (err) {
             res.json({code: 1, msg: err.message});
             console.log(err.stack);
@@ -48,12 +49,12 @@ var login = function (req, res, next) {
             res.json({code: -5, msg: '该Email未注册。'});
             return;
         }
-        req.login(user, function (err) {
+        req.login(user, (err) => {
             if (err) {
                 res.json({code: 1, msg: err.message});
                 return;
             }
-            userApi.login(user.email, req.ip).then(function () {
+            userApi.login(user.email, req.ip).then(() => {
                 res.json({code: 0, msg: '登陆成功。'});
             });
         });
@@ -61,11 +62,11 @@ var login = function (req, res, next) {
     })(req, res, next);
 };
 
-var register = function (req, res) {
-    var errors;
-    var email = req.body.email;
-    var password = req.body.password;
-    var permissionId = req.body.permission;
+const register = (req, res) => {
+    let errors;
+    let email = req.body.email;
+    let password = req.body.password;
+    let permissionId = req.body.permission;
     req.checkBody('email', 'Email 不是合格的邮箱地址。')
         .notEmpty().withMessage('Email 为空。')
         .isEmail();
@@ -79,29 +80,29 @@ var register = function (req, res) {
         res.json({code: -3, msg: '表单数据有误。', data: errors});
         return;
     }
-    (function (id) {
+    ((id) => {
         if (id) {
             return permissionApi.getById(id);
         } else {
             return permissionApi.get({name: config.defaultUserPermission}, 1, 1);
         }
-    })(permissionId).then(function (data) {
+    })(permissionId).then((data) => {
         if (!data.total) {
             res.json({code: -5, msg: '获取权限数据失败！'});
             return;
         }
-        var permission = data.data[0];
-        userApi.getByEmail(email).then(function (data) {
+        let permission = data.data[0];
+        userApi.getByEmail(email).then((data) => {
             if (data.total) {
                 res.json({code: -4, msg: '该Email已注册。'});
                 return;
             }
             userApi.create({
                 username: email,
-                email: email,
+                email,
                 auth: {
                     local: {
-                        email: email,
+                        email,
                         password: userApi.generatePassword(password)
                     }
                 },
@@ -115,14 +116,14 @@ var register = function (req, res) {
                     type: 1,
                     user: email
                 }]
-            }).then(function (user) {
+            }).then((user) => {
                 res.json({code: 0, msg: '注册成功。', data: _.pick(user, ['_id', 'email', 'username'])});
             });
         });
     });
 };
 
-var logout = function (req, res) {
+const logout = (req, res) => {
     if (req.user) {
         req.logout();
         res.json({code: 0, msg: '退出成功。'});
@@ -131,8 +132,4 @@ var logout = function (req, res) {
     }
 };
 
-module.exports.login    = login;
-module.exports.register = register;
-module.exports.logout   = logout;
-module.exports.post     = post;
-module.exports.category = category;
+export default {login, register, logout, post, category};

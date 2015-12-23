@@ -1,7 +1,10 @@
-var mongoose       = Promise.promisifyAll(require('mongoose'));
-var Schema         = mongoose.Schema;
-var CategorySchema = new Schema({
+import Promise  from 'bluebird';
+import mongoose from 'mongoose';
+const mongo          = Promise.promisifyAll(mongoose);
+const Schema         = mongo.Schema;
+const CategorySchema = new Schema({
     name: {type: String, unique: true},
     count: {type: Number, default: 0}
 });
-module.exports = mongoose.model('Category', CategorySchema);
+
+export default mongo.model('Category', CategorySchema);

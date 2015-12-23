@@ -1,6 +1,8 @@
-var mongoose    = Promise.promisifyAll(require('mongoose'));
-var Schema      = mongoose.Schema;
-var BruteSchema = new Schema({
+import Promise  from 'bluebird';
+import mongoose from 'mongoose';
+const mongo       = Promise.promisifyAll(mongoose);
+const Schema      = mongo.Schema;
+const BruteSchema = new Schema({
     ip            : String,
     count         : Number,
     failedCount   : Number,
@@ -9,4 +11,5 @@ var BruteSchema = new Schema({
     remainingTime : Number,
     resetCountDate: Date,
 });
-module.exports = mongoose.model('Brute', BruteSchema);
+
+export default mongo.model('Brute', BruteSchema);

@@ -1,18 +1,17 @@
-var Brute = require('../model/brute');
-var _ = require('lodash');
-var get = require('../helper/get-data');
-
-module.exports = {
-    get: function () {
+import Brute from '../model/brute';
+import _     from 'lodash';
+import get   from '../helper/get-data';
+export default  {
+    get () {
         return get.apply(Brute, arguments);
     },
-    update: function (ip, options) {
+    update (ip, options) {
         var obj = {};
         _.extend(obj, options);
 
         return Brute.findOneAndUpdateAsync({ip: ip}, obj);
     },
-    create: function (options) {
+    create (options) {
         var brute = new Brute(options);
         _.extend(brute, options);
 
@@ -20,10 +19,10 @@ module.exports = {
             return b;
         });
     },
-    delete: function (ip) {
+    delete (ip) {
         return Brute.findOneAndRemoveAsync({ip: ip});
     },
-    addIp: function (ip) {
+    addIp (ip) {
         var now = new Date();
         return this.create({
             ip           : ip,
@@ -35,7 +34,7 @@ module.exports = {
             resetCountDate: now
         });
     },
-    getIp: function (ip) {
+    getIp (ip) {
         return this.get({ip: ip}, 1, 1);
     },
 };

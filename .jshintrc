@@ -25,5 +25,6 @@
       "globals": {
             "Promise": false,
             "config": false
-      }
+      },
+      "esnext": true
 }

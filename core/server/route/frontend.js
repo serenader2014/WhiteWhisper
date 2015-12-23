@@ -1,8 +1,8 @@
-var express = require('express');
-var frontend = express();
-var homePageController = require('../controller/frontend');
+import express            from 'express';
+import homePageController from '../controller/frontend';
+let frontend = express();
 
 frontend.route('/')
 .get(homePageController.getHomePage);
 
-module.exports = frontend;
+export default frontend;

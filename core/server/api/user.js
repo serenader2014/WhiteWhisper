@@ -1,46 +1,46 @@
-var User       = require('../model').user;
-var bcrypt     = require('bcrypt-nodejs');
-var _          = require('lodash');
-var get        = require('../helper/get-data');
+import  User      from '../model/user';
+import  bcrypt    from 'bcrypt-nodejs';
+import  _         from 'lodash';
+import  get       from '../helper/get-data';
 
-module.exports = {
-    get: function () {
+export default  {
+    get () {
         return get.apply(User, arguments);
     },
-    create: function (options) {
+    create (options) {
         var user = new User();
         _.extend(user, options);
 
-        return user.saveAsync().spread(function (user) {
+        return user.saveAsync().spread((user) => {
             return user;
         });
     },
-    update: function (id, options) {
+    update (id, options) {
         var obj = {};
         _.extend(obj, options);
 
         return User.findByIdAndUpdateAsync(id, obj);
     },
-    delete: function (id) {
+    delete (id) {
         return User.findByIdAndRemoveAsync(id);
     },
-    check: function (username, email) {
+    check (username, email) {
         return User.findAsync({ $or: [{username: username}, {email: email}]});
     },
-    getById: function (id) {
+    getById (id) {
         return this.get({_id: id}, 1, 1);
     },
-    getByEmail: function (email) {
+    getByEmail (email) {
         return this.get({email: email}, 1, 1);
     },
-    getByUsername: function (username) {
+    getByUsername (username) {
         return this.get({username: username});
     },
-    getAll: function (amount, page) {
+    getAll (amount, page) {
         return this.get({}, amount, page);
     },
-    login: function (email, ip) {
-        return this.get({email: email}, 1, 1).then(function (data) {
+    login (email, ip) {
+        return this.get({email: email}, 1, 1).then((data) => {
             var user = data.data[0];
             user.log.push({
                 date: new Date(),
@@ -51,10 +51,10 @@ module.exports = {
             return user.saveAsync();
         });
     },
-    generatePassword: function (password) {
+    generatePassword (password) {
         return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
     },
-    validatePassword: function (pwd1, pwd2) {
+    validatePassword (pwd1, pwd2) {
         return bcrypt.compareSync(pwd1, pwd2);
     }
 };

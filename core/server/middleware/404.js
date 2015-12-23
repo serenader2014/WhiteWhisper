@@ -1,5 +1,5 @@
-module.exports = function () {
-    return function notFound (req, res) {
+export default function () {
+    return (req, res) => {
         res.status(404).send('404 not found.');
     };
-};
+}

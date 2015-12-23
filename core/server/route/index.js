@@ -1,14 +1,14 @@
-var admin    = require('./admin');
-var frontend = require('./frontend');
-var api      = require('./api');
-var express  = require('express');
-var app      = express();
+import admin    from './admin';
+import frontend from './frontend';
+import api      from './api';
+import express  from 'express';
+let app      = express();
 
 
 app.use('/api', api);
 app.use('/admin', admin);
 app.use('/', frontend);
 
-module.exports = function () {
+export default function () {
     return app;
-};
+}

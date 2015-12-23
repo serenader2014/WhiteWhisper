@@ -14,10 +14,12 @@
  * }
  */
 
-var mongoose   = Promise.promisifyAll(require('mongoose'));
-var Schema     = mongoose.Schema;
-var ObjectId   = Schema.Types.ObjectId;
-var UserSchema = new Schema({
+import Promise  from 'bluebird';
+import mongoose from 'mongoose';
+const mongo      = Promise.promisifyAll(mongoose);
+const Schema     = mongo.Schema;
+const ObjectId   = Schema.Types.ObjectId;
+const UserSchema = new Schema({
     username: {type: String, unique: true},
     email: {type: String, unique: true},
     auth: {
@@ -38,4 +40,4 @@ var UserSchema = new Schema({
     log      : Array
 });
 
-module.exports = mongoose.model('User', UserSchema);
+export default mongo.model('User', UserSchema);

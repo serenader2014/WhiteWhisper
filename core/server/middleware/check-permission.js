@@ -1,6 +1,6 @@
-var permissionApi = require('../api').permission;
-var log = require('../helper/log');
-var checkPermission = function (type, method) {
+import permissionApi from '../api/permission';
+import log from '../helper/log';
+export default function (type, method) {
     return function (req, res, next) {
         var user = req.user;
         (function () {
@@ -28,6 +28,4 @@ var checkPermission = function (type, method) {
             log.error(err);
         });
     };
-};
-
-module.exports = checkPermission;
+}

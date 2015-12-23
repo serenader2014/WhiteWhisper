@@ -1,19 +1,19 @@
-var Post        = require('../model').post;
-var _           = require('lodash');
-var get         = require('../helper/get-data');
-var categoryApi = require('./category');
+import Post        from '../model/post';
+import _           from 'lodash';
+import get         from '../helper/get-data';
+import categoryApi from './category';
 
-module.exports = {
-    get: function () {
+export default {
+    get () {
         return get.apply(Post, arguments);
     },
-    create: function (options) {
+    create (options) {
         var post = new Post();
         _.extend(post, options);
 
-        return post.saveAsync().spread(function (post) {
+        return post.saveAsync().spread((post) => {
             if (post.status === 'published') {
-                return categoryApi.increaseCount(post.category.id).then(function () {
+                return categoryApi.increaseCount(post.category.id).then(() => {
                     return post;
                 });
             } else {
@@ -21,11 +21,11 @@ module.exports = {
             }
         });
     },
-    update: function (id, options) {
+    update (id, options) {
         var obj = {};
         _.extend(obj, options);
 
-        return Post.findByIdAsync(id).then(function (post) {
+        return Post.findByIdAsync(id).then((post) => {
             if (post.status === 'published' && obj.status !== 'published') {
                 return categoryApi.decreaseCount(post.category.id);
             }
@@ -34,24 +34,24 @@ module.exports = {
             }
             if (post.status === 'published' && obj.status === 'published' &&
                 post.category.id.toString() !== obj.category.id.toString()) {
-                return categoryApi.decreaseCount(post.category.id).then(function () {
+                return categoryApi.decreaseCount(post.category.id).then(() => {
                     return categoryApi.increaseCount(obj.category.id);
                 });
             }
-        }).then(function () {
+        }).then(() => {
             return Post.findByIdAndUpdateAsync(id, obj, {new: true});
         });
     },
-    getById: function (id) {
+    getById (id) {
         return this.get({_id: id});
     },
-    getByAuthor: function (username, amount, page) {
+    getByAuthor (username, amount, page) {
         return this.get({'author.name': username}, amount, page);
     },
-    getBySlug: function (slug) {
+    getBySlug (slug) {
         return this.get({slug: slug}, 1, 1);
     },
-    delete: function (id) {
+    delete (id) {
         return this.update(id, {status: 'deleted'});
     }
 };

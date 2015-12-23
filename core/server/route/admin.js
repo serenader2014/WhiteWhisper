@@ -1,8 +1,8 @@
-var express = require('express');
-var admin = express();
-var adminController = require('../controller/admin');
+import express from 'express';
+import adminController from '../controller/admin';
+let admin = express();
 
 admin.route('*')
 .get(adminController.getHomePage);
 
-module.exports = admin;
+export default admin;

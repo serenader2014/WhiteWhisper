@@ -1,64 +1,64 @@
-var _        = require('lodash');
-var Category = require('../model').category;
-var postApi  = require('./post');
-var get      = require('../helper/get-data');
+import  _        from 'lodash';
+import  Category from '../model/category';
+import  postApi  from './post';
+import  get      from '../helper/get-data';
 
-module.exports = {
-    get: function () {
+export default {
+    get () {
         return get.apply(Category, arguments);
     },
-    update: function (id, options) {
+    update (id, options) {
         var obj = {};
         var category;
         _.extend(obj, options);
 
-        return Category.findByIdAndUpdateAsync(id, obj, {new: true}).then(function (c) {
+        return Category.findByIdAndUpdateAsync(id, obj, {new: true}).then((c) => {
             category = c;
             return postApi.get({'category.id': id});
-        }).then(function (data) {
+        }).then((data) => {
             if (!data.total) {
                 return ;
             }
-            return data.data.reduce(function (p, post) {
-                return p.then(function () {
+            return data.data.reduce((p, post) => {
+                return p.then(() => {
                     post.category.name = options.name;
                     return post.saveAsync();
                 });
             }, Promise.resolve());
-        }).then(function () {
+        }).then(() => {
             return category;
         });
     },
-    create: function (options) {
+    create (options) {
         var category = new Category();
         _.extend(category, options);
 
-        return category.saveAsync().spread(function (c) {
+        return category.saveAsync().spread((c) => {
             return c;
         });
     },
-    delete: function (id) {
+    delete (id) {
         return Category.findByIdAndRemoveAsync(id);
     },
-    increaseCount: function (id) {
-        return Category.findByIdAsync(id).then(function (c) {
+    increaseCount (id) {
+        return Category.findByIdAsync(id).then((c) => {
             c.count = c.count + 1;
             return c.saveAsync();
         });
     },
-    decreaseCount: function (id) {
-        return Category.findByIdAsync(id).then(function (c) {
+    decreaseCount (id) {
+        return Category.findByIdAsync(id).then((c) => {
             c.count = c.count - 1;
             return c.saveAsync();
         });
     },
-    getById: function (id) {
+    getById (id) {
         return this.get({_id: id}, 1, 1);
     },
-    getByName: function (name) {
+    getByName (name) {
         return this.get({name: name}, 1,1);
     },
-    getAll: function () {
+    getAll () {
         return this.get({}, 10, 1);
     }
 };

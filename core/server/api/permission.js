@@ -1,35 +1,35 @@
-var Permission = require('../model').permission;
-var get        = require('../helper/get-data');
-var _          = require('lodash');
+import Permission from '../model/permission';
+import get        from '../helper/get-data';
+import _          from 'lodash';
 
-module.exports = {
-    get: function () {
+export default {
+    get () {
         return get.apply(Permission, arguments);
     },
-    create: function (options) {
+    create (options) {
         var p = new Permission();
         _.extend(p, options);
 
-        return p.saveAsync().spread(function (p) {
+        return p.saveAsync().spread((p) => {
             return p;
         });
     },
-    update: function (id, options) {
+    update (id, options) {
         var obj = {};
         _.extend(obj, options);
 
         return Permission.findByIdAndUpdateAsync(id, obj);
     },
-    delete: function (id) {
+    delete (id) {
         return Permission.findByIdAndRemoveAsync(id);
     },
-    getById: function (id) {
+    getById (id) {
         return this.get({_id: id}, 1,1);
     },
-    getByName: function (name) {
+    getByName (name) {
         return this.get({name: name}, 1, 1);
     },
-    getAll: function () {
+    getAll () {
         return this.get({}, 10, 1);
     },
 };

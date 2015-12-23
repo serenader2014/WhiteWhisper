@@ -1,5 +1,4 @@
-function adminHomePage (req, res, next) {
+function getHomePage (req, res, next) {
     res.send('ok');
 }
-
-module.exports.getHomePage = adminHomePage;
+export default {getHomePage};

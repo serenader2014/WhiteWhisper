@@ -1,5 +1,5 @@
-var pkg    = require('./package.json');
-var config = {
+const pkg    = require('./package.json');
+const config = {
     version      : pkg.version,
     db           : 'mongodb://127.0.0.1/whitewhisper',
     sessionSecret: 'love music',
@@ -104,5 +104,5 @@ var config = {
     },
     defaultUserPermission: 'admin'
 };
-
-module.exports = global.config = config;
+global.config = config;
+export default config;

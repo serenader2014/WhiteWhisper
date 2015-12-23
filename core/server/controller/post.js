@@ -1,21 +1,21 @@
-var _              = require('lodash');
-var htmlToText     = require('html-to-text');
-var postApi        = require('../api').post;
-var categoryApi    = require('../api').category;
-var log            = require('../helper/log');
-var checkBodyError = require('../middleware/check-body-error');
+import _              from 'lodash';
+import htmlToText     from 'html-to-text';
+import postApi        from '../api/post';
+import categoryApi    from '../api/category';
+import log            from '../helper/log';
+import checkBodyError from '../middleware/check-body-error';
 
-var list           = function (req, res) {
-    var page      = req.query.page || 1;
-    var amount    = req.query.amount || 20;
-    var author    = req.query.author;
-    var status    = req.query.status;
-    var type      = req.query.type;
-    var startTime = new Date(+req.query.startTime || req.query.startTime);
-    var endTime   = new Date(+req.query.endTime || req.query.endTime);
-    var search    = req.query.search ? new RegExp(req.query.search, 'ig') : null;
-    var category  = req.query.category;
-    var dateQuery = {};
+const list           = (req, res) => {
+    let page      = req.query.page || 1;
+    let amount    = req.query.amount || 20;
+    let author    = req.query.author;
+    let status    = req.query.status;
+    let type      = req.query.type;
+    let startTime = new Date(+req.query.startTime || req.query.startTime);
+    let endTime   = new Date(+req.query.endTime || req.query.endTime);
+    let search    = req.query.search ? new RegExp(req.query.search, 'ig') : null;
+    let category  = req.query.category;
+    let dateQuery = {};
     if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
     if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
     if (_.isEmpty(dateQuery)) { dateQuery = null; }
@@ -40,24 +40,24 @@ var list           = function (req, res) {
         create: dateQuery,
         title: search,
         'category.name': category
-    }, amount, page).then(function (data) {
+    }, amount, page).then((data) => {
         res.json(data);
-    }).catch(function (err) {
+    }).catch((err) => {
         res.json({code: 1, error: err.message});
         log.error(err);
     });
 };
 
-var update = function (req, res) {
-    var id       = req.body.id;
-    var title    = req.body.title;
-    var author   = req.user;
-    var slug     = req.body.slug;
-    var markdown = req.body.markdown;
-    var html     = req.body.html;
-    var tags     = req.body.tags;
-    var status   = req.body.status;
-    var category = req.body.category;
+const update = (req, res) => {
+    let id       = req.body.id;
+    let title    = req.body.title;
+    let author   = req.user;
+    let slug     = req.body.slug;
+    let markdown = req.body.markdown;
+    let html     = req.body.html;
+    let tags     = req.body.tags;
+    let status   = req.body.status;
+    let category = req.body.category;
 
     req.checkBody('id', '文章ID为空')
         .notEmpty();
@@ -70,19 +70,19 @@ var update = function (req, res) {
 
     if (checkBodyError(req, res)) { return; }
     
-    categoryApi.getById(category).then(function (data) {
+    categoryApi.getById(category).then((data) => {
         if (!data.total) {
             throw {code: -5, message: '找不到该文章分类。'};
         }
         return data.data[0];
-    }).then(function (category) {
-        postApi.getById(id).then(function (data) {
+    }).then((category) => {
+        postApi.getById(id).then((data) => {
             if (!data.total) {
                 res.json({code: -5, msg: '找不到该文章。'});
                 return;
             }
-            var post = data.data[0];
-            var draft = post.draft;
+            let post = data.data[0];
+            let draft = post.draft;
             if (['published', 'unpublished'].indexOf(status) !== -1) {
                 draft.push(_.pick(post, [
                     'title', 
@@ -102,27 +102,27 @@ var update = function (req, res) {
                         id      : author._id,
                         avatar  : author.avatar
                     },
-                    slug    : slug,
-                    markdown: markdown,
-                    html    : html,
+                    slug,
+                    markdown,
+                    html,
                     tags    : (tags || '').split(','),
-                    status  : status,
+                    status,
                     category: {
                         name: category.name,
                         id  : category._id
                     },
                     excerpt : htmlToText.fromString(html).substring(0, 350),
-                    draft: draft
+                    draft
                 });
             } else {
                 draft.push({
-                    title   : title,
+                    title,
                     create  : new Date(),
-                    slug    : slug,
-                    markdown: markdown,
-                    html    : html,
+                    slug,
+                    markdown,
+                    html,
                     tags    : (tags || '').split(','),
-                    status  : status,
+                    status,
                     category: {
                         name: category.name,
                         id  : category._id
@@ -133,24 +133,24 @@ var update = function (req, res) {
                     draft: draft
                 });
             }
-        }).then(function (post) {
+        }).then((post) => {
             res.json({code: 0, data: post});
-        }).catch(function (err) {
+        }).catch((err) => {
             res.json({code: err.code || 1, error: err.message});
             log.error(err);
         });
     });
 };
 
-var create = function (req, res) {
-    var title    = req.body.title;
-    var author   = req.user;
-    var slug     = req.body.slug;
-    var markdown = req.body.markdown;
-    var html     = req.body.html;
-    var tags     = req.body.tags;
-    var status   = req.body.status;
-    var category = req.body.category;
+const create = (req, res) => {
+    let title    = req.body.title;
+    let author   = req.user;
+    let slug     = req.body.slug;
+    let markdown = req.body.markdown;
+    let html     = req.body.html;
+    let tags     = req.body.tags;
+    let status   = req.body.status;
+    let category = req.body.category;
 
     req.checkBody('title', '文章标题为空。')
         .notEmpty();
@@ -161,59 +161,56 @@ var create = function (req, res) {
 
     if (checkBodyError(req, res)) { return; }
     
-    categoryApi.getById(category).then(function (data) {
+    categoryApi.getById(category).then((data) => {
         if (!data.total) {
             throw ({code: -5, message: '找不到该文章分类。'});
         }
-        var category = data.data[0];
+        let category = data.data[0];
         return postApi.create({
-            title : title,
+            title,
             create: new Date(),
             author: {
                 username: author.username,
                 id      : author._id,
                 avatar  : author.avatar
             },
-            slug    : slug,
-            markdown: markdown,
-            html    : html,
+            slug,
+            markdown,
+            html,
             tags    : (tags || '').split(','),
-            status  : status,
+            status,
             category: {
                 name: category.name,
                 id  : category._id
             },
             excerpt : htmlToText.fromString(html).substring(0, 350),
         });
-    }).then(function (post) {
+    }).then((post) => {
         res.json({code: 0, data: post});
-    }).catch(function (err) {
+    }).catch((err) => {
         res.json({code: err.code || 1, error: err.message});
         log.error(err);
     });
 };
 
-var del = function (req, res) {
-    var id = req.body.id;
+const del = (req, res) => {
+    let id = req.body.id;
 
     req.checkBody('id', '文章ID为空。')
         .notEmpty();
 
     if (checkBodyError(req, res)) { return; }
 
-    postApi.getById(id).then(function (data) {
+    postApi.getById(id).then((data) => {
         if (!data.total) { throw {code: -4, message: '文章不存在。'}; }
         return postApi.delete(id);
-    }).then(function () {
+    }).then(() => {
         res.json({code: 0});
-    }).catch(function (err) {
+    }).catch((err) => {
         res.json({code: err.code || 1, error: err.message});
         log.error(err);
     });
 
 };
 
-module.exports.list   = list;
-module.exports.update = update;
-module.exports.create = create;
-module.exports.delete = del;
+export default {list, update, create, delete: del};

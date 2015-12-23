@@ -1,8 +1,8 @@
-var express         = require('express');
-var api             = express();
-var apiController   = require('../controller/api');
-var brute           = require('../middleware/brute');
-var checkPermission = require('../middleware/check-permission');
+import express         from 'express';
+import apiController   from '../controller/api';
+import brute           from '../middleware/brute';
+import checkPermission from '../middleware/check-permission';
+let api             = express();
 
 api.route('/login')
     .post(brute({
@@ -34,5 +34,4 @@ api.route('/category')
     .put(checkPermission('category', 'put'), apiController.category.update)
     .delete(checkPermission('category', 'delete'), apiController.category.delete);
 
-
-module.exports = api;
+export default api;

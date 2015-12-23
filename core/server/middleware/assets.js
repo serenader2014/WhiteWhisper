@@ -1,5 +1,5 @@
-module.exports = function () {
-    return function assets (req, res, next) {
+export default function () {
+    return  (req, res, next) => {
         next();
     };
-};
+}

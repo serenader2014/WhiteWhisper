@@ -1,5 +1,5 @@
-module.exports = function () {
-    return function responseTime (req, res, next) {
+export default function () {
+    return (req, res, next) => {
         var _send = res.send;
         var now   = new Date();
         res.send = function () {
@@ -10,4 +10,4 @@ module.exports = function () {
         };
         next();
     };
-};
+}
