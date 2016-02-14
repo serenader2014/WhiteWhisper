@@ -17,6 +17,12 @@ describe('User system unit test: login and register', function () {
         email: randomString(6) + '@' + randomString(4) + '.com',
         password: '123456789'
     };
+    before(function (done) {
+        require('babel-core/register');
+        require('../app.js').default().then(function () {
+            done();
+        });
+    });
     it('should submit empty request body to register', function (done) {
         request(url)
             .post(register)
