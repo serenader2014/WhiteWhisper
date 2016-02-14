@@ -2,6 +2,7 @@ const pkg    = require('./package.json');
 const config = {
     version      : pkg.version,
     db           : 'mongodb://127.0.0.1/whitewhisper',
+    testDb        : 'mongodb://127.0.0.1/whitewhispertest',
     sessionSecret: 'love music',
     host         : '127.0.0.1',
     port         : 10010,

@@ -4,9 +4,12 @@ var should   = require('should');
 var assert   = require('assert');
 var request  = require('supertest');
 var _        = require('lodash');
+var mongoose = require('mongoose');
+
 var url      = 'http://localhost:10010';
 var register = '/api/register';
 var login    = '/api/login';
+
 function randomString (length) {
     var str = 'abcdefghijklmnopqrstuvwxyz';
     return str.split('').sort(function () {return Math.random() - 0.5;}).slice(0, length).join('');
@@ -18,9 +21,14 @@ describe('User system unit test: login and register', function () {
         password: '123456789'
     };
     before(function (done) {
-        require('babel-core/register');
-        require('../app.js').default().then(function () {
-            done();
+        mongoose.connect('mongodb://127.0.0.1/whitewhispertest', function () {
+            mongoose.connection.db.dropDatabase();
+            mongoose.connection.close(function () {
+                require('babel-core/register');
+                require('../app.js').default('test').then(function () {
+                    done();
+                });
+            });
         });
     });
     it('should submit empty request body to register', function (done) {
