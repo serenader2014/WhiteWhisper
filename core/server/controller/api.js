@@ -16,6 +16,7 @@ import userApi        from '../api/user';
 import permissionApi  from '../api/permission';
 import post           from './post';
 import category       from './category';
+import user           from './user';
 import passportHelper from '../helper/passport';
 import log            from '../helper/log';
 
@@ -138,4 +139,4 @@ const logout = (req, res) => {
     }
 };
 
-export default {login, register, logout, post, category};
+export default {login, register, logout, post, category, user};

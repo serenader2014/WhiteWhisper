@@ -1,13 +1,15 @@
 /* jshint jasmine:true */
 
-var should   = require('should');
-var assert   = require('assert');
-var request  = require('supertest');
-var mongoose = require('mongoose');
+var should      = require('should');
+var assert      = require('assert');
+var request     = require('supertest');
+var mongoose    = require('mongoose');
 
-var url      = 'http://localhost:10011';
-var register = '/api/register';
-var login    = '/api/login';
+var url         = 'http://localhost:10011';
+var register    = '/api/register';
+var login       = '/api/login';
+var currentUser = '/api/user';
+var logout      = '/api/logout';
 
 function randomString (length) {
     var str = 'abcdefghijklmnopqrstuvwxyz';
@@ -126,6 +128,16 @@ describe('User system unit test: login and register', function () {
                 done();
             });
     });
+    it('should show the current logined user', function (done) {
+        agent
+            .get(currentUser)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.email.should.equal(user.email);
+                done();
+            });
+    });
     it('will try to login twice', function (done) {
         agent
             .post(login)
@@ -135,6 +147,33 @@ describe('User system unit test: login and register', function () {
                 if (err) {
                     throw err;
                 }
+                res.body.code.should.equal(-1);
+                done();
+            });
+    });
+    it('should logout the current user', function (done) {
+        agent
+            .get(logout)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
+    it('should show empty user on current user api route', function (done) {
+        agent
+            .get(currentUser)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(-5);
+                done();
+            });
+    });
+    it('will try to lotout again', function (done) {
+        agent
+            .get(logout)
+            .end(function (err, res) {
+                if (err) {throw err;}
                 res.body.code.should.equal(-1);
                 done();
             });

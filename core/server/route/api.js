@@ -18,9 +18,7 @@ api.route('/logout')
     .all(apiController.logout);
 
 api.route('/user')
-    .get(function (req, res) {
-        res.send(req.user);
-    });
+    .get(apiController.user.getInfo);
 
 api.route('/post')
     .get(checkPermission('post', 'get'), apiController.post.list)
