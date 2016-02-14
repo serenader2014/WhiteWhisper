@@ -19,17 +19,18 @@ describe('User system unit test: login and register', function () {
         email: randomString(6) + '@' + randomString(4) + '.com',
         password: '123456789'
     };
-    // before(function (done) {
-    //     mongoose.connect('mongodb://127.0.0.1/whitewhispertest', function () {
-    //         mongoose.connection.db.dropDatabase();
-    //         mongoose.connection.close(function () {
-    //             require('babel-core/register');
-    //             require('../app.js').default('test').then(function () {
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
+    it('will try to use the unregistered account to login ' + user.email, function (done) {
+        request(url)
+            .post(login)
+            .send(user)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                res.body.code.should.equal(-5);
+                done();
+            });
+    });
     it('should submit empty request body to register', function (done) {
         request(url)
             .post(register)
@@ -96,19 +97,6 @@ describe('User system unit test: login and register', function () {
                 done();
             });
     });
-    it('should login to server using the random account ' + user.email, function (done) {
-        request(url)
-            .post(login)
-            .send(user)
-            .expect(200)
-            .end(function (err, res) {
-                if (err) {
-                    throw err;
-                }
-                res.body.code.should.equal(0);
-                done();
-            });
-    });
     it('will try to use the wrong password to login ' + user.email, function (done) {
         request(url)
             .post(login)
@@ -124,5 +112,31 @@ describe('User system unit test: login and register', function () {
                 done();
             });
     });
-    
+    var agent = request.agent(url);
+    it('should login to server using the random account ' + user.email, function (done) {
+        agent
+            .post(login)
+            .send(user)
+            .expect(200)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
+    it('will try to login twice', function (done) {
+        agent
+            .post(login)
+            .send(user)
+            .expect(200)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                res.body.code.should.equal(-1);
+                done();
+            });
+    });
 });
