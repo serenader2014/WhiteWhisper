@@ -2,14 +2,14 @@ import express         from 'express';
 import apiController   from '../controller/api';
 import brute           from '../middleware/brute';
 import checkPermission from '../middleware/check-permission';
-let api             = express();
+let api                = express();
 
 api.route('/login')
-    .post(brute({
+    .post(/*brute({
         limitCount: 5,
         limitTime: 60*60*1000,
         minWaitTime: 100*1000,
-    }), apiController.login);
+    }), */apiController.login);
 
 api.route('/register')
     .post(apiController.register);

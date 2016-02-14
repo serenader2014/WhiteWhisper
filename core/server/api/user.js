@@ -1,6 +1,6 @@
-import  User      from '../model/user';
 import  bcrypt    from 'bcrypt-nodejs';
 import  _         from 'lodash';
+import  User      from '../model/user';
 import  get       from '../helper/get-data';
 
 export default  {

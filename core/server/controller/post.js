@@ -16,6 +16,7 @@ const list           = (req, res) => {
     let search    = req.query.search ? new RegExp(req.query.search, 'ig') : null;
     let category  = req.query.category;
     let dateQuery = {};
+    
     if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
     if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
     if (_.isEmpty(dateQuery)) { dateQuery = null; }
@@ -35,11 +36,11 @@ const list           = (req, res) => {
     }
 
     postApi.get({
-        status: status, 
+        status           : status, 
         'author.username': author,
-        create: dateQuery,
-        title: search,
-        'category.name': category
+        create           : dateQuery,
+        title            : search,
+        'category.name'  : category
     }, amount, page).then((data) => {
         res.json(data);
     }).catch((err) => {

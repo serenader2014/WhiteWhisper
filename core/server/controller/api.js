@@ -10,13 +10,14 @@
  */
 
 
-import userApi        from '../api/user';
-import permissionApi  from '../api/permission';
 import passport       from 'passport';
 import _              from 'lodash';
+import userApi        from '../api/user';
+import permissionApi  from '../api/permission';
 import post           from './post';
 import category       from './category';
 import passportHelper from '../helper/passport';
+import log            from '../helper/log';
 
 passportHelper(passport);
 
@@ -31,18 +32,22 @@ const login = (req, res, next) => {
 
     errors = req.validationErrors();
 
-    if (errors) {
-        res.json({code: -3, msg: '表单数据有误。', data: errors});
-        return;
-    }
     if (req.user) {
         res.json({code: -1, msg: '已经登陆。', data: _.pick(req.user, ['_id', 'email', 'username'])});
         return;
     }
-    passport.authenticate('local-login', (err, user) => {
+    if (errors) {
+        res.json({code: -3, msg: '表单数据有误。', data: errors});
+        return;
+    }
+    passport.authenticate('local-login', (err, user, errMsg) => {
         if (err) {
             res.json({code: 1, msg: err.message});
-            console.log(err.stack);
+            log.error(err);
+            return;
+        }
+        if (errMsg) {
+            res.json({code: -5, msg: errMsg.message});
             return;
         }
         if (!user) {
@@ -52,6 +57,7 @@ const login = (req, res, next) => {
         req.login(user, (err) => {
             if (err) {
                 res.json({code: 1, msg: err.message});
+                log.error(err);
                 return;
             }
             userApi.login(user.email, req.ip).then(() => {
@@ -64,8 +70,8 @@ const login = (req, res, next) => {
 
 const register = (req, res) => {
     let errors;
-    let email = req.body.email;
-    let password = req.body.password;
+    let email        = req.body.email;
+    let password     = req.body.password;
     let permissionId = req.body.permission;
     req.checkBody('email', 'Email 不是合格的邮箱地址。')
         .notEmpty().withMessage('Email 为空。')

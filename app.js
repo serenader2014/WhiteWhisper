@@ -19,19 +19,11 @@ import notFound     from './core/server/middleware/404';
 import setCookie    from './core/server/middleware/set-cookie';
 import responseTime from './core/server/middleware/response-time';
 
-const app        = express();
-const MongoStore = mongoStore(session);
+const app          = express();
+const MongoStore   = mongoStore(session);
+const mongo        = Promise.promisifyAll(mongoose);
 
-const mongo = Promise.promisifyAll(mongoose);
-
-(async function connectDB () {
-    try {
-        await mongo.connectAsync(config.db);
-        await initDB();
-    } catch (err){
-        log.error(err.message, err.stack);
-        process.exit(1);
-    }
+mongo.connectAsync(config.db).then(initDB).then(function () {
 
     // 设置模板引擎为 jade
     app.set('view engine', 'jade');
@@ -47,11 +39,11 @@ const mongo = Promise.promisifyAll(mongoose);
     app.locals.config = config;
 
     // 每秒钟至多请求1000次，超过则需等待5分钟或以上。
-    app.use(brute({
-        limitCount: 1000,
-        limitTime: 1000,
-        minWaitTime: 5*1000,
-    }));
+    // app.use(brute({
+    //     limitCount: 1000,
+    //     limitTime: 1000,
+    //     minWaitTime: 5*1000,
+    // }));
 
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
@@ -94,4 +86,7 @@ const mongo = Promise.promisifyAll(mongoose);
         log.info('Server now listen on ' + config.host + ':' + app.get('port'));
         log.info('Server is running on ' + app.get('env') + ' envriroment.');
     });
-})();
+}).catch(function (err) {
+    log.error(err.message, err.stack);
+    process.exit(1);
+});
