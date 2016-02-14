@@ -1,0 +1,17 @@
+stages:
+- run
+- test
+
+cache:
+  paths:
+  - node_modules/
+
+build_job:
+  stage: run
+  script:
+  - npm i && npm start
+
+test_job:
+  stage: test
+  script:
+  - mocha
