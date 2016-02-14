@@ -28,7 +28,7 @@ export default function (env) {
 
         // 设置模板引擎为 jade
         app.set('view engine', 'jade');
-        app.set('port', config.port);
+        app.set('port', env === 'test' ? config.testPort : config.port);
         // trust proxy 用于获取真实ip。当服务器由前端服务器如Nginx转发到nodejs程序时，则需要
         // 设置该选项，才能获取正确的客户端地址，否则一直为 127.0.0.1
         if (config.trustProxy) {

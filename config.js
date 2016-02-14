@@ -6,6 +6,7 @@ const config = {
     sessionSecret: 'love music',
     host         : '127.0.0.1',
     port         : 10010,
+    testPort     : 10011,
     appRoot      : __dirname,
     trustProxy   : true,
     defaultBlogConfig   : {
