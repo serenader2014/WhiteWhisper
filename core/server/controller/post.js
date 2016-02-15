@@ -19,6 +19,7 @@ const list           = (req, res) => {
     let id        = req.query.id;
     let direction = +req.query.direction;
     let idSort    = null;
+    
     if ([1, -1].indexOf(direction) === -1) {direction = -1;}
     if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
     if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
