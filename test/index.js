@@ -1,4 +1,4 @@
-/* jshint jasmine:true */
+/* jshint mocha:true */
 
 var mongoose = require('mongoose');
 var fs       = require('fs');

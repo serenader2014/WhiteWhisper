@@ -1,4 +1,4 @@
-/* jshint jasmine:true */
+/* jshint mocha:true */
 
 var should      = require('should');
 var assert      = require('assert');
