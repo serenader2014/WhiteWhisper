@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - "5.6"
 before_script:
-- npm i -g mocha
+- npm i -g mocha && service mongod start
 script: npm i && mocha test/index.js
 cache:
   directories:
