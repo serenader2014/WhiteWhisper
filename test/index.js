@@ -16,13 +16,15 @@ describe('Drop the test database', function () {
             });
         });
     });
-
-    var files = fs.readdirSync(__dirname);
-
-    files.forEach(function (file) {
-        var stat = fs.statSync(path.resolve(__dirname,  file));
-        if (stat.isFile() && path.extname(file) === '.js' && file !== 'index.js'){
-            require(path.join(__dirname, file));
-        }
+    it('empty test', function (done) {
+        done();
     });
+});
+var files = fs.readdirSync(__dirname);
+
+files.forEach(function (file) {
+    var stat = fs.statSync(path.resolve(__dirname,  file));
+    if (stat.isFile() && path.extname(file) === '.js' && file !== 'index.js'){
+        require(path.join(__dirname, file));
+    }
 });
