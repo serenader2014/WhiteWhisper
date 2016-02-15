@@ -6,6 +6,7 @@ var path     = require('path');
 
 describe('Drop the test database', function () {
     before(function (done) {
+        this.timeout(20000);
         mongoose.connect('mongodb://127.0.0.1/whitewhispertest', function () {
             mongoose.connection.db.dropDatabase();
             mongoose.connection.close(function () {
