@@ -19,7 +19,7 @@ const list           = (req, res) => {
     let id        = req.query.id;
     let direction = +req.query.direction;
     let idSort    = null;
-    
+
     if ([1, -1].indexOf(direction) === -1) {direction = -1;}
     if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
     if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
@@ -55,7 +55,7 @@ const list           = (req, res) => {
         'category.name'  : category,
         '_id'            : idSort
     }, amount, page).then((data) => {
-        res.json(data);
+        res.json({code: 0, data: data});
     }).catch((err) => {
         res.json({code: 1, error: err.message});
         log.error(err);
@@ -63,7 +63,7 @@ const list           = (req, res) => {
 };
 
 const update = (req, res) => {
-    let id       = req.body.id;
+    let id       = req.body._id;
     let title    = req.body.title;
     let author   = req.user;
     let slug     = req.body.slug;
@@ -73,7 +73,7 @@ const update = (req, res) => {
     let status   = req.body.status;
     let category = req.body.category;
 
-    req.checkBody('id', '文章ID为空')
+    req.checkBody('_id', '文章ID为空')
         .notEmpty();
     req.checkBody('title', '文章标题为空。')
         .notEmpty();
@@ -84,7 +84,7 @@ const update = (req, res) => {
 
     if (checkBodyError(req, res)) { return; }
     
-    categoryApi.getById(category).then((data) => {
+    categoryApi.getById(category._id).then((data) => {
         if (!data.total) {
             throw {code: -5, message: '找不到该文章分类。'};
         }
@@ -96,20 +96,35 @@ const update = (req, res) => {
                 return;
             }
             let post = data.data[0];
-            let draft = post.draft;
             if (['published', 'unpublished'].indexOf(status) !== -1) {
-                draft.push(_.pick(post, [
-                    'title', 
-                    'slug', 
-                    'create',
-                    'markdown', 
-                    'html', 
-                    'tags', 
-                    'status', 
-                    'category',
-                    'excerpt']));
-                return postApi.update(id, {
-                    title : title,
+                return postApi.create(_.extend(post, {
+                    isHistory: true,
+                    original: post._id
+                })).then(function () {
+                    return postApi.update(id, {
+                        title : title,
+                        create: new Date(),
+                        author: {
+                            username: author.username,
+                            id      : author._id,
+                            avatar  : author.avatar
+                        },
+                        slug,
+                        markdown,
+                        html,
+                        tags    : tags,
+                        status,
+                        category: {
+                            name: category.name,
+                            _id  : category._id
+                        },
+                        excerpt  : htmlToText.fromString(html).substring(0, 350),
+                        isHistory: false
+                    });
+                });
+            } else {
+                return postApi.create({
+                    title,
                     create: new Date(),
                     author: {
                         username: author.username,
@@ -123,28 +138,13 @@ const update = (req, res) => {
                     status,
                     category: {
                         name: category.name,
-                        id  : category._id
+                        _id : category._id
                     },
-                    excerpt : htmlToText.fromString(html).substring(0, 350),
-                    draft
-                });
-            } else {
-                draft.push({
-                    title,
-                    create  : new Date(),
-                    slug,
-                    markdown,
-                    html,
-                    tags    : (tags || '').split(','),
-                    status,
-                    category: {
-                        name: category.name,
-                        id  : category._id
-                    },
-                    excerpt : htmlToText.fromString(html).substring(0, 350),
-                });
-                return postApi.update(id, {
-                    draft: draft
+                    excerpt  : htmlToText.fromString(html).substring(0, 350),
+                    isHistory: true,
+                    original : post._id
+                }).then(function () {
+                    return post;
                 });
             }
         }).then((post) => {
@@ -195,9 +195,10 @@ const create = (req, res) => {
             status,
             category: {
                 name: category.name,
-                id  : category._id
+                _id : category._id
             },
-            excerpt : htmlToText.fromString(html).substring(0, 350),
+            excerpt  : htmlToText.fromString(html).substring(0, 350),
+            isHistory: false
         });
     }).then((post) => {
         res.json({code: 0, data: post});

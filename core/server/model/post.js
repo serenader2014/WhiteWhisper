@@ -19,8 +19,9 @@ const PostSchema = new Schema({
     status  : String, // 'published', 'unpublished', 'deleted', 'draft'
     category: {
         name: String,
-        id  : ObjectId
+        _id : ObjectId
     },
-    draft: Array
+    isHistory : Boolean,
+    original  : ObjectId
 });
 export default mongo.model('Post', PostSchema);

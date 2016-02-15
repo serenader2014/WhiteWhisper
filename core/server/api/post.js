@@ -10,10 +10,9 @@ export default {
     create (options) {
         var post = new Post();
         _.extend(post, options);
-
         return post.saveAsync().spread((post) => {
             if (post.status === 'published') {
-                return categoryApi.increaseCount(post.category.id).then(() => {
+                return categoryApi.increaseCount(post.category._id).then(() => {
                     return post;
                 });
             } else {
@@ -27,15 +26,15 @@ export default {
 
         return Post.findByIdAsync(id).then((post) => {
             if (post.status === 'published' && obj.status !== 'published') {
-                return categoryApi.decreaseCount(post.category.id);
+                return categoryApi.decreaseCount(post.category._id);
             }
             if (post.status !== 'published' && obj.status === 'published') {
-                return categoryApi.increaseCount(obj.category.id);
+                return categoryApi.increaseCount(obj.category._id);
             }
             if (post.status === 'published' && obj.status === 'published' &&
-                post.category.id.toString() !== obj.category.id.toString()) {
-                return categoryApi.decreaseCount(post.category.id).then(() => {
-                    return categoryApi.increaseCount(obj.category.id);
+                post.category._id.toString() !== obj.category._id.toString()) {
+                return categoryApi.decreaseCount(post.category._id).then(() => {
+                    return categoryApi.increaseCount(obj.category._id);
                 });
             }
         }).then(() => {
