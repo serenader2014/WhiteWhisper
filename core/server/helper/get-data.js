@@ -5,7 +5,9 @@ export default function (conditions, amount, page) {
     let tmpObj = {};
     let total  = 0;
     conditions = conditions || {};
-    if ((+amount).toString() === 'NaN') {
+    amount = +amount;
+    page = +page;
+    if (amount.toString() === 'NaN') {
         amount = 10;
     }
     if ((+page).toString() === 'NaN') {
