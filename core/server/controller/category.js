@@ -4,9 +4,22 @@ import checkBodyError from '../middleware/check-body-error';
 
 export default {
     list (req, res) {
-        let page = req.query.page || 1;
-        let amount = req.query.amount || 20;
-        categoryApi.get({}, amount, page).then((data) => {
+        let page      = req.query.page || 1;
+        let amount    = req.query.amount || 20;
+        let id        = req.query.id;
+        let direction = +req.query.direction;
+        if ([1, -1].indexOf(direction) === -1) {
+            direction = -1;
+        }
+        let conditions = {};
+        if (id) {
+            if (direction === -1) {
+                conditions['_id'] = {$gt: id};
+            } else {
+                conditions['_id'] = {$lt: id};
+            }
+        }
+        categoryApi.get(conditions, amount, page).then((data) => {
             res.json({code: 0, data: data});
         }).catch((err) => {
             res.json({code: -1, err: err});

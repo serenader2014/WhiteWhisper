@@ -16,7 +16,10 @@ const list           = (req, res) => {
     let search    = req.query.search ? new RegExp(req.query.search, 'ig') : null;
     let category  = req.query.category;
     let dateQuery = {};
-    
+    let id        = req.query.id;
+    let direction = +req.query.direction;
+    let idSort    = null;
+    if ([1, -1].indexOf(direction) === -1) {direction = -1;}
     if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
     if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
     if (_.isEmpty(dateQuery)) { dateQuery = null; }
@@ -35,12 +38,21 @@ const list           = (req, res) => {
         status = 'published';
     }
 
+    if (id) {
+        if (direction === -1) {
+            idSort = {$gt: id};
+        } else {
+            idSort = {$lt: id};
+        }
+    }
+
     postApi.get({
         status           : status, 
         'author.username': author,
         create           : dateQuery,
         title            : search,
-        'category.name'  : category
+        'category.name'  : category,
+        '_id'            : idSort
     }, amount, page).then((data) => {
         res.json(data);
     }).catch((err) => {
