@@ -53,17 +53,60 @@ const list           = (req, res) => {
         create           : dateQuery,
         title            : search,
         'category.name'  : category,
-        '_id'            : idSort
+        '_id'            : idSort,
+        isHistory        : false
     }, amount, page).then((data) => {
         res.json({code: 0, data: data});
     }).catch((err) => {
-        res.json({code: 1, error: err.message});
+        res.json({code: 1, msg: err.message});
         log.error(err);
     });
 };
 
+const getPost = (req, res) => {
+    let id = req.params.id;
+    let history = req.query.history;
+    let amount = req.query.amount || 20;
+    let page = req.query.page || 1;
+
+    postApi.getById(id).then(function (data) {
+        let post = data.data[0];
+        if (!data.total ) {
+            res.json({code: -5, msg: '找不到该文章。'});
+            return;
+        }
+
+        let isOwn     = req.user && req.user.username === post.author.username;
+        let published = post.status === 'published';
+
+        if (isOwn) {
+            if (history) {
+                return postApi.get({
+                    isHistory: true,
+                    original: id
+                }, amount, page).then(function (data) {
+                    res.json({code: 0, data: data});
+                });
+            } else {
+                res.json({code: 0, data: post});
+            }
+        } else {
+            if (history) {
+                res.json({code: -1, msg: '权限不足。'});
+            } else if (published) {
+                res.json({code: 0, data: post});
+            } else {
+                res.json({code: -5, msg: '找不到该文章。'});
+            }
+        }
+    }).catch(function (err) {
+        log.error(err);
+        res.json({code: 1, msg: err.message});
+    });
+};
+
 const update = (req, res) => {
-    let id       = req.body._id;
+    let id       = req.params.id;
     let title    = req.body.title;
     let author   = req.user;
     let slug     = req.body.slug;
@@ -97,9 +140,12 @@ const update = (req, res) => {
             }
             let post = data.data[0];
             if (['published', 'unpublished'].indexOf(status) !== -1) {
-                return postApi.create(_.extend(post, {
+                var originalPost = _.clone(post._doc);
+                delete originalPost._id;
+                return postApi.create(_.extend(originalPost, {
                     isHistory: true,
-                    original: post._id
+                    original : post._id,
+                    isDraft  : false
                 })).then(function () {
                     return postApi.update(id, {
                         title : title,
@@ -119,10 +165,11 @@ const update = (req, res) => {
                             _id  : category._id
                         },
                         excerpt  : htmlToText.fromString(html).substring(0, 350),
-                        isHistory: false
+                        isHistory: false,
+                        isDraft  : false
                     });
                 });
-            } else {
+            } else if (status === 'draft') {
                 return postApi.create({
                     title,
                     create: new Date(),
@@ -134,7 +181,7 @@ const update = (req, res) => {
                     slug,
                     markdown,
                     html,
-                    tags    : (tags || '').split(','),
+                    tags    : tags,
                     status,
                     category: {
                         name: category.name,
@@ -146,6 +193,8 @@ const update = (req, res) => {
                 }).then(function () {
                     return post;
                 });
+            } else {
+                return Promise.reject({code: -1, err: {message: '文章状态不合法。'}});
             }
         }).then((post) => {
             res.json({code: 0, data: post});
@@ -209,7 +258,7 @@ const create = (req, res) => {
 };
 
 const del = (req, res) => {
-    let id = req.body.id;
+    let id = req.params.id;
 
     req.checkBody('id', '文章ID为空。')
         .notEmpty();
@@ -228,4 +277,4 @@ const del = (req, res) => {
 
 };
 
-export default {list, update, create, delete: del};
+export default {list, update, create, getPost, delete: del};

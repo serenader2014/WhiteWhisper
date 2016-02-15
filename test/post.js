@@ -15,6 +15,11 @@ var post        = {
     tags    : 'tags, tags',
     status  : 'published',
 };
+var newPost = {
+    title   : 'new title',
+    markdown: '## new title',
+    html    : '<h2>new title</h2>',
+};
 describe('create account', function () {
     loginTest.register();
     loginTest.login();
@@ -71,16 +76,21 @@ describe('create account', function () {
             });
     });
 
+    it('should get single post', function (done) {
+        agent
+            .get(postUrl + '/' + tmpPost._id)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.title.should.equal(tmpPost.title);
+                done();
+            });
+    });
 
     it('should update post', function (done) {
-        var newPost = {
-            title: 'new title',
-            markdown: '## new title',
-            html: '<h2>new title</h2>',
-        };
         agent
-            .put(postUrl)
-            .send(_.extend(tmpPost, newPost))
+            .put(postUrl + '/' + tmpPost._id)
+            .send(_.extend({}, tmpPost, newPost))
             .end(function (err, res) {
                 if (err) {throw err;}
                 res.body.code.should.equal(0);
@@ -91,5 +101,60 @@ describe('create account', function () {
             });
     });
 
+    it('should get post history', function (done) {
+        agent
+            .get(postUrl + '/' + tmpPost._id + '?history=true')
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.total.should.equal(1);
+                res.body.data.data[0].title.should.equal(tmpPost.title);
+                done();
+            });
+    });
 
+    it('should not show the history in the post list', function (done) {
+        agent
+            .get(postUrl)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.total.should.equal(1);
+                done();
+            });
+    });
+
+    it('should save a post draft', function (done) {
+        agent
+            .put(postUrl + '/' + tmpPost._id)
+            .send(_.extend({}, tmpPost, newPost, {status: 'draft'}))
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
+
+    it('should have two post history now', function (done) {
+        agent
+            .get(postUrl + '/' + tmpPost._id + '?history=true')
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.total.should.equal(2);
+                res.body.data.data[0].status.should.equal('draft');
+                done();
+            });
+    });
+
+    it('should not change the previous post content', function (done) {
+        agent
+            .get(postUrl + '/' + tmpPost._id)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.status.should.equal(tmpPost.status);
+                done();
+            });
+    });
 });

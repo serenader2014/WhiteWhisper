@@ -22,7 +22,10 @@ api.route('/user')
 
 api.route('/post')
     .get(checkPermission('post', 'get'), apiController.post.list)
-    .post(checkPermission('post', 'post'), apiController.post.create)
+    .post(checkPermission('post', 'post'), apiController.post.create);
+
+api.route('/post/:id')
+    .get(checkPermission('post', 'get'), apiController.post.getPost)
     .put(checkPermission('post', 'put'), apiController.post.update)
     .delete(checkPermission('post', 'delete'), apiController.post.delete);
 
