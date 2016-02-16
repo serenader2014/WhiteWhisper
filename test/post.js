@@ -247,6 +247,7 @@ describe('multiple user and post test', function () {
                 });
             }
         })(agent);
+        loginTest.logout();
     }
 
     it('should list the total post', function (done) {

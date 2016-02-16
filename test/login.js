@@ -113,6 +113,17 @@ describe('User system unit test: login and register', function () {
             });
     });
 
+    it('will try to register', function (done) {
+        agent
+            .post(register)
+            .send(user)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(-1);
+                done();
+            });
+    });
+
     loginTest.logout();
 
     it('will try to lotout again', function (done) {

@@ -87,6 +87,11 @@ const register = (req, res) => {
         res.json({code: -3, msg: '表单数据有误。', data: errors});
         return;
     }
+    
+    if (req.user) {
+        res.json({code: -1, msg: '已经登陆。', data: _.pick(req.user, ['_id', 'email', 'username'])});
+        return;
+    }
     ((id) => {
         if (id) {
             return permissionApi.getById(id);
