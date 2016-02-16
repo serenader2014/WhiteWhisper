@@ -20,6 +20,7 @@ var newPost = {
     markdown: '## new title',
     html    : '<h2>new title</h2>',
 };
+
 describe('create account', function () {
     loginTest.register();
     loginTest.login();
@@ -178,4 +179,131 @@ describe('create account', function () {
                 done(); 
             });
     });
+});
+
+describe('multiple user and post test', function () {
+    var categoryList = [];
+
+    var lt = require('./common/login')();
+    lt.register();
+    lt.login();
+    var a = lt.agent;
+    for (var o = 0; o < 20; o += 1) {
+        (function (i) {
+            var name = require('./common/login').randomString(6);
+            it('create multiple category ' + name, function (done) {
+                a
+                    .post(categoryUrl)
+                    .send({name: name})
+                    .end(function (err, res) {
+                        if (err) {throw err;}
+                        res.body.code.should.equal(0);
+                        res.body.data.name.should.equal(name);
+                        categoryList.push(res.body.data);
+                        done();
+                    });
+            });
+        })(o);
+    }
+    lt.logout();
+
+    var previousPostNumber = 0;
+
+    it('should get current post list', function (done) {
+        request(url)
+            .get(postUrl)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                previousPostNumber = res.body.data.total;
+                done();
+            });
+    });
+
+    var totalPost = [];
+    var totalUser = [];
+    for (var i = 0; i < 20; i += 1) {
+        var loginTest    = require('./common/login')();
+        var randomString = require('./common/login').randomString;
+        totalUser.push(loginTest.randomUser);
+        loginTest.register();
+        loginTest.login();
+        var agent        = loginTest.agent;
+        (function (agent) {
+            var count        = Math.floor(Math.random() * 5);
+            for (var j = 0; j < count; j += 1) {
+                it('create post', function (done) {
+                    var category     = categoryList[Math.floor(Math.random() * categoryList.length)];
+                    var p         = _.extend({}, post, {title: randomString(10), category: category._id});
+                    agent
+                        .post(postUrl)
+                        .send(p)
+                        .end(function (err, res) {
+                            if (err) {throw err;}
+                            res.body.code.should.equal(0);
+                            totalPost.push(res.body.data);
+                            done();
+                        });
+                });
+            }
+        })(agent);
+    }
+
+    it('should list the total post', function (done) {
+        request(url)
+            .get(postUrl)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.total.should.equal(previousPostNumber + totalPost.length);
+                done();
+            });
+    });
+
+    for (var j = 0; j < totalUser.length; j += 1) {
+        (function (current) {
+            it('should filter post list by author', function (done) {
+                var user = totalUser[current];
+                var postNum = _.filter(totalPost, function (item) {return item.author.username === user.email; }).length;
+                request(url)
+                    .get(postUrl + '?author=' + user.email)
+                    .end(function (err, res) {
+                        if (err) {throw err;}
+                        res.body.code.should.equal(0);
+                        res.body.data.total.should.equal(postNum);
+                        done();
+                    });
+            });
+        })(j);
+    }
+
+    for (var k = 0; k < 20; k += 1) {
+        (function (current) {
+            it('should filter post list by category', function (done) {
+                var category = categoryList[current];
+                var postNum = _.filter(totalPost, function (item) {return item.category.name === category.name;}).length;
+                request(url)
+                    .get(postUrl + '?category=' + category.name)
+                    .end(function (err, res) {
+                        if (err) {throw err;}
+                        res.body.code.should.equal(0);
+                        res.body.data.total.should.equal(postNum);
+                        done();
+                    });
+            });
+            it('check category count', function (done) {
+                var category = categoryList[current];
+                var postNum = _.filter(totalPost, function (item) {return item.category.name === category.name;}).length;
+                request(url)
+                    .get(categoryUrl + '/' + category._id)
+                    .end(function (err, res) {
+                        if (err) {throw err;}
+                        res.body.code.should.equal(0);
+                        res.body.data.count.should.equal(category.count + postNum);
+                        done();
+                    });
+            });
+        })(k);
+    }
+
 });

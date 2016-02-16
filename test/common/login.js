@@ -14,6 +14,7 @@ function randomString (length) {
     return str.split('').sort(function () {return Math.random() - 0.5;}).slice(0, length).join('');
 }
 
+
 module.exports = function () {
     var obj = {};
     var user = {
@@ -91,3 +92,5 @@ module.exports = function () {
     };
     return obj;
 };
+
+module.exports.randomString = randomString;
