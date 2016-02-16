@@ -31,7 +31,10 @@ api.route('/post/:id')
 
 api.route('/category')
     .get(checkPermission('category', 'get') ,apiController.category.list)
-    .post(checkPermission('category', 'post'), apiController.category.create)
+    .post(checkPermission('category', 'post'), apiController.category.create);
+
+api.route('/category/:id')
+    .get(checkPermission('category', 'get'), apiController.category.getCategory)
     .put(checkPermission('category', 'put'), apiController.category.update)
     .delete(checkPermission('category', 'delete'), apiController.category.delete);
 

@@ -26,6 +26,19 @@ export default {
             log.error(err);
         });
     },
+    getCategory (req, res) {
+        let id = req.params.id;
+        categoryApi.getById(id).then((data) => {
+            if (!data.total) {
+                res.json({code: -5, msg: '找不到该分类。'});
+                return;
+            }
+            res.json({code: 0, data: data.data[0]});
+        }).catch((err) => {
+            log.error(err);
+            res.json({code: 1, err: err});
+        });
+    },
     create (req, res) {
         let name = req.body.name;
 
@@ -50,11 +63,8 @@ export default {
         });
     },
     update (req, res) {
-        let id = req.body.id;
+        let id = req.params.id;
         let name = req.body.name;
-
-        req.checkBody('id', '分类ID为空。')
-            .notEmpty();
 
         req.checkBody('name', '分类名称为空。')
             .notEmpty();
@@ -69,10 +79,7 @@ export default {
         });
     },
     delete (req, res) {
-        let id = req.body.id;
-
-        req.checkBody('id', '分类ID为空。')
-            .notEmpty();
+        let id = req.params.id;
 
         if (checkBodyError(req, res)) {return ;}
 

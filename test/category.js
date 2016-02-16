@@ -66,7 +66,7 @@ describe('create account', function () {
         it('should update the category', function (done) {
             var newName = 'new name;';
             agent
-                .put(categoryUrl)
+                .put(categoryUrl + '/' + tmpCategory._id)
                 .send({
                     id: tmpCategory._id,
                     name: newName
@@ -82,8 +82,7 @@ describe('create account', function () {
 
         it('should delete the category', function (done) {
             agent
-                .delete(categoryUrl)
-                .send({id: tmpCategory._id})
+                .delete(categoryUrl + '/' + tmpCategory._id)
                 .end(function (err, res) {
                     if (err) {throw err;}
                     res.body.code.should.equal(0);

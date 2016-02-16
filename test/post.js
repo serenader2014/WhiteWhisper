@@ -61,6 +61,17 @@ describe('create account', function () {
             });
     });
 
+    it('should increase the category post count', function (done) {
+        agent
+            .get(categoryUrl + '/' + category._id)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.count.should.equal(category.count + 1);
+                done();
+            });
+    });
+
 
     var tmpPost;
     it('should list post', function (done) {
@@ -155,6 +166,16 @@ describe('create account', function () {
                 res.body.code.should.equal(0);
                 res.body.data.status.should.equal(tmpPost.status);
                 done();
+            });
+    });
+
+    it('should reject the guest to view the post history', function (done) {
+        request(url)
+            .get(postUrl + '/' + tmpPost._id + '?history=true')
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(-1);
+                done(); 
             });
     });
 });
