@@ -7,6 +7,7 @@ var loginTest   = require('./common/login')();
 var url         = 'http://localhost:10011';
 var postUrl     = '/api/post';
 var categoryUrl = '/api/category';
+var loginUrl    = '/api/login';
 var post        = {
     title   : 'test title',
     slug    : 'test title slug',
@@ -278,13 +279,40 @@ describe('multiple user and post test', function () {
         })(j);
     }
 
+    var currentUser = totalUser[0];
+    var loginAgent = request.agent(url);
+
+    it('should login to user ' + currentUser.email, function (done) {
+        loginAgent
+            .post(loginUrl)
+            .send(currentUser)
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
+
+    it('should filter logined user post', function (done) {
+
+        var postNum = _.filter(totalPost, function (item) {return item.author.username === currentUser.email;}).length;
+        loginAgent
+            .get(postUrl + '?type=mine')
+            .end(function (err, res) {
+                if (err) {throw err;}
+                res.body.code.should.equal(0);
+                res.body.data.total.should.equal(postNum);
+                done();
+            });
+    });
+
     for (var k = 0; k < 20; k += 1) {
         (function (current) {
             it('should filter post list by category', function (done) {
                 var category = categoryList[current];
                 var postNum = _.filter(totalPost, function (item) {return item.category.name === category.name;}).length;
                 request(url)
-                    .get(postUrl + '?category=' + category.name)
+                    .get(postUrl + '?category=' + category._id)
                     .end(function (err, res) {
                         if (err) {throw err;}
                         res.body.code.should.equal(0);

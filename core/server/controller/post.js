@@ -52,7 +52,7 @@ const list           = (req, res) => {
         'author.username': author,
         create           : dateQuery,
         title            : search,
-        'category.name'  : category,
+        'category._id'  : category,
         '_id'            : idSort,
         isHistory        : false
     }, amount, page).then((data) => {
