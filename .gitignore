@@ -1,2 +1,22 @@
+.sass-cache/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Dependency directories
 node_modules
-npm-debug.log
+jspm_packages
+bower_components
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
