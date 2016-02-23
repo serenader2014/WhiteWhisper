@@ -52,7 +52,7 @@ const list           = (req, res) => {
         }
     }
 
-    if (category && !mongoose.Types.ObjectId.isValid(id)) {
+    if (category && !mongoose.Types.ObjectId.isValid(category)) {
         res.json({code: -3, msg: '分类ID格式错误。'});
         return;
     }
