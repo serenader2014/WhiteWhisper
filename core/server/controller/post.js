@@ -1,5 +1,6 @@
 import _              from 'lodash';
 import htmlToText     from 'html-to-text';
+import mongoose       from 'mongoose';
 import postApi        from '../api/post';
 import categoryApi    from '../api/category';
 import log            from '../helper/log';
@@ -40,11 +41,20 @@ const list           = (req, res) => {
     }
 
     if (id) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.json({code: -3, msg: '文章ID格式错误。'});
+            return;
+        }
         if (direction === -1) {
             idSort = {$gt: id};
         } else {
             idSort = {$lt: id};
         }
+    }
+
+    if (category && !mongoose.Types.ObjectId.isValid(id)) {
+        res.json({code: -3, msg: '分类ID格式错误。'});
+        return;
     }
 
     postApi.get({
