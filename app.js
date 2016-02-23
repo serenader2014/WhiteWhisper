@@ -13,7 +13,7 @@ import config       from './config';
 import log          from './core/server/helper/log';
 import initDB       from './core/server/helper/init-db';
 import route        from './core/server/route';
-import brute        from './core/server/middleware/brute';
+// import brute        from './core/server/middleware/brute';
 import assets       from './core/server/middleware/assets';
 import notFound     from './core/server/middleware/404';
 import setCookie    from './core/server/middleware/set-cookie';

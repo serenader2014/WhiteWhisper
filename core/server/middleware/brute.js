@@ -72,7 +72,9 @@ export default function (options) {
         });
     };
     let handleExpired  = () => {
-        return reset(true).then(() => {return false;});
+        return reset(true).then(() => { 
+            return false; 
+        });
     };
     let handleBlock = (target) => {
         // 对于当前IP来说，即使数据库中存地记录为仍然为屏蔽状态，但是此时有可能已经过了一段时间了，
@@ -86,7 +88,9 @@ export default function (options) {
                 return true;
             });
         } else {
-            return reset().then(() => {return false;});
+            return reset().then(() => {
+                return false;
+            });
         }
     };
     let handleNormal = (target) => {
@@ -109,7 +113,7 @@ export default function (options) {
                     count        : count,
                     lastVisit    : now,
                     failedCount  : failedCount,
-                    remainingTime: remainingTime,
+                    remainingTime: remainingTime
                 }).then(() => {
                     return true;
                 });
@@ -120,7 +124,7 @@ export default function (options) {
                 count        : 0,
                 lastVisit    : now,
                 firstVisit   : now,
-                remainingTime: 0,
+                remainingTime: 0
             }).then(() => {
                 return false;
             });
@@ -163,7 +167,7 @@ export default function (options) {
             }
         }).then((flag) => {
             if (flag) {
-                obj.failCallback(req,res, next, reset, ip, remainingTime);
+                obj.failCallback(req, res, next, reset, ip, remainingTime);
             } else {
                 req.brute = {
                     reset: reset,

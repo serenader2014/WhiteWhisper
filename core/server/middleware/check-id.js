@@ -3,7 +3,6 @@ import mongoose  from 'mongoose';
 export default function () {
     let checkId = (req, res, next) => {
         let id = req.params.id;
-        console.log(id);
         if (mongoose.Types.ObjectId.isValid(id)) {
             next();
         } else {

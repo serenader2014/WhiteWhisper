@@ -1,4 +1,4 @@
-function getHomePage (req, res, next) {
+function getHomePage (req, res) {
     res.send('ok');
 }
 

@@ -24,12 +24,12 @@ export default {
         return Permission.findByIdAndRemoveAsync(id);
     },
     getById (id) {
-        return this.get({_id: id}, 1,1);
+        return this.get({_id: id}, 1, 1);
     },
     getByName (name) {
         return this.get({name: name}, 1, 1);
     },
     getAll () {
         return this.get({}, 10, 1);
-    },
+    }
 };

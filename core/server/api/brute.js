@@ -36,5 +36,5 @@ export default  {
     },
     getIp (ip) {
         return this.get({ip: ip}, 1, 1);
-    },
+    }
 };

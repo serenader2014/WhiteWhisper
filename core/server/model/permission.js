@@ -1,5 +1,5 @@
 import Promise  from 'bluebird';
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 const mongo            = Promise.promisifyAll(mongoose);
 const Schema           = mongo.Schema;
 const PermissionSchema = new Schema({
@@ -40,6 +40,6 @@ const PermissionSchema = new Schema({
         post  : Boolean,
         put   : Boolean,
         delete: Boolean
-    },
+    }
 });
 export default mongo.model('Permission', PermissionSchema);
