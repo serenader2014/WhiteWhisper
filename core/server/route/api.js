@@ -1,6 +1,6 @@
 import express         from 'express';
 import apiController   from '../controller/api';
-import brute           from '../middleware/brute';
+// import brute           from '../middleware/brute';
 import checkPermission from '../middleware/check-permission';
 import checkId         from '../middleware/check-id';
 let api                = express();
@@ -32,7 +32,7 @@ api.route('/post/:id')
     .delete(checkPermission('post', 'delete'), apiController.post.delete);
 
 api.route('/category')
-    .get(checkPermission('category', 'get') ,apiController.category.list)
+    .get(checkPermission('category', 'get'), apiController.category.list)
     .post(checkPermission('category', 'post'), apiController.category.create);
 
 api.route('/category/:id')

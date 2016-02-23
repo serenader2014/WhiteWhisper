@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": false,
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint core"
   },
   "dependencies": {
     "babel-cli": "^6.5.1",

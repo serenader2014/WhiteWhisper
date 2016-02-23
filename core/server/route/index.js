@@ -1,5 +1,5 @@
-import admin    from './admin';
-import frontend from './frontend';
+// import admin    from './admin';
+// import frontend from './frontend';
 import api      from './api';
 import express  from 'express';
 let app         = express();

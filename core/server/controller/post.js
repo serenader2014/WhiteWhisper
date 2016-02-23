@@ -21,7 +21,7 @@ const list           = (req, res) => {
     let direction = +req.query.direction;
     let idSort    = null;
 
-    if ([1, -1].indexOf(direction) === -1) {direction = -1;}
+    if ([1, -1].indexOf(direction) === -1) { direction = -1; }
     if (startTime.toString() !== 'Invalid Date') { dateQuery.$gt = startTime; }
     if (endTime.toString() !== 'Invalid Date') { dateQuery.$lt = endTime; }
     if (_.isEmpty(dateQuery)) { dateQuery = null; }
@@ -81,7 +81,7 @@ const getPost = (req, res) => {
 
     postApi.getById(id).then(function (data) {
         let post = data.data[0];
-        if (!data.total ) {
+        if (!data.total) {
             res.json({code: -5, msg: '找不到该文章。'});
             return;
         }

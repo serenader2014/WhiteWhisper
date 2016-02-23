@@ -27,7 +27,6 @@
     "no-alert"                          : 0,
     "no-lone-blocks"                    : 0,
     "block-spacing"                     : [1, "always"],
-    "brace-style"                       : [1, "1tbs"],
     "comma-spacing"                     : [2, {"before": false, "after": true}],
     "comma-style"                       : [2, "last"],
     "consistent-this"                   : [2, "self"],

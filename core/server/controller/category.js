@@ -81,10 +81,10 @@ export default {
     delete (req, res) {
         let id = req.params.id;
 
-        if (checkBodyError(req, res)) {return ;}
+        if (checkBodyError(req, res)) { return ; }
 
         categoryApi.getById(id).then((data) => {
-            if (!data.total) { throw { code: -5, message: '分类不存在。'};}
+            if (!data.total) { throw { code: -5, message: '分类不存在。'}; }
             let category = data.data[0];
             if (category.count > 0) { 
                 throw { code: 1, message: '无法删除仍有文章的分类。'};
