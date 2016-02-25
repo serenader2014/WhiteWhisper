@@ -16,7 +16,7 @@ function getEntry (env) {
         entry.push('webpack-hot-middleware/client');
     }
 
-    entry.push('./core/client/src/index.js');
+    entry.push('./core/client/index.js');
     return entry;
 }
 
@@ -48,19 +48,19 @@ function getPlugins (env) {
 
 function getLoaders (env) {
     const loaders = [{ 
-        test: /\.js$/, 
-        include: resolve(__dirname, 'core/client/src'),
+        test   : /\.js$/, 
+        include: resolve(__dirname, 'core/client'),
         loaders: ['babel', 'eslint']
     }];
 
     if (env == prodEnv) {
         loaders.push({
-            test: /(\.css|\.scss)$/,
+            test  : /(\.css|\.scss)$/,
             loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
         });
     } else {
         loaders.push({
-            test: /(\.css|\.scss)$/,
+            test   : /(\.css|\.scss)$/,
             loaders: ['style', 'css?sourceMap', 'sass?sourceMap']
         });
     }
@@ -69,17 +69,17 @@ function getLoaders (env) {
 }
 
 const config =  {
-    debug: true,
+    debug  : true,
     devtool: env === prodEnv ? 'source-map' : 'cheap-module-eval-source-map',
-    noInfo: true,
-    entry: getEntry(env),
-    output: {
-        path: resolve(__dirname, 'core/client/src'),
+    noInfo : true,
+    entry  : getEntry(env),
+    output : {
+        path      : resolve(__dirname, 'core/client'),
         publicPath: '',
-        filename: 'bundle.js'
+        filename  : 'bundle.js'
     },
     plugins: getPlugins(env),
-    module: {
+    module : {
         loaders: getLoaders(env)
     }
 };
@@ -88,7 +88,7 @@ const bundler = webpack(config);
 
 browserSync({
     server: {
-        baseDir: resolve(__dirname, 'core/client/src'),
+        baseDir: resolve(__dirname, 'core/client'),
         middleware: [
             webpackDevMiddleware(bundler, {
                 publicPath: config.output.publicPath,
@@ -99,6 +99,6 @@ browserSync({
         ]
     },
     files: [
-        'core/client/src/*.html'
+        'core/client/*.html'
     ]
 });
