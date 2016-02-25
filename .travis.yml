@@ -3,8 +3,7 @@ node_js:
 - "5.6"
 before_script:
 - sleep 15
-- npm i -g mocha
-script: npm i && mocha test/index.js
+script: npm i && npm test
 cache:
   directories:
   - node_modules

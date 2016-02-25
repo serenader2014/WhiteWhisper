@@ -8,4 +8,4 @@ cache:
 test_job:
   stage: test
   script:
-  - npm i && mocha test/index.js
+  - npm i && npm test

@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "lint": "eslint core",
-    "dev": "babel-node webpack.config.js"
+    "dev": "babel-node webpack.config.js",
+    "test": "mocha test/index.js"
   },
   "dependencies": {
     "babel-cli": "^6.5.1",
@@ -40,6 +41,7 @@
     "jade": "~1.11.0",
     "lodash": "~3.10.0",
     "marked": "~0.3.3",
+    "mocha": "^2.4.5",
     "moment": "~2.10.3",
     "mongoose": "~4.2.2",
     "morgan": "~1.6.1",
