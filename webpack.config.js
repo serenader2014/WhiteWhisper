@@ -1,13 +1,13 @@
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-plugin';
-import path from 'path';
-import browserSync from 'browser-sync';
+import webpack              from 'webpack';
+import ExtractTextPlugin    from 'extract-text-webpack-plugin';
+import browserSync          from 'browser-sync';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import {resolve}            from 'path';
 
-const devEnv = 'development';
+const devEnv  = 'development';
 const prodEnv = 'production';
-const env = process.env.NODE_ENV || devEnv;
+const env     = process.env.NODE_ENV || devEnv;
 
 function getEntry (env) {
     const entry = [];
@@ -16,13 +16,14 @@ function getEntry (env) {
         entry.push('webpack-hot-middleware/client');
     }
 
-    entry.push('./core/client/src/index');
+    entry.push('./core/client/src/index.js');
+    return entry;
 }
 
 function getPlugins (env) {
     const GLOBALS = {
         'process.env.NODE_ENV': JSON.stringify(env),
-        __DEV__: env === devEnv
+        __DEV__               : env === devEnv
     };
 
     const plugins = [
@@ -32,7 +33,7 @@ function getPlugins (env) {
 
     switch (env) {
         case devEnv:
-            plugins.push(new webpack.HotModulesReplacementPlugin());
+            plugins.push(new webpack.HotModuleReplacementPlugin());
             plugins.push(new webpack.NoErrorsPlugin());
             break;
         case prodEnv:
@@ -48,7 +49,7 @@ function getPlugins (env) {
 function getLoaders (env) {
     const loaders = [{ 
         test: /\.js$/, 
-        include: path.join(__dirname, 'core/client/src'),
+        include: resolve(__dirname, 'core/client/src'),
         loaders: ['babel', 'eslint']
     }];
 
@@ -73,7 +74,7 @@ const config =  {
     noInfo: true,
     entry: getEntry(env),
     output: {
-        path: path.resolve(__dirname, 'core/client/build'),
+        path: resolve(__dirname, 'core/client/src'),
         publicPath: '',
         filename: 'bundle.js'
     },
@@ -87,7 +88,7 @@ const bundler = webpack(config);
 
 browserSync({
     server: {
-        baseDir: path.resovle(__dirname, 'core/client/src'),
+        baseDir: resolve(__dirname, 'core/client/src'),
         middleware: [
             webpackDevMiddleware(bundler, {
                 publicPath: config.output.publicPath,
