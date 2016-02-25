@@ -41,4 +41,7 @@ api.route('/category/:id')
     .put(checkPermission('category', 'put'), apiController.category.update)
     .delete(checkPermission('category', 'delete'), apiController.category.delete);
 
+api.route('/captcha')
+    .get(apiController.captcha.generate);
+
 export default api;
