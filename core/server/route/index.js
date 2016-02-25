@@ -6,7 +6,7 @@ let app         = express();
 
 
 app.use('/api', api);
-app.use('/admin', express.static(resolve(__dirname, '../../client')));
+app.use('/admin', express.static(resolve(__dirname, '../../client/build')));
 // app.use('/', frontend);
 
 export default function () {

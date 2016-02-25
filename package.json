@@ -5,8 +5,10 @@
   "scripts": {
     "start": "node index.js",
     "lint": "eslint core",
-    "dev": "babel-node webpack.config.js",
-    "test": "mocha test/index.js"
+    "dev": "babel-node scripts/dev.js",
+    "test": "mocha test/index.js",
+    "build": "babel-node scripts/build.js",
+    "prebuild": "babel-node scripts/pre-build.js"
   },
   "dependencies": {
     "babel-cli": "^6.5.1",
@@ -49,10 +51,13 @@
     "passport-local": "~1.0.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
+    "react-redux": "^4.4.0",
     "react-router": "^2.0.0",
     "react-transform-catch-errors": "^1.0.2",
     "react-transform-hmr": "^1.0.2",
     "redbox-react": "^1.2.2",
+    "redux": "^3.3.1",
+    "rimraf": "^2.5.2",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "validator": "~4.0.5",

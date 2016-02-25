@@ -20,3 +20,6 @@ bower_components
 
 # Optional REPL history
 .node_repl_history
+
+core/client/build
+.DS_Store

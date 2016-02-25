@@ -1,13 +1,9 @@
-import webpack              from 'webpack';
-import ExtractTextPlugin    from 'extract-text-webpack-plugin';
-import browserSync          from 'browser-sync';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import {resolve}            from 'path';
+import webpack           from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import {resolve}         from 'path';
 
-const devEnv  = 'development';
-const prodEnv = 'production';
-const env     = process.env.NODE_ENV || devEnv;
+const devEnv            = 'development';
+const prodEnv           = 'production';
 
 function getEntry (env) {
     const entry = [];
@@ -16,7 +12,7 @@ function getEntry (env) {
         entry.push('webpack-hot-middleware/client');
     }
 
-    entry.push('./core/client/index.js');
+    entry.push('./core/client/src/index.js');
     return entry;
 }
 
@@ -49,7 +45,7 @@ function getPlugins (env) {
 function getLoaders (env) {
     const loaders = [{ 
         test   : /\.js$/, 
-        include: resolve(__dirname, 'core/client'),
+        include: resolve(__dirname, 'core/client/src'),
         loaders: ['babel', 'eslint']
     }];
 
@@ -68,37 +64,20 @@ function getLoaders (env) {
     return loaders;
 }
 
-const config =  {
-    debug  : true,
-    devtool: env === prodEnv ? 'source-map' : 'cheap-module-eval-source-map',
-    noInfo : true,
-    entry  : getEntry(env),
-    output : {
-        path      : resolve(__dirname, 'core/client'),
-        publicPath: '',
-        filename  : 'bundle.js'
-    },
-    plugins: getPlugins(env),
-    module : {
-        loaders: getLoaders(env)
-    }
-};
-
-const bundler = webpack(config);
-
-browserSync({
-    server: {
-        baseDir: resolve(__dirname, 'core/client'),
-        middleware: [
-            webpackDevMiddleware(bundler, {
-                publicPath: config.output.publicPath,
-                stats: { color: true },
-                noInfo: true
-            }),
-            webpackHotMiddleware(bundler)
-        ]
-    },
-    files: [
-        'core/client/*.html'
-    ]
-});
+export default function getWebpackConfig (env) {
+    return {
+        debug  : true,
+        devtool: env === prodEnv ? 'source-map' : 'cheap-module-eval-source-map',
+        noInfo : true,
+        entry  : getEntry(env),
+        output : {
+            path      : resolve(__dirname, 'core/client/build'),
+            publicPath: '',
+            filename  : 'bundle.js'
+        },
+        plugins: getPlugins(env),
+        module : {
+            loaders: getLoaders(env)
+        }
+    };
+}
