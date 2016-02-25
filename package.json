@@ -4,7 +4,7 @@
   "private": false,
   "scripts": {
     "start": "node index.js",
-    "lint": "eslint core",
+    "lint": "eslint core/client/src core/server",
     "dev": "babel-node scripts/dev.js",
     "test": "mocha test/index.js",
     "build": "babel-node scripts/build.js",
