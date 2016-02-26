@@ -26,6 +26,7 @@ class HelloWorld extends Component {
                     value = {this.state.input}
                     onChange = {this.handleChange.bind(this)}
                  />
+                 <span>{this.state.input}</span>
             </div>
         );
     }

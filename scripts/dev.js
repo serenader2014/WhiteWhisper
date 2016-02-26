@@ -5,11 +5,13 @@ import webpack              from 'webpack';
 import { resolve }          from 'path';
 import webpackConfig        from '../webpack.config.js';
 
-let bundler = webpack(webpackConfig('development'));
+
+let config = webpackConfig('development');
+let bundler = webpack(config);
 
 browserSync({
     server: {
-        baseDir: resolve(__dirname, 'core/client/src'),
+        baseDir: resolve(__dirname, '../core/client/src'),
         middleware: [
             webpackDevMiddleware(bundler, {
                 publicPath: config.output.publicPath,
@@ -21,5 +23,9 @@ browserSync({
     },
     files: [
         'core/client/src/*.html'
-    ]
+    ],
+    port: 7777,
+    ui: {
+        port: 7776
+    }
 });
