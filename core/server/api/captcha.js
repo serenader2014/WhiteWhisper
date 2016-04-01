@@ -17,9 +17,9 @@ export default {
         img    = captcha.getBase64();
         return new Buffer(img, 'base64');
     },
-    validate (req, num) {
+    validate (req, num = 0) {
         let id = req.query.id;
-        return req.session.captcha && 
+        return req.session.captcha && req.session.captcha[id] &&
             req.session.captcha[id].toString() === num.toString();
     },
     clear (req) {
