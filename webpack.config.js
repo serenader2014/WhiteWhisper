@@ -43,21 +43,21 @@ function getPlugins (env) {
 }
 
 function getLoaders (env) {
-    const loaders = [{ 
-        test   : /\.js$/, 
+    const loaders = [{
+        test   : /\.js$/,
         include: resolve(__dirname, 'core/client/src'),
-        loaders: ['babel', 'eslint']
+        loaders: ['babel-loader', 'eslint-loader']
     }];
 
     if (env == prodEnv) {
         loaders.push({
             test  : /(\.css|\.scss)$/,
-            loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
+            loader: ExtractTextPlugin.extract('css-loader?sourceMap!sass-loader?sourceMap')
         });
     } else {
         loaders.push({
             test   : /(\.css|\.scss)$/,
-            loaders: ['style', 'css?sourceMap', 'sass?sourceMap']
+            loaders: ['style-loader', 'css-loader?sourceMap', 'sass-loader?sourceMap']
         });
     }
 

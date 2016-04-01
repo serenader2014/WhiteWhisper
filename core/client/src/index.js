@@ -1,7 +1,6 @@
-import React         from 'react';
-import { Component } from 'react';
-import { render }    from 'react-dom';
-
+import React, { Component } from 'react';
+import { render }           from 'react-dom';
+import './index.scss';
 
 const user = {
     name: 'serenader'
@@ -21,8 +20,8 @@ class HelloWorld extends Component {
         return (
             <div>
                 Hello world, {this.props.user.name}
-                <input 
-                    type = "text" 
+                <input
+                    type = "text"
                     value = {this.state.input}
                     onChange = {this.handleChange.bind(this)}
                  />
@@ -33,8 +32,8 @@ class HelloWorld extends Component {
 }
 
 HelloWorld.propTypes = {
-    user: React.PropTypes.object, 
-    'user.name': React.PropTypes.string 
+    user: React.PropTypes.object,
+    'user.name': React.PropTypes.string
 };
 
 render(<HelloWorld user={user} />, document.getElementsByClassName('container')[0]);
