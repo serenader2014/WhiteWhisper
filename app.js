@@ -20,10 +20,11 @@ import setCookie    from './core/server/middleware/set-cookie';
 import responseTime from './core/server/middleware/response-time';
 
 export default function (env) {
-    const app          = express();
-    const MongoStore   = mongoStore(session);
-    const mongo        = Promise.promisifyAll(mongoose);
-    return mongo.connectAsync(env === 'test' ? config.testDb : config.db)
+    const app         = express();
+    const MongoStore  = mongoStore(session);
+    const mongo       = Promise.promisifyAll(mongoose);
+    const envriroment = env || app.get('env');
+    return mongo.connectAsync(envriroment === 'test' ? config.testDb : config.db)
     .then(initDB).then(() => {
         // 设置模板引擎为 jade
         app.set('view engine', 'jade');

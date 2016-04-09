@@ -96,7 +96,7 @@ const getPost = (req, res) => {
                     isHistory: true,
                     original : id,
                 }, amount, page).then((posts) => {
-                    res.json({ code: 0, posts });
+                    res.json({ code: 0, data: posts });
                 });
             }
             res.json({ code: 0, data: post });

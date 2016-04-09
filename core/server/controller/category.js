@@ -49,7 +49,7 @@ export default {
 
         categoryApi.getByName(name).then((data) => {
             if (data.total) {
-                throw new Error({
+                return Promise.reject({
                     message: '分类名称已存在。',
                     code   : -5,
                 });
