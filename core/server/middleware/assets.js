@@ -1,5 +1,5 @@
 export default function () {
-    return  (req, res, next) => {
+    return (req, res, next) => {
         next();
     };
 }

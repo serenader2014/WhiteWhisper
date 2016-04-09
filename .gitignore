@@ -23,3 +23,4 @@ bower_components
 
 core/client/build
 .DS_Store
+.idea

@@ -8,31 +8,32 @@ import app                  from '../app';
 import { request, Agent }   from 'http';
 
 
-let webpackConfig = getWebpackConfig('development');
-let bundler       = webpack(webpackConfig);
-let agent         = new Agent({
-    maxSockets: 100000
+const webpackConfig = getWebpackConfig('development');
+const bundler       = webpack(webpackConfig);
+const agent         = new Agent({
+    maxSockets: 100000,
 });
 
-let proxyApi = (req, res, next) => {
-    let url = req.url;
+const proxyApi = (req, res, next) => {
+    const url = req.url;
     if (url.indexOf('/api') === -1) {
         next();
         return;
     }
+    /*eslint no-console:false */
     console.log(`proxying api request: ${url}`);
-    let proxy = request({
+    const proxy = request({
         path: url,
         host: config.host,
         port: config.port,
         headers: req.headers,
         method: req.method,
-        agent
+        agent,
     }, (response) => {
-        response.pipe(res, {end: true});
+        response.pipe(res, { end: true });
     });
 
-    req.pipe(proxy, {end: true});
+    req.pipe(proxy, { end: true });
 
     proxy.on('error', (err) => {
         res.end(err.stack);
@@ -47,18 +48,18 @@ app().then(() => {
                 webpackDevMiddleware(bundler, {
                     publicPath: webpackConfig.output.publicPath,
                     stats: { color: true },
-                    noInfo: true
+                    noInfo: true,
                 }),
                 webpackHotMiddleware(bundler),
-                proxyApi
-            ]
+                proxyApi,
+            ],
         },
         files: [
-            'core/client/src/*.html'
+            'core/client/src/*.html',
         ],
         port: 7777,
         ui: {
-            port: 7776
-        }
+            port: 7776,
+        },
     });
 });

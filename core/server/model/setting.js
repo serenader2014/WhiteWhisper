@@ -11,7 +11,7 @@ const SettingSchema = new Schema({
     theme          : String,
     requestAmount  : Number,
     update         : Date,
-    background     : String
+    background     : String,
 });
 
 export default mongo.model('Setting', SettingSchema);

@@ -1,13 +1,12 @@
-/*eslint-disable no-console */
-
+/* eslint-disable no-console */
 import webpack          from 'webpack';
 import getWebpackConfig from '../webpack.config.js';
 
 process.env.NODE_ENV = 'production';
-let bundler          = webpack(getWebpackConfig(process.env.NODE_ENV));
+const bundler        = webpack(getWebpackConfig(process.env.NODE_ENV));
 
+/* eslint-disable consistent-return */
 bundler.run((err, stats) => {
-
     if (err) {
         console.log(err);
         return 1;

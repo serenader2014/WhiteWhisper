@@ -1,35 +1,31 @@
 import _ from 'lodash';
 
-export default function (conditions, amount, page) {
-    let targetData;
+export default function (conditions = {}, amount = 10, page = 1) {
     let tmpObj = {};
     let total  = 0;
-    conditions = conditions || {};
-    amount = +amount;
-    page = +page;
-    if (amount.toString() === 'NaN') {
-        amount = 10;
+    let targetAmount = +amount;
+    let targetPage = +page;
+    if (targetAmount.toString() === 'NaN') {
+        targetAmount = 10;
     }
-    if ((+page).toString() === 'NaN') {
-        page = 1;
+    if ((targetPage).toString() === 'NaN') {
+        targetPage = 1;
     }
-    tmpObj = _.pick(conditions, (value) => {
-        return value != null;
-    });
-
-    targetData = this.find(tmpObj);
-
+    /* eslint-disable eqeqeq */
+    tmpObj = _.pick(conditions, (value) => value != null);
+    const targetData = this.find(tmpObj);
     return targetData.countAsync().then((count) => {
         total = count;
 
-        return targetData.sort({_id: -1}).skip((page - 1) * amount)
-            .limit(amount).execAsync('find');
+        return targetData.sort({ _id: -1 }).skip((targetPage - 1) * targetAmount)
+            .limit(targetAmount).execAsync('find');
     }).then((data) => {
-        return {
-            total: +total,
-            data: data,
-            page: +page,
-            amount: +amount
+        const result = {
+            data,
+            total : +total,
+            page  : +targetPage,
+            amount: +targetAmount,
         };
+        return result;
     });
 }

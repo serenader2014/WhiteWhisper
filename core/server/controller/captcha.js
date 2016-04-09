@@ -1,19 +1,18 @@
 import captchaApi from '../api/captcha';
 
 export default {
-    generate (req, res) {
-        let image = captchaApi.generate(req);
+    generate(req, res) {
+        const image = captchaApi.generate(req);
         res.set('Content-Type', 'image/png');
         res.send(image);
     },
-    validate (req, res) {
-        let result, num;
-        num    = req.body.captcha;
-        result = captchaApi.validate(req, num);
+    validate(req, res) {
+        const num    = req.body.captcha;
+        const result = captchaApi.validate(req, num);
         if (result) {
-            res.json({code: 0});
+            res.json({ code: 0 });
         } else {
-            res.json({code: -1});
+            res.json({ code: -1 });
         }
-    }
+    },
 };

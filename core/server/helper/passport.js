@@ -1,6 +1,6 @@
 import passportLocal from 'passport-local';
 import userApi       from '../api/user';
-let LocalStrategy = passportLocal.Strategy;
+const LocalStrategy = passportLocal.Strategy;
 
 export default function (passport) {
     passport.serializeUser((user, done) => {
@@ -21,18 +21,18 @@ export default function (passport) {
 
     passport.use('local-register', new LocalStrategy({
         usernameField: 'email',
-        passwordField: 'password'
+        passwordField: 'password',
     }, (email, password, done) => {
-        let pwd = userApi.generatePassword(password);
+        const pwd = userApi.generatePassword(password);
         userApi.create({
-            username: email.split('@')[0],
             email,
-            auth: {
+            username: email.split('@')[0],
+            auth    : {
                 local: {
                     email,
-                    password: pwd
-                }
-            }
+                    password: pwd,
+                },
+            },
         }).then((user) => {
             done(null, user);
         });
@@ -40,18 +40,18 @@ export default function (passport) {
 
     passport.use('local-login', new LocalStrategy({
         usernameField: 'email',
-        passwordField: 'password'
+        passwordField: 'password',
     }, (email, password, done) => {
         userApi.getByEmail(email).then((result) => {
             if (result.total) {
-                let user = result.data[0];
+                const user = result.data[0];
                 if (userApi.validatePassword(password, user.auth.local.password)) {
                     done(null, user);
                 } else {
-                    done(null, false, {message: 'Password incorrect.'});
+                    done(null, false, { message: 'Password incorrect.' });
                 }
             } else {
-                done(null, false, {message: 'User doesnt exist.'});
+                done(null, false, { message: 'User doesnt exist.' });
             }
         }).catch((err) => {
             done(err);

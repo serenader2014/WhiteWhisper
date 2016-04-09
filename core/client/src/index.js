@@ -3,28 +3,28 @@ import { render }           from 'react-dom';
 import './index.scss';
 
 const user = {
-    name: 'serenader'
+    name: 'serenader',
 };
 
 class HelloWorld extends Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.state = {
-            input: ''
+            input: '',
         };
     }
-    handleChange (e) {
-        this.setState({input: e.target.value});
+    handleChange = (e) => {
+        this.setState({ input: e.target.value });
     }
-    render () {
+    render() {
         return (
             <div>
                 Hello world, {this.props.user.name}
                 <input
-                    type = "text"
-                    value = {this.state.input}
-                    onChange = {this.handleChange.bind(this)}
-                 />
+                  type = "text"
+                  value = {this.state.input}
+                  onChange = {this.handleChange}
+                />
                  <span>{this.state.input}</span>
             </div>
         );
@@ -32,8 +32,8 @@ class HelloWorld extends Component {
 }
 
 HelloWorld.propTypes = {
-    user: React.PropTypes.object,
-    'user.name': React.PropTypes.string
+    user       : React.PropTypes.object,
+    'user.name': React.PropTypes.string,
 };
 
 render(<HelloWorld user={user} />, document.getElementsByClassName('container')[0]);

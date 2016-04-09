@@ -20,24 +20,24 @@ const mongo      = Promise.promisifyAll(mongoose);
 const Schema     = mongo.Schema;
 const ObjectId   = Schema.Types.ObjectId;
 const UserSchema = new Schema({
-    username: {type: String, unique: true},
-    email: {type: String, unique: true},
-    auth: {
+    username: { type: String, unique: true },
+    email   : { type: String, unique: true },
+    auth    : {
         local: {
             email   : String,
-            password: String
-        }
+            password: String,
+        },
     },
     permission: {
         profileName: String,
-        id         : ObjectId
+        id         : ObjectId,
     },
     avatar   : String,
     cover    : String,
     signature: String,
     social   : Array,
     status   : String,
-    log      : Array
+    log      : Array,
 });
 
 export default mongo.model('User', UserSchema);

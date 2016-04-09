@@ -1,5 +1,5 @@
-function getHomePage (req, res) {
+function getHomePage(req, res) {
     res.send('ok');
 }
 
-export default {getHomePage};
+export default { getHomePage };

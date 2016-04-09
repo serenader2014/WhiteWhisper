@@ -1,5 +1,4 @@
-/*eslint-disable no-console*/
-
+/* eslint-disable no-console, consistent-return */
 import fs          from 'fs';
 import { resolve } from 'path';
 import rm          from 'rimraf';
@@ -12,16 +11,16 @@ rm(buildPath, (err) => {
     if (err) {
         return console.log('Remove build folder error.');
     }
-    fs.readFile(resolve(srcPath, fileName), 'utf8', (err, content) => {
-        if (err) {
+    fs.readFile(resolve(srcPath, fileName), 'utf8', (err1, content) => {
+        if (err1) {
             return console.log('Read index.html file error.');
         }
-        fs.mkdir(buildPath, (err) => {
-            if (err) {
+        fs.mkdir(buildPath, (err2) => {
+            if (err2) {
                 return console.log('Make build folder error.');
             }
-            fs.writeFile(resolve(buildPath, fileName), content, 'utf8', (err) => {
-                if (err) {
+            fs.writeFile(resolve(buildPath, fileName), content, 'utf8', (err3) => {
+                if (err3) {
                     console.log('Write index.html file error.');
                 }
                 console.log(`index.html written to ${resolve(buildPath, fileName)}`);

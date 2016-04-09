@@ -9,7 +9,7 @@ const BruteSchema = new Schema({
     lastVisit     : Date,
     firstVisit    : Date,
     remainingTime : Number,
-    resetCountDate: Date
+    resetCountDate: Date,
 });
 
 export default mongo.model('Brute', BruteSchema);

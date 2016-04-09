@@ -4,26 +4,27 @@ import get         from '../helper/get-data';
 import categoryApi from './category';
 
 export default {
-    get () {
-        return get.apply(Post, arguments);
+    get(...args) {
+        return get.apply(Post, args);
     },
-    create (options) {
-        var post = new Post();
+    create(options) {
+        const post = new Post();
         _.extend(post, options);
-        return post.saveAsync().spread((post) => {
-            if (post.status === 'published') {
-                return categoryApi.increaseCount(post.category._id).then(() => {
-                    return post;
+        return post.saveAsync().spread((currentPost) => {
+            if (currentPost.status === 'published') {
+                return categoryApi.increaseCount(currentPost.category._id).then(() => {
+                    const result = currentPost;
+                    return result;
                 });
-            } else {
-                return post;
             }
+            return currentPost;
         });
     },
-    update (id, options) {
-        var obj = {};
+    update(id, options) {
+        const obj = {};
         _.extend(obj, options);
 
+        /* eslint-disable consistent-return */
         return Post.findByIdAsync(id).then((post) => {
             if (post.status === 'published' && obj.status !== 'published') {
                 return categoryApi.decreaseCount(post.category._id);
@@ -33,24 +34,21 @@ export default {
             }
             if (post.status === 'published' && obj.status === 'published' &&
                 post.category._id.toString() !== obj.category._id.toString()) {
-                return categoryApi.decreaseCount(post.category._id).then(() => {
-                    return categoryApi.increaseCount(obj.category._id);
-                });
+                return categoryApi.decreaseCount(post.category._id)
+                    .then(() => categoryApi.increaseCount(obj.category._id));
             }
-        }).then(() => {
-            return Post.findByIdAndUpdateAsync(id, obj, {new: true});
-        });
+        }).then(() => Post.findByIdAndUpdateAsync(id, obj, { new: true }));
     },
-    getById (id) {
-        return this.get({_id: id});
+    getById(id) {
+        return this.get({ _id: id });
     },
-    getByAuthor (username, amount, page) {
-        return this.get({'author.name': username}, amount, page);
+    getByAuthor(username, amount, page) {
+        return this.get({ 'author.name': username }, amount, page);
     },
-    getBySlug (slug) {
-        return this.get({slug: slug}, 1, 1);
+    getBySlug(slug) {
+        return this.get({ slug }, 1, 1);
     },
-    delete (id) {
-        return this.update(id, {status: 'deleted'});
-    }
+    delete(id) {
+        return this.update(id, { status: 'deleted' });
+    },
 };

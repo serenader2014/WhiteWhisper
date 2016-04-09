@@ -1,11 +1,11 @@
 import webpack           from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import {resolve}         from 'path';
+import { resolve }         from 'path';
 
 const devEnv            = 'development';
 const prodEnv           = 'production';
 
-function getEntry (env) {
+function getEntry(env) {
     const entry = [];
 
     if (env === devEnv) {
@@ -16,15 +16,15 @@ function getEntry (env) {
     return entry;
 }
 
-function getPlugins (env) {
+function getPlugins(env) {
     const GLOBALS = {
         'process.env.NODE_ENV': JSON.stringify(env),
-        __DEV__               : env === devEnv
+        __DEV__               : env === devEnv,
     };
 
     const plugins = [
         new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.DefinePlugin(GLOBALS)
+        new webpack.DefinePlugin(GLOBALS),
     ];
 
     switch (env) {
@@ -37,34 +37,35 @@ function getPlugins (env) {
             plugins.push(new webpack.optimize.DedupePlugin());
             plugins.push(new webpack.optimize.UglifyJsPlugin());
             break;
+        default:
+            return plugins;
     }
-
     return plugins;
 }
 
-function getLoaders (env) {
+function getLoaders(env) {
     const loaders = [{
         test   : /\.js$/,
         include: resolve(__dirname, 'core/client/src'),
-        loaders: ['babel-loader', 'eslint-loader']
+        loaders: ['babel-loader', 'eslint-loader'],
     }];
 
-    if (env == prodEnv) {
+    if (env === prodEnv) {
         loaders.push({
             test  : /(\.css|\.scss)$/,
-            loader: ExtractTextPlugin.extract('css-loader?sourceMap!sass-loader?sourceMap')
+            loader: ExtractTextPlugin.extract('css-loader?sourceMap!sass-loader?sourceMap'),
         });
     } else {
         loaders.push({
             test   : /(\.css|\.scss)$/,
-            loaders: ['style-loader', 'css-loader?sourceMap', 'sass-loader?sourceMap']
+            loaders: ['style-loader', 'css-loader?sourceMap', 'sass-loader?sourceMap'],
         });
     }
 
     return loaders;
 }
 
-export default function getWebpackConfig (env) {
+export default function getWebpackConfig(env) {
     return {
         debug  : true,
         devtool: env === prodEnv ? 'source-map' : 'cheap-module-eval-source-map',
@@ -73,11 +74,11 @@ export default function getWebpackConfig (env) {
         output : {
             path      : resolve(__dirname, 'core/client/build'),
             publicPath: '',
-            filename  : 'bundle.js'
+            filename  : 'bundle.js',
         },
         plugins: getPlugins(env),
         module : {
-            loaders: getLoaders(env)
-        }
+            loaders: getLoaders(env),
+        },
     };
 }

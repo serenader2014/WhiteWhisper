@@ -3,29 +3,34 @@ import categoryApi   from '../api/category';
 import permissionApi from '../api/permission';
 import log           from './log';
 
-let initDB = () => {
-    return settingApi.get({}, 1, 1).then((data) => {
+const initDB = () => {
+    const promise = settingApi.get({}, 1, 1).then((data) => {
         if (!data.total) {
             log.info('Create default blog setting');
             return settingApi.create(config.defaultBlogConfig);
         }
+        return null;
     }).then(() => {
-        return categoryApi.get({}, 1, 1).then((data) => {
+        const createCategory = categoryApi.get({}, 1, 1).then((data) => {
             if (!data.total) {
                 log.info('Create default category');
                 return categoryApi.create(config.defaultCategory);
             }
+            return null;
         });
+        return createCategory;
     }).then(() => {
-        return permissionApi.get({}, 1, 1).then((data) => {
+        const createPermission = permissionApi.get({}, 1, 1).then((data) => {
             if (!data.total) {
                 log.info('Create default permission suit');
-                return permissionApi.create(config.defaultPermission).then(() => {
-                    return permissionApi.create(config.guestPermission);
-                });
+                return permissionApi.create(config.defaultPermission)
+                    .then(() => permissionApi.create(config.guestPermission));
             }
+            return null;
         });
+        return createPermission;
     });
+    return promise;
 };
 
 export default initDB;

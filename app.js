@@ -20,12 +20,11 @@ import setCookie    from './core/server/middleware/set-cookie';
 import responseTime from './core/server/middleware/response-time';
 
 export default function (env) {
-
     const app          = express();
     const MongoStore   = mongoStore(session);
     const mongo        = Promise.promisifyAll(mongoose);
-    return mongo.connectAsync(env === 'test' ? config.testDb : config.db).then(initDB).then(function () {
-
+    return mongo.connectAsync(env === 'test' ? config.testDb : config.db)
+    .then(initDB).then(() => {
         // 设置模板引擎为 jade
         app.set('view engine', 'jade');
         app.set('port', env === 'test' ? config.testPort : config.port);
@@ -35,7 +34,7 @@ export default function (env) {
             app.set('trust proxy', true);
         }
 
-        global.env        = app.get('env');
+        global.env = app.get('env');
         // 将设置挂载到 locals 中，方便模板文件中读取。
         app.locals.config = config;
 
@@ -49,11 +48,11 @@ export default function (env) {
         app.use(bodyParser.urlencoded({ extended: false }));
         app.use(bodyParser.json());
         app.use(validator({
-            customValidators:{
-                isPostStatus (value) {
+            customValidators: {
+                isPostStatus(value) {
                     return ['published', 'unpublished', 'deleted', 'draft'].indexOf(value) !== -1;
-                }
-            }
+                },
+            },
         }));
         app.use(cookieParser());
 
@@ -64,13 +63,13 @@ export default function (env) {
         }
 
         app.use(session({
-            name: 'blog session',
+            name  : 'blog session',
             secret: config.sessionSecret,
-            store: new MongoStore({
-                url: config.db
+            store : new MongoStore({
+                url: config.db,
             }),
-            resave: true,
-            saveUninitialized: true
+            resave           : true,
+            saveUninitialized: true,
         }));
 
         app.use(passport.initialize());
@@ -86,12 +85,12 @@ export default function (env) {
 
         return new Promise((resolve) => {
             app.listen(app.get('port'), config.host, () => {
-                log.info('Server now listen on ' + config.host + ':' + app.get('port'));
-                log.info('Server is running on ' + app.get('env') + ' envriroment.');
+                log.info(`Server now listen on ${config.host} : ${app.get('port')}`);
+                log.info(`Server is running on ${app.get('env')} envriroment.`);
                 resolve();
             });
         });
-    }).catch(function (err) {
+    }).catch((err) => {
         log.error(err.message, err.stack);
         process.exit(1);
     });

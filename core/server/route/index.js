@@ -1,8 +1,8 @@
 // import frontend from './frontend';
-import api     from './api';
-import express from 'express';
-import { resolve }    from 'path';
-let app         = express();
+import api         from './api';
+import express     from 'express';
+import { resolve } from 'path';
+const app         = express();
 
 
 app.use('/api', api);

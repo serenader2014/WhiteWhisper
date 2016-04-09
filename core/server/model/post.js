@@ -9,7 +9,7 @@ const PostSchema = new Schema({
     author: {
         username: String,
         id      : ObjectId,
-        avatar  : String
+        avatar  : String,
     },
     slug    : String,
     markdown: String,
@@ -19,9 +19,9 @@ const PostSchema = new Schema({
     status  : String, // 'published', 'unpublished', 'deleted', 'draft'
     category: {
         name: String,
-        _id : ObjectId
+        _id : ObjectId,
     },
-    isHistory : Boolean,
-    original  : ObjectId
+    isHistory: Boolean,
+    original : ObjectId,
 });
 export default mongo.model('Post', PostSchema);

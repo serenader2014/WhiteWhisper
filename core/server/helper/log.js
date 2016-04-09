@@ -1,13 +1,13 @@
-/*eslint no-console: 0 */
-
+/* eslint no-console: 0 */
 import chalk from 'chalk';
-let log  = {
-    info (message) {
-        var start = `Info    -->   ${message} \n`;
+const log  = {
+    info(message) {
+        const start = `Info    -->   ${message} \n`;
         console.log(chalk.gray(start));
     },
-    error (err) {
-        var message, stack;
+    error(err) {
+        let message;
+        let stack;
         if (typeof err === 'object') {
             message = err.message;
             stack = err.stack;
@@ -15,13 +15,13 @@ let log  = {
             message = err;
             stack = err;
         }
-        var start = `Error   -->  \n  ${message} \n`;
+        const start = `Error   -->  \n  ${message} \n`;
         console.log(chalk.bold.bgWhite.red(start));
         console.log(chalk.bold.bgWhite.red(stack));
     },
-    success (message)  {
-        var start = `Success -->  \n ${message} \n`;
+    success(message) {
+        const start = `Success -->  \n ${message} \n`;
         console.log(chalk.green(start));
-    }
+    },
 };
 export default log;

@@ -1,25 +1,26 @@
-import Setting from'../model/setting';
-import get     from'../helper/get-data';
-import _       from'lodash';
+import Setting from '../model/setting';
+import get     from '../helper/get-data';
+import _       from 'lodash';
 
-export default  {
-    get () {
-        return get.apply(Setting, arguments);
+export default {
+    get(...args) {
+        return get.apply(Setting, args);
     },
-    create (options) {
-        var setting = new Setting();
+    create(options) {
+        const setting = new Setting();
         _.extend(setting, options);
-        return setting.saveAsync().spread((setting) => {
-            return setting;
+        return setting.saveAsync().spread((currentSetting) => {
+            const result = currentSetting;
+            return result;
         });
     },
-    update (id, options) {
-        var obj = {};
+    update(id, options) {
+        const obj = {};
         _.extend(obj, options);
 
         return Setting.findByIdAndUpdateAsync(id, obj);
     },
-    delete (id) {
+    delete(id) {
         return Setting.findByIdAndRemoveAsync(id);
-    }
+    },
 };

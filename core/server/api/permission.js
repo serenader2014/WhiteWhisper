@@ -3,33 +3,34 @@ import get        from '../helper/get-data';
 import _          from 'lodash';
 
 export default {
-    get () {
-        return get.apply(Permission, arguments);
+    get(...args) {
+        return get.apply(Permission, args);
     },
-    create (options) {
-        var p = new Permission();
+    create(options) {
+        const p = new Permission();
         _.extend(p, options);
 
-        return p.saveAsync().spread((p) => {
-            return p;
+        return p.saveAsync().spread((permission) => {
+            const result = permission;
+            return result;
         });
     },
-    update (id, options) {
-        var obj = {};
+    update(id, options) {
+        const obj = {};
         _.extend(obj, options);
 
         return Permission.findByIdAndUpdateAsync(id, obj);
     },
-    delete (id) {
+    delete(id) {
         return Permission.findByIdAndRemoveAsync(id);
     },
-    getById (id) {
-        return this.get({_id: id}, 1, 1);
+    getById(id) {
+        return this.get({ _id: id }, 1, 1);
     },
-    getByName (name) {
-        return this.get({name: name}, 1, 1);
+    getByName(name) {
+        return this.get({ name }, 1, 1);
     },
-    getAll () {
+    getAll() {
         return this.get({}, 10, 1);
-    }
+    },
 };

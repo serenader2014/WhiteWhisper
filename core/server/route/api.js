@@ -3,14 +3,10 @@ import apiController   from '../controller/api';
 // import brute           from '../middleware/brute';
 import checkPermission from '../middleware/check-permission';
 import checkId         from '../middleware/check-id';
-let api                = express();
+const api                = express();
 
 api.route('/login')
-    .post(/*brute({
-        limitCount: 5,
-        limitTime: 60*60*1000,
-        minWaitTime: 100*1000,
-    }), */apiController.login);
+    .post(apiController.login);
 
 api.route('/register')
     .post(apiController.register);
