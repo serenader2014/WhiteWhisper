@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "scripts": {
-    "start": "node index.js",
+    "start": "node bin/server.js",
     "lint": "eslint core/client/src core/server",
     "dev": "babel-node scripts/dev.js",
     "test": "mocha test/index.js",

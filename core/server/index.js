@@ -9,15 +9,15 @@ import validator    from 'express-validator';
 import mongoStore   from 'connect-mongo';
 import passport     from 'passport';
 
-import config       from './config';
-import log          from './core/server/helper/log';
-import initDB       from './core/server/helper/init-db';
-import route        from './core/server/route';
-// import brute        from './core/server/middleware/brute';
-import assets       from './core/server/middleware/assets';
-import notFound     from './core/server/middleware/404';
-import setCookie    from './core/server/middleware/set-cookie';
-import responseTime from './core/server/middleware/response-time';
+import config       from '../../config';
+import log          from './helper/log';
+import initDB       from './helper/init-db';
+import route        from './route';
+// import brute        from './middleware/brute';
+import assets       from './middleware/assets';
+import notFound     from './middleware/404';
+import setCookie    from './middleware/set-cookie';
+import responseTime from './middleware/response-time';
 
 export default function (env) {
     const app         = express();

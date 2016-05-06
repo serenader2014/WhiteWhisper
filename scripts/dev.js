@@ -4,7 +4,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpack              from 'webpack';
 import { resolve }          from 'path';
 import getWebpackConfig     from '../webpack.config.js';
-import app                  from '../app';
+import app                  from '../core/server';
 import { request, Agent }   from 'http';
 
 
