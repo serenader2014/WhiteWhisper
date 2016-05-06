@@ -12,7 +12,7 @@ function getEntry(env) {
         entry.push('webpack-hot-middleware/client');
     }
 
-    entry.push('./core/client/src/index.js');
+    entry.push('./core/client/src/app/index.js');
     return entry;
 }
 
@@ -45,7 +45,7 @@ function getPlugins(env) {
 
 function getLoaders(env) {
     const loaders = [{
-        test   : /\.js$/,
+        test   : /\.jsx?$/,
         include: resolve(__dirname, 'core/client/src'),
         loaders: ['babel-loader', 'eslint-loader'],
     }];
