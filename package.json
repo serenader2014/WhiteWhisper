@@ -6,7 +6,7 @@
     "start": "node bin/server.js",
     "lint": "eslint core/client/src core/server",
     "dev": "babel-node scripts/dev.js",
-    "test": "mocha test/index.js",
+    "test": "mocha --compilers js:babel-core/register test/index.js",
     "build": "babel-node scripts/build.js",
     "prebuild": "babel-node scripts/pre-build.js"
   },

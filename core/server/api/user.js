@@ -4,6 +4,7 @@ import  User      from '../model/user';
 import  get       from '../helper/get-data';
 
 export default {
+    model: User,
     get(...args) {
         return get.apply(User, args);
     },
@@ -11,10 +12,7 @@ export default {
         const user = new User();
         _.extend(user, options);
 
-        return user.saveAsync().spread((currentUser) => {
-            const result = currentUser;
-            return result;
-        });
+        return user.save();
     },
     update(id, options) {
         const obj = {};
@@ -49,7 +47,7 @@ export default {
                 user: user.email,
                 data: ip,
             });
-            return user.saveAsync();
+            return user.save();
         });
     },
     generatePassword(password) {

@@ -1,5 +1,7 @@
 import permissionApi from '../api/permission';
+import * as errorCode from '../../shared/constants/error-code';
 import log from '../helper/log';
+
 export default function (type, method) {
     return function checkPermission(req, res, next) {
         const user = req.user;
@@ -7,11 +9,7 @@ export default function (type, method) {
             if (user) {
                 return permissionApi.getById(user.permission.id).then((data) => {
                     if (!data.total) {
-                        throw new Error({
-                            code: -1,
-                            msg : '找不到权限数据。',
-                            data: user.permission.id,
-                        });
+                        return Promise.reject(errorCode.getError('权限'));
                     }
                     return data.data[0]._doc;
                 });
@@ -21,10 +19,7 @@ export default function (type, method) {
             if (permission[type][method]) {
                 next();
             } else {
-                res.status(401).json({
-                    code: -1,
-                    msg : '权限不足。',
-                });
+                res.status(401).json(errorCode.noPermission());
             }
         }).catch((err) => {
             res.json(err);

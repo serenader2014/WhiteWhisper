@@ -1,4 +1,6 @@
-import captchaApi from '../api/captcha';
+import captchaApi     from '../api/captcha';
+import successCode    from '../../shared/constants/success-code';
+import * as errorCode from '../../shared/constants/error-code';
 
 export default {
     generate(req, res) {
@@ -10,9 +12,9 @@ export default {
         const num    = req.body.captcha;
         const result = captchaApi.validate(req, num);
         if (result) {
-            res.json({ code: 0 });
+            res.json(successCode('验证成功'));
         } else {
-            res.json({ code: -1 });
+            res.json(errorCode.captchaError());
         }
     },
 };

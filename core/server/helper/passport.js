@@ -1,6 +1,8 @@
 import passportLocal from 'passport-local';
 import userApi       from '../api/user';
+import * as errorCode from '../../shared/constants/error-code';
 const LocalStrategy = passportLocal.Strategy;
+
 
 export default function (passport) {
     passport.serializeUser((user, done) => {
@@ -12,7 +14,7 @@ export default function (passport) {
             if (result.total) {
                 done(null, result.data[0]);
             } else {
-                done('user not found');
+                done(errorCode.userNotExist().msg);
             }
         }).catch((err) => {
             done(err);
@@ -48,10 +50,10 @@ export default function (passport) {
                 if (userApi.validatePassword(password, user.auth.local.password)) {
                     done(null, user);
                 } else {
-                    done(null, false, { message: 'Password incorrect.' });
+                    done(null, false, { message: errorCode.passwordError().msg });
                 }
             } else {
-                done(null, false, { message: 'User doesnt exist.' });
+                done(null, false, { message: errorCode.userNotExist().msg });
             }
         }).catch((err) => {
             done(err);

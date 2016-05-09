@@ -1,37 +1,39 @@
 /* jshint mocha:true */
 
-var should       = require('should');
-var loginTest    = require('./common/login')();
-var param        = require('./common/util').param;
-var categoryUrl  = '/api/category';
+/* eslint-disable no-unused-vars */
+import should       from 'should';
+import loginTest    from './common/login';
+import param        from './common/util';
+import * as errorCode from '../../core/shared/constants/error-code';
+const categoryUrl  = '/api/category';
 
-describe('create account', function () {
+loginTest = loginTest();
+
+describe('create account', () => {
     loginTest.register();
     loginTest.login();
-    var agent = loginTest.agent;
-    describe('category system test', function () {
-
-        it('should list the category', function (done) {
+    const agent = loginTest.agent;
+    describe('category system test', () => {
+        it('should list the category', (done) => {
             agent
                 .get(categoryUrl)
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     res.body.data.total.should.equal(1);
                     done();
                 });
         });
 
+        let tmpCategory = {};
+        const categoryName = 'test';
 
-        var tmpCategory = {};
-        var categoryName = 'test';
-
-        it('should create a category', function (done) {
+        it('should create a category', (done) => {
             agent
                 .post(categoryUrl)
-                .send({name: categoryName})
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .send({ name: categoryName })
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     res.body.data.name.should.equal(categoryName);
                     tmpCategory = res.body.data;
@@ -40,104 +42,100 @@ describe('create account', function () {
         });
 
 
-        it('should try to create duplicate category name', function (done) {
+        it('should try to create duplicate category name', (done) => {
             agent
                 .post(categoryUrl)
-                .send({name: categoryName})
-                .end(function (err, res) {
-                    if (err) {throw err;}
-                    res.body.code.should.equal(-5);
+                .send({ name: categoryName })
+                .end((err, res) => {
+                    if (err) { throw err; }
+                    res.body.code.should.equal(errorCode.categoryExist().code);
                     done();
                 });
         });
 
-        it('now it should have two category', function (done) {
+        it('now it should have two category', (done) => {
             agent
                 .get(categoryUrl)
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     res.body.data.total.should.equal(2);
                     done();
                 });
         });
 
-
-        it('should update the category', function (done) {
-            var newName = 'new name;';
+        it('should update the category', (done) => {
+            const newName = 'new name;';
             agent
-                .put(categoryUrl + '/' + tmpCategory._id)
+                .put(`${categoryUrl}/${tmpCategory._id}`)
                 .send({
-                    id: tmpCategory._id,
-                    name: newName
+                    id  : tmpCategory._id,
+                    name: newName,
                 })
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     res.body.data.name.should.equal(newName);
                     done();
                 });
         });
 
-
-        it('should delete the category', function (done) {
+        it('should delete the category', (done) => {
             agent
-                .delete(categoryUrl + '/' + tmpCategory._id)
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .delete(`${categoryUrl}/${tmpCategory._id}`)
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     done();
                 });
         });
 
-
-        it('now it should have only 1 category', function (done) {
+        it('now it should have only 1 category', (done) => {
             agent
                 .get(categoryUrl)
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     res.body.data.total.should.equal(1);
                     done();
                 });
         });
 
-
-        for (var i = 1; i < 20; i += 1) {
-            (function (i) {
-                var name = 'category name ' + i;
-                it('create multiple category ' + name, function (done) {
+        for (let count = 1; count < 20; count += 1) {
+            ((i) => {
+                const name = `category name ${i}`;
+                it(`create multiple category ${name}`, (done) => {
                     agent
                         .post(categoryUrl)
-                        .send({name: name})
-                        .end(function (err, res) {
-                            if (err) {throw err;}
+                        .send({ name })
+                        .end((err, res) => {
+                            if (err) { throw err; }
                             res.body.code.should.equal(0);
                             res.body.data.name.should.equal(name);
                             done();
                         });
                 });
-                it('now it should have ' + i + 1 + ' category', function (done) {
+                it(`now it should have ${i + 1} category'`, (done) => {
                     agent
                         .get(categoryUrl)
-                        .end(function (err, res) {
-                            if (err) {throw err;}
+                        .end((err, res) => {
+                            if (err) { throw err; }
                             res.body.code.should.equal(0);
                             res.body.data.total.should.equal(i + 1);
                             done();
                         });
                 });
-            })(i);
+            })(count);
         }
 
-        it('should return the correct data using pagination', function (done) {
+        it('should return the correct data using pagination', (done) => {
             agent
-                .get(categoryUrl + '?' + param({
-                    page: 1,
-                    amount: 10
-                }))
-                .end(function (err, res) {
-                    if (err) {throw err;}
+                .get(`${categoryUrl}?${param({
+                    page  : 1,
+                    amount: 10,
+                })}`)
+                .end((err, res) => {
+                    if (err) { throw err; }
                     res.body.code.should.equal(0);
                     res.body.data.total.should.equal(20);
                     res.body.data.page.should.equal(1);
@@ -146,6 +144,5 @@ describe('create account', function () {
                     done();
                 });
         });
-
     });
 });

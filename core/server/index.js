@@ -84,7 +84,7 @@ export default function (env) {
         app.use(notFound());
 
 
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             app.listen(app.get('port'), config.host, () => {
                 log.info(`Server now listen on ${config.host} : ${app.get('port')}`);
                 log.info(`Server is running on ${app.get('env')} envriroment.`);
@@ -94,5 +94,6 @@ export default function (env) {
     }).catch((err) => {
         log.error(err.message, err.stack);
         process.exit(1);
+        throw err;
     });
 }

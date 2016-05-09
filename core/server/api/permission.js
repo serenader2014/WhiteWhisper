@@ -10,10 +10,7 @@ export default {
         const p = new Permission();
         _.extend(p, options);
 
-        return p.saveAsync().spread((permission) => {
-            const result = permission;
-            return result;
-        });
+        return p.save();
     },
     update(id, options) {
         const obj = {};

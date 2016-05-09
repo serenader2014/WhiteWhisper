@@ -12,20 +12,17 @@ export default function (conditions = {}, amount = 10, page = 1) {
         targetPage = 1;
     }
     /* eslint-disable eqeqeq */
-    tmpObj = _.pick(conditions, (value) => value != null);
+    tmpObj = _.pickBy(conditions, value => value != null);
     const targetData = this.find(tmpObj);
     return targetData.countAsync().then((count) => {
         total = count;
 
         return targetData.sort({ _id: -1 }).skip((targetPage - 1) * targetAmount)
             .limit(targetAmount).execAsync('find');
-    }).then((data) => {
-        const result = {
-            data,
-            total : +total,
-            page  : +targetPage,
-            amount: +targetAmount,
-        };
-        return result;
-    });
+    }).then(data => ({
+        data,
+        total : +total,
+        page  : +targetPage,
+        amount: +targetAmount,
+    }));
 }

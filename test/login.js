@@ -40,7 +40,7 @@ describe('User system unit test: login and register', function () {
             .post(register)
             .send({
                 email: 'fakeemail',
-                password: 'fakeemail'
+                password: 'fakeemail',
             })
             .end(function (err, res) {
                 if (err) {
@@ -55,7 +55,7 @@ describe('User system unit test: login and register', function () {
             .post(register)
             .send({
                 email: 'test@test.com',
-                password: '1'
+                password: '1',
             })
             .end(function (err, res) {
                 if (err) {
@@ -85,7 +85,7 @@ describe('User system unit test: login and register', function () {
             .post(login)
             .send({
                 email: user.email,
-                password: 'wrongpassword'
+                password: 'wrongpassword',
             })
             .end(function (err, res) {
                 if (err) {
@@ -118,7 +118,7 @@ describe('User system unit test: login and register', function () {
             .post(register)
             .send(user)
             .end(function (err, res) {
-                if (err) {throw err;}
+                if (err) { throw err; }
                 res.body.code.should.equal(-1);
                 done();
             });
@@ -130,7 +130,7 @@ describe('User system unit test: login and register', function () {
         agent
             .get(logout)
             .end(function (err, res) {
-                if (err) {throw err;}
+                if (err) { throw err; }
                 res.body.code.should.equal(-1);
                 done();
             });

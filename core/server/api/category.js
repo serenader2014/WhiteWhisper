@@ -12,10 +12,10 @@ export default {
         let category;
         _.extend(obj, options);
 
-        return Category.findByIdAndUpdateAsync(id, obj, { new: true }).then((c) => {
+        return Category.findByIdAndUpdateAsync(id, obj, { new: true }).then(c => {
             category = c;
             return postApi.get({ 'category.id': id });
-        }).then((data) => {
+        }).then(data => {
             /* eslint-disable consistent-return */
             if (!data.total) {
                 return;
@@ -24,7 +24,7 @@ export default {
                 /* eslint-disable no-param-reassign */
                 const result = p.then(() => {
                     post.category.name = options.name;
-                    return post.saveAsync();
+                    return post.save();
                 });
                 return result;
             }, Promise.resolve());
@@ -37,10 +37,7 @@ export default {
         const category = new Category();
         _.extend(category, options);
 
-        return category.saveAsync().spread((c) => {
-            const result = c;
-            return result;
-        });
+        return category.save();
     },
     delete(id) {
         return Category.findByIdAndRemoveAsync(id);
@@ -48,13 +45,13 @@ export default {
     increaseCount(id) {
         return Category.findByIdAsync(id).then((c) => {
             c.count = c.count + 1;
-            return c.saveAsync();
+            return c.save();
         });
     },
     decreaseCount(id) {
         return Category.findByIdAsync(id).then((c) => {
             c.count = c.count - 1;
-            return c.saveAsync();
+            return c.save();
         });
     },
     getById(id) {

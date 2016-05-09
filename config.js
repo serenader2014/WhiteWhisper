@@ -10,15 +10,18 @@ const config = {
     appRoot          : __dirname,
     trustProxy       : true,
     defaultBlogConfig: {
-        blogName       : 'White Whisper',
-        blogDescription: 'Another blog system',
-        blogLogo       : 'logo.png',
-        blogFavicon    : 'favicon.ico',
-        register       : true,
-        theme          : 'white',
-        requestAmount  : 10,
-        update         : new Date(),
-        background     : '',
+        blogName             : 'White Whisper',
+        blogDescription      : 'Another blog system',
+        blogLogo             : 'logo.png',
+        blogFavicon          : 'favicon.ico',
+        register             : true,
+        theme                : 'white',
+        requestAmount        : 10,
+        update               : new Date(),
+        background           : '',
+        hasInitialized       : false,
+        defaultUserPermission: 'admin',
+        language             : 'zh',
     },
     defaultCategory: {
         name : '默认分类',
@@ -104,7 +107,6 @@ const config = {
             delete: false,
         },
     },
-    defaultUserPermission: 'admin',
 };
 global.config = config;
 export default config;

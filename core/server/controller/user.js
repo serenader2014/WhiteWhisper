@@ -1,9 +1,11 @@
-import _       from 'lodash';
-import userApi from '../api/user';
-import log     from '../helper/log';
+import _              from 'lodash';
+import userApi        from '../api/user';
+import log            from '../helper/log';
+import successCode    from '../../shared/constants/success-code';
+import * as errorCode from '../../shared/constants/error-code';
 
 const getInfo = (req, res) => {
-    const query = req.query;
+    const { query } = req;
     const getUser = () => {
         if (query.id) {
             return userApi.get({ _id: query.id });
@@ -20,14 +22,15 @@ const getInfo = (req, res) => {
         });
     };
     let targetUser = {};
-    getUser().then((data) => {
+    getUser().then(data => {
         if (data.total) {
             targetUser = data.data[0];
-            res.json({ code: 0, data: _.pick(targetUser, ['_id', 'email', 'username', 'social']) });
+            res.json(successCode('获取用户信息成功',
+                _.pick(targetUser, ['_id', 'email', 'username', 'social'])));
         } else {
-            res.json({ code: -5, data: null, msg: '找不到用户' });
+            res.json(errorCode.getError('用户'));
         }
-    }).catch((err) => {
+    }).catch(err => {
         log.error(err);
         res.json({ code: 1, msg: err.message });
     });

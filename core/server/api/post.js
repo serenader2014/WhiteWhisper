@@ -10,12 +10,10 @@ export default {
     create(options) {
         const post = new Post();
         _.extend(post, options);
-        return post.saveAsync().spread((currentPost) => {
+        return post.save().then(currentPost => {
             if (currentPost.status === 'published') {
-                return categoryApi.increaseCount(currentPost.category._id).then(() => {
-                    const result = currentPost;
-                    return result;
-                });
+                /* eslint-disable no-underscore-dangle */
+                return categoryApi.increaseCount(currentPost.category._id).then(() => currentPost);
             }
             return currentPost;
         });

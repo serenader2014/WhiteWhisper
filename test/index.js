@@ -1,27 +1,28 @@
 /* jshint mocha:true */
 
-var mongoose = require('mongoose');
-var fs       = require('fs');
-var path     = require('path');
+import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
 
-describe('Drop the test database', function () {
-    before(function (done) {
+describe('Drop the test database', () => {
+    before(function beforeTask(done) {
         this.timeout(20000);
-        mongoose.connect('mongodb://127.0.0.1/whitewhispertest', function () {
+        mongoose.connect('mongodb://127.0.0.1/whitewhispertest', () => {
             mongoose.connection.db.dropDatabase();
-            mongoose.connection.close(function () {
+            mongoose.connection.close(() => {
+                /* eslint-disable global-require */
                 require('babel-core/register');
-                require('../app.js').default('test').then(function () {
+                require('../core/server').default('test').then(() => {
                     done();
                 });
             });
         });
     });
-    var files = fs.readdirSync(__dirname);
+    const files = fs.readdirSync(__dirname);
 
-    files.forEach(function (file) {
-        var stat = fs.statSync(path.resolve(__dirname,  file));
-        if (stat.isFile() && path.extname(file) === '.js' && file !== 'index.js'){
+    files.forEach((file) => {
+        const stat = fs.statSync(path.resolve(__dirname, file));
+        if (stat.isFile() && path.extname(file) === '.js' && file !== 'index.js') {
             require(path.join(__dirname, file));
         }
     });
