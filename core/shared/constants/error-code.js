@@ -42,3 +42,5 @@ export const idFormatError = type => ({ code: -13, msg: `${type || ''}ID格式�
 export const noPermission = () => ({ code: -14, msg: '权限不足' });
 
 export const postStatusError = () => ({ code: -15, msg: '文章状态不合法。' });
+
+export const alreadyLogout = () => ({ code: -16, msg: '已经退出了' });

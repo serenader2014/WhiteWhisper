@@ -1,14 +1,18 @@
 /* jshint mocha:true */
 
 require('should');
-var request     = require('supertest');
-var _           = require('lodash');
-var loginTest   = require('./common/login')();
-var url         = 'http://localhost:10011';
-var postUrl     = '/api/post';
-var categoryUrl = '/api/category';
-var loginUrl    = '/api/login';
-var post        = {
+import request        from 'supertest';
+import _              from 'lodash';
+import LoginTest      from './common/login';
+import * as errorCode from '../core/shared/constants/error-code';
+
+const loginTest = LoginTest();
+
+const url         = 'http://localhost:10011';
+const postUrl     = '/api/post';
+const categoryUrl = '/api/category';
+const loginUrl    = '/api/login';
+const post        = {
     title   : 'test title',
     slug    : 'test title slug',
     markdown: '# test markdown',
@@ -16,23 +20,23 @@ var post        = {
     tags    : 'tags, tags',
     status  : 'published',
 };
-var newPost = {
+const newPost = {
     title   : 'new title',
     markdown: '## new title',
     html    : '<h2>new title</h2>',
 };
 
-describe('create account', function () {
+describe('create account', () => {
     loginTest.register();
     loginTest.login();
-    var agent = loginTest.agent;
+    const agent = loginTest.agent;
 
 
-    it('should list post', function (done) {
+    it('should list post', (done) => {
         agent
             .get(postUrl)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(0);
                 done();
@@ -40,34 +44,34 @@ describe('create account', function () {
     });
 
 
-    var category;
-    it('should get the a category', function (done) {
+    let category;
+    it('should get the a category', (done) => {
         agent
             .get(categoryUrl)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 category = res.body.data.data[0];
                 done();
             });
     });
 
-    it('should create new post', function (done) {
+    it('should create new post', (done) => {
         agent
             .post(postUrl)
-            .send(_.extend(post, {category: category._id}))
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .send(_.extend(post, { category: category._id }))
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 done();
             });
     });
 
-    it('should increase the category post count', function (done) {
+    it('should increase the category post count', (done) => {
         agent
-            .get(categoryUrl + '/' + category._id)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .get(`${categoryUrl}/${category._id}`)
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.count.should.equal(category.count + 1);
                 done();
@@ -75,12 +79,12 @@ describe('create account', function () {
     });
 
 
-    var tmpPost;
-    it('should list post', function (done) {
+    let tmpPost;
+    it('should list post', (done) => {
         agent
             .get(postUrl)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(1);
                 res.body.data.data[0].title.should.equal(post.title);
@@ -89,23 +93,23 @@ describe('create account', function () {
             });
     });
 
-    it('should get single post', function (done) {
+    it('should get single post', (done) => {
         agent
-            .get(postUrl + '/' + tmpPost._id)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .get(`${postUrl}/${tmpPost._id}`)
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.title.should.equal(tmpPost.title);
                 done();
             });
     });
 
-    it('should update post', function (done) {
+    it('should update post', (done) => {
         agent
-            .put(postUrl + '/' + tmpPost._id)
+            .put(`${postUrl}/${tmpPost._id}`)
             .send(_.extend({}, tmpPost, newPost))
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.title.should.equal(newPost.title);
                 res.body.data.markdown.should.equal(newPost.markdown);
@@ -114,11 +118,11 @@ describe('create account', function () {
             });
     });
 
-    it('should get post history', function (done) {
+    it('should get post history', (done) => {
         agent
-            .get(postUrl + '/' + tmpPost._id + '?history=true')
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .get(`${postUrl}/${tmpPost._id}?history=true`)
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(1);
                 res.body.data.data[0].title.should.equal(tmpPost.title);
@@ -126,33 +130,33 @@ describe('create account', function () {
             });
     });
 
-    it('should not show the history in the post list', function (done) {
+    it('should not show the history in the post list', (done) => {
         agent
             .get(postUrl)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(1);
                 done();
             });
     });
 
-    it('should save a post draft', function (done) {
+    it('should save a post draft', (done) => {
         agent
-            .put(postUrl + '/' + tmpPost._id)
-            .send(_.extend({}, tmpPost, newPost, {status: 'draft'}))
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .put(`${postUrl}/${tmpPost._id}`)
+            .send(_.extend({}, tmpPost, newPost, { status: 'draft' }))
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 done();
             });
     });
 
-    it('should have two post history now', function (done) {
+    it('should have two post history now', (done) => {
         agent
-            .get(postUrl + '/' + tmpPost._id + '?history=true')
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .get(`${postUrl}/${tmpPost._id}?history=true`)
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(2);
                 res.body.data.data[0].status.should.equal('draft');
@@ -160,44 +164,46 @@ describe('create account', function () {
             });
     });
 
-    it('should not change the previous post content', function (done) {
+    it('should not change the previous post content', (done) => {
         agent
-            .get(postUrl + '/' + tmpPost._id)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .get(`${postUrl}/${tmpPost._id}`)
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.status.should.equal(tmpPost.status);
                 done();
             });
     });
 
-    it('should reject the guest to view the post history', function (done) {
+    it('should reject the guest to view the post history', (done) => {
         request(url)
-            .get(postUrl + '/' + tmpPost._id + '?history=true')
-            .end(function (err, res) {
-                if (err) {throw err;}
-                res.body.code.should.equal(-1);
-                done(); 
+            .get(`${postUrl}/${tmpPost._id}?history=true`)
+            .end((err, res) => {
+                if (err) { throw err; }
+                res.body.code.should.equal(errorCode.noPermission().code);
+                done();
             });
     });
 });
 
-describe('multiple user and post test', function () {
-    var categoryList = [];
+/* eslint-disable global-require */
 
-    var lt = require('./common/login')();
+describe('multiple user and post test', () => {
+    const categoryList = [];
+
+    const lt = require('./common/login')();
     lt.register();
     lt.login();
-    var a = lt.agent;
-    for (var o = 0; o < 20; o += 1) {
-        (function (i) {
-            var name = require('./common/login').randomString(6);
-            it('create multiple category ' + name, function (done) {
+    const a = lt.agent;
+    for (let o = 0; o < 20; o += 1) {
+        (() => {
+            const name = require('./common/login').randomString(6);
+            it(`create multiple category ${name}`, (done) => {
                 a
                     .post(categoryUrl)
-                    .send({name: name})
-                    .end(function (err, res) {
-                        if (err) {throw err;}
+                    .send({ name })
+                    .end((err, res) => {
+                        if (err) { throw err; }
                         res.body.code.should.equal(0);
                         res.body.data.name.should.equal(name);
                         categoryList.push(res.body.data);
@@ -208,69 +214,71 @@ describe('multiple user and post test', function () {
     }
     lt.logout();
 
-    var previousPostNumber = 0;
+    let previousPostNumber = 0;
 
-    it('should get current post list', function (done) {
+    it('should get current post list', (done) => {
         request(url)
             .get(postUrl)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 previousPostNumber = res.body.data.total;
                 done();
             });
     });
 
-    var totalPost = [];
-    var totalUser = [];
-    for (var i = 0; i < 20; i += 1) {
-        var loginTest    = require('./common/login')();
-        var randomString = require('./common/login').randomString;
-        totalUser.push(loginTest.randomUser);
-        loginTest.register();
-        loginTest.login();
-        var agent        = loginTest.agent;
-        (function (agent) {
-            var count        = Math.floor(Math.random() * 5);
-            for (var j = 0; j < count; j += 1) {
-                it('create post', function (done) {
-                    var category     = categoryList[Math.floor(Math.random() * categoryList.length)];
-                    var p         = _.extend({}, post, {title: randomString(10), category: category._id});
+    const totalPost = [];
+    const totalUser = [];
+    for (let i = 0; i < 20; i += 1) {
+        const anotherLogin    = require('./common/login')();
+        const randomString = require('./common/login').randomString;
+        totalUser.push(anotherLogin.randomUser);
+        anotherLogin.register();
+        anotherLogin.login();
+        const loginAgent = anotherLogin.agent;
+        ((agent) => {
+            const count        = Math.floor(Math.random() * 5);
+            for (let j = 0; j < count; j += 1) {
+                it('create post', (done) => {
+                    const category     = categoryList[Math.floor(Math.random() * categoryList.length)];
+                    const p         = _.extend({}, post, { title: randomString(10), category: category._id });
                     agent
                         .post(postUrl)
                         .send(p)
-                        .end(function (err, res) {
-                            if (err) {throw err;}
+                        .end((err, res) => {
+                            if (err) { throw err; }
                             res.body.code.should.equal(0);
                             totalPost.push(res.body.data);
                             done();
                         });
                 });
             }
-        })(agent);
-        loginTest.logout();
+        })(loginAgent);
+        anotherLogin.logout();
     }
 
-    it('should list the total post', function (done) {
+    it('should list the total post', (done) => {
         request(url)
             .get(postUrl)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(previousPostNumber + totalPost.length);
                 done();
             });
     });
 
-    for (var j = 0; j < totalUser.length; j += 1) {
-        (function (current) {
-            it('should filter post list by author', function (done) {
-                var user = totalUser[current];
-                var postNum = _.filter(totalPost, function (item) {return item.author.username === user.email; }).length;
+    for (let j = 0; j < totalUser.length; j += 1) {
+        ((current) => {
+            it('should filter post list by author', (done) => {
+                const user = totalUser[current];
+                const postNum = _.filter(totalPost,
+                    item => item.author.username === user.email
+                ).length;
                 request(url)
-                    .get(postUrl + '?author=' + user.email)
-                    .end(function (err, res) {
-                        if (err) {throw err;}
+                    .get(`${postUrl}?author=${user.email}`)
+                    .end((err, res) => {
+                        if (err) { throw err; }
                         res.body.code.should.equal(0);
                         res.body.data.total.should.equal(postNum);
                         done();
@@ -279,54 +287,60 @@ describe('multiple user and post test', function () {
         })(j);
     }
 
-    var currentUser = totalUser[0];
-    var loginAgent = request.agent(url);
+    const currentUser = totalUser[0];
+    const loginAgent = request.agent(url);
 
-    it('should login to user ' + currentUser.email, function (done) {
+    it(`should login to user ${currentUser.email}`, (done) => {
         loginAgent
             .post(loginUrl)
             .send(currentUser)
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 done();
             });
     });
 
-    it('should filter logined user post', function (done) {
+    it('should filter logined user post', (done) => {
 
-        var postNum = _.filter(totalPost, function (item) {return item.author.username === currentUser.email;}).length;
+        const postNum = _.filter(totalPost, item =>
+            item.author.username === currentUser.email
+        ).length;
         loginAgent
-            .get(postUrl + '?type=mine')
-            .end(function (err, res) {
-                if (err) {throw err;}
+            .get(`${postUrl}?type=mine`)
+            .end((err, res) => {
+                if (err) { throw err; }
                 res.body.code.should.equal(0);
                 res.body.data.total.should.equal(postNum);
                 done();
             });
     });
 
-    for (var k = 0; k < 20; k += 1) {
-        (function (current) {
-            it('should filter post list by category', function (done) {
-                var category = categoryList[current];
-                var postNum = _.filter(totalPost, function (item) {return item.category.name === category.name;}).length;
+    for (let k = 0; k < 20; k += 1) {
+        ((current) => {
+            it('should filter post list by category', (done) => {
+                const category = categoryList[current];
+                const postNum = _.filter(totalPost,
+                    item => item.category.name === category.name
+                ).length;
                 request(url)
-                    .get(postUrl + '?category=' + category._id)
-                    .end(function (err, res) {
-                        if (err) {throw err;}
+                    .get(`${postUrl}?category=${category._id}`)
+                    .end((err, res) => {
+                        if (err) { throw err; }
                         res.body.code.should.equal(0);
                         res.body.data.total.should.equal(postNum);
                         done();
                     });
             });
-            it('check category count', function (done) {
-                var category = categoryList[current];
-                var postNum = _.filter(totalPost, function (item) {return item.category.name === category.name;}).length;
+            it('check category count', (done) => {
+                const category = categoryList[current];
+                const postNum = _.filter(totalPost,
+                    item => item.category.name === category.name
+                ).length;
                 request(url)
-                    .get(categoryUrl + '/' + category._id)
-                    .end(function (err, res) {
-                        if (err) {throw err;}
+                    .get(`${categoryUrl}/${category._id}`)
+                    .end((err, res) => {
+                        if (err) { throw err; }
                         res.body.code.should.equal(0);
                         res.body.data.count.should.equal(category.count + postNum);
                         done();
@@ -334,5 +348,4 @@ describe('multiple user and post test', function () {
             });
         })(k);
     }
-
 });

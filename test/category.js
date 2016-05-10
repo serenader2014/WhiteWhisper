@@ -2,12 +2,12 @@
 
 /* eslint-disable no-unused-vars */
 import should       from 'should';
-import loginTest    from './common/login';
+import login    from './common/login';
 import param        from './common/util';
-import * as errorCode from '../../core/shared/constants/error-code';
+import * as errorCode from '../core/shared/constants/error-code';
 const categoryUrl  = '/api/category';
 
-loginTest = loginTest();
+const loginTest = login();
 
 describe('create account', () => {
     loginTest.register();

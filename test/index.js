@@ -11,7 +11,6 @@ describe('Drop the test database', () => {
             mongoose.connection.db.dropDatabase();
             mongoose.connection.close(() => {
                 /* eslint-disable global-require */
-                require('babel-core/register');
                 require('../core/server').default('test').then(() => {
                     done();
                 });

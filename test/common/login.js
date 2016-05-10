@@ -11,7 +11,7 @@ const login       = '/api/login';
 const currentUser = '/api/user';
 const logout      = '/api/logout';
 
-const randomString = (length) => 'abcdefghijklmnopqrstuvwxyz'
+const randomString = (length) => ('abcdefghijklmnopqrstuvwxyz').split('')
     .sort(() => Math.random() - 0.5)
     .slice(0, length).join('');
 
