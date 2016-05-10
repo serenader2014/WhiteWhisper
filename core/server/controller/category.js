@@ -24,7 +24,7 @@ export default {
             }
         }
         categoryApi.get(conditions, amount, page)
-            .then(data => successCode('获取列表成功', data))
+            .then(data => res.json(successCode('获取列表成功', data)))
             .catch(err => {
                 res.json({ code: -1, err });
                 log.error(err);
@@ -55,7 +55,7 @@ export default {
                 return Promise.reject(errorCode.categoryExist());
             }
             return categoryApi.create({ name });
-        }).then(category => successCode('创建分类成功', category)).catch((err) => {
+        }).then(category => res.json(successCode('创建分类成功', category))).catch((err) => {
             res.json({ code: err.code || 1, error: err.message });
             log.error(err);
         });
@@ -70,7 +70,7 @@ export default {
         if (checkBodyError(req, res)) { return; }
 
         categoryApi.update(id, { name })
-            .then(category => successCode('更新分类成功', category))
+            .then(category => res.json(successCode('更新分类成功', category)))
             .catch((err) => {
                 res.json({ code: err.code || 1, error: err });
                 log.error(err);
@@ -88,7 +88,7 @@ export default {
                 return Promise.reject(errorCode.categoryNotEmpty());
             }
             return categoryApi.delete(id);
-        }).then(() => successCode('删除分类成功')).catch(err => {
+        }).then(() => res.json(successCode('删除分类成功'))).catch(err => {
             res.json({ code: err.code || 1, error: err.message || err });
             log.error(err);
         });

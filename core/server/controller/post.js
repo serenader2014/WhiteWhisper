@@ -75,7 +75,7 @@ const list           = (req, res) => {
         'category._id'   : category,
         _id              : idSort,
         isHistory        : false,
-    }, amount, page).then(data => successCode('获取文章列表成功', data)).catch((err) => {
+    }, amount, page).then(data => res.json(successCode('获取文章列表成功', data))).catch((err) => {
         res.json({ code: 1, msg: err.message });
         log.error(err);
     });
@@ -104,9 +104,9 @@ const getPost = (req, res) => {
                 return postApi.get({
                     isHistory: true,
                     original : id,
-                }, amount, page).then(posts => successCode('获取文章历史记录成功', posts));
+                }, amount, page).then(posts => res.json(successCode('获取文章历史记录成功', posts)));
             }
-            successCode('获取文章成功', post);
+            res.json(successCode('获取文章成功', post));
         } else {
             if (history) {
                 res.json(errorCode.noPermission());
@@ -208,7 +208,7 @@ const update = (req, res) => {
                 }).then(() => post);
             }
             return Promise.reject(errorCode.postStatusError());
-        }).then((post) => successCode('文章更新成功', post)).catch((err) => {
+        }).then((post) => res.json(successCode('文章更新成功', post))).catch((err) => {
             res.json({ code: err.code || 1, error: err.message });
             log.error(err);
         });
@@ -259,7 +259,7 @@ const create = (req, res) => {
             excerpt  : htmlToText.fromString(html).substring(0, 350),
             isHistory: false,
         });
-    }).then((post) => successCode('文章创建成功', post)).catch((err) => {
+    }).then((post) => res.json(successCode('文章创建成功', post))).catch((err) => {
         res.json({ code: err.code || 1, error: err.message });
         log.error(err);
     });
@@ -276,7 +276,7 @@ const del = (req, res) => {
     postApi.getById(id).then(data => {
         if (!data.total) { return Promise.reject(errorCode.getError('文章')); }
         return postApi.delete(id);
-    }).then(() => successCode('文章删除成功')).catch((err) => {
+    }).then(() => res.json(successCode('文章删除成功'))).catch((err) => {
         res.json({ code: err.code || 1, error: err.message });
         log.error(err);
     });

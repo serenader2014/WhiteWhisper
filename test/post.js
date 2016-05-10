@@ -191,7 +191,7 @@ describe('create account', () => {
 describe('multiple user and post test', () => {
     const categoryList = [];
 
-    const lt = require('./common/login')();
+    const lt = require('./common/login').default();
     lt.register();
     lt.login();
     const a = lt.agent;
@@ -230,7 +230,7 @@ describe('multiple user and post test', () => {
     const totalPost = [];
     const totalUser = [];
     for (let i = 0; i < 20; i += 1) {
-        const anotherLogin    = require('./common/login')();
+        const anotherLogin    = require('./common/login').default();
         const randomString = require('./common/login').randomString;
         totalUser.push(anotherLogin.randomUser);
         anotherLogin.register();
@@ -240,8 +240,8 @@ describe('multiple user and post test', () => {
             const count        = Math.floor(Math.random() * 5);
             for (let j = 0; j < count; j += 1) {
                 it('create post', (done) => {
-                    const category     = categoryList[Math.floor(Math.random() * categoryList.length)];
-                    const p         = _.extend({}, post, { title: randomString(10), category: category._id });
+                    const category = categoryList[Math.floor(Math.random() * categoryList.length)];
+                    const p        = _.extend({}, post, { title: randomString(10), category: category._id });
                     agent
                         .post(postUrl)
                         .send(p)
@@ -302,7 +302,6 @@ describe('multiple user and post test', () => {
     });
 
     it('should filter logined user post', (done) => {
-
         const postNum = _.filter(totalPost, item =>
             item.author.username === currentUser.email
         ).length;

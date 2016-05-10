@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 import should  from 'should';
 import request from 'supertest';
-import getError from '../../core/shared/constants/error-code';
+import * as errorCode from '../../core/shared/constants/error-code';
 
 const url         = 'http://localhost:10011';
 const register    = '/api/register';
@@ -11,7 +11,7 @@ const login       = '/api/login';
 const currentUser = '/api/user';
 const logout      = '/api/logout';
 
-const randomString = (length) => ('abcdefghijklmnopqrstuvwxyz').split('')
+export const randomString = (length) => ('abcdefghijklmnopqrstuvwxyz').split('')
     .sort(() => Math.random() - 0.5)
     .slice(0, length).join('');
 
@@ -85,12 +85,10 @@ export default () => {
                 .get(currentUser)
                 .end((err, res) => {
                     if (err) { throw err; }
-                    res.body.code.should.equal(getError().code);
+                    res.body.code.should.equal(errorCode.getError().code);
                     done();
                 });
         });
     };
     return obj;
 };
-
-module.exports.randomString = randomString;

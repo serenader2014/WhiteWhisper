@@ -1,9 +1,9 @@
 /* jshint mocha:true */
 
 /* eslint-disable no-unused-vars */
-import should       from 'should';
-import login    from './common/login';
-import param        from './common/util';
+import should         from 'should';
+import login          from './common/login';
+import { param }      from './common/util';
 import * as errorCode from '../core/shared/constants/error-code';
 const categoryUrl  = '/api/category';
 

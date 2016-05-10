@@ -23,7 +23,7 @@ describe('User system unit test: login and register', () => {
                 if (err) {
                     throw err;
                 }
-                res.body.code.should.equal(errorCode.emailNotExist().code);
+                res.body.code.should.equal(errorCode.authError().code);
                 done();
             });
     });
@@ -94,7 +94,7 @@ describe('User system unit test: login and register', () => {
                 if (err) {
                     throw err;
                 }
-                res.body.code.should.equal(errorCode.passwordError().code);
+                res.body.code.should.equal(errorCode.authError().code);
                 done();
             });
     });
@@ -134,7 +134,7 @@ describe('User system unit test: login and register', () => {
             .get(logout)
             .end((err, res) => {
                 if (err) { throw err; }
-                res.body.code.should.equal(errorCode.alreadyLogout().code);
+                res.body.code.should.equal(errorCode.notLogin().code);
                 done();
             });
     });
