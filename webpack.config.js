@@ -1,9 +1,9 @@
-import webpack           from 'webpack';
+import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import { resolve }         from 'path';
+import { resolve } from 'path';
 
-const devEnv            = 'development';
-const prodEnv           = 'production';
+const devEnv = 'development';
+const prodEnv = 'production';
 
 function getEntry(env) {
     const entry = [];
@@ -12,7 +12,7 @@ function getEntry(env) {
         entry.push('webpack-hot-middleware/client');
     }
 
-    entry.push('./core/client/src/app/index.js');
+    entry.push('./client/app/index.js');
     return entry;
 }
 
@@ -46,7 +46,7 @@ function getPlugins(env) {
 function getLoaders(env) {
     const loaders = [{
         test   : /\.jsx?$/,
-        include: resolve(__dirname, 'core/client/src'),
+        include: resolve(__dirname, '/client'),
         loaders: ['babel-loader', 'eslint-loader'],
     }];
 
@@ -72,7 +72,7 @@ export default function getWebpackConfig(env) {
         noInfo : true,
         entry  : getEntry(env),
         output : {
-            path      : resolve(__dirname, 'core/client/build'),
+            path      : resolve(__dirname, 'client/'),
             publicPath: '',
             filename  : 'bundle.js',
         },

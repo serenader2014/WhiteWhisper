@@ -1,16 +1,15 @@
-import browserSync          from 'browser-sync';
+import browserSync from 'browser-sync';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import webpack              from 'webpack';
-import { resolve }          from 'path';
-import getWebpackConfig     from '../webpack.config.js';
-import app                  from '../core/server';
-import { request, Agent }   from 'http';
-
+import webpack from 'webpack';
+import { resolve } from 'path';
+import getWebpackConfig from '../webpack.config.js';
+import app from '../core/server';
+import { request, Agent } from 'http';
 
 const webpackConfig = getWebpackConfig('development');
-const bundler       = webpack(webpackConfig);
-const agent         = new Agent({
+const bundler = webpack(webpackConfig);
+const agent = new Agent({
     maxSockets: 100000,
 });
 
@@ -43,7 +42,7 @@ const proxyApi = (req, res, next) => {
 app().then(() => {
     browserSync({
         server: {
-            baseDir: resolve(__dirname, '../core/client/src'),
+            baseDir: resolve(__dirname, '../client/'),
             middleware: [
                 webpackDevMiddleware(bundler, {
                     publicPath: webpackConfig.output.publicPath,
@@ -55,7 +54,7 @@ app().then(() => {
             ],
         },
         files: [
-            'core/client/src/*.html',
+            'client/*.html',
         ],
         port: 7777,
         ui: {
