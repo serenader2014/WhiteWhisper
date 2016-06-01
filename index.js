@@ -6,21 +6,22 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import validator from 'express-validator';
 
-import log from '../utils/logger';
-import init from '../utils/init';
-import config from '../config';
+import log from './utils/logger';
+import init from './utils/init';
+import config from './config';
 
 global.Promise = Promise;
 
 export default init.then(() => {
     const app = express();
+    const appConfig = config[process.NODE_ENV || 'development'];
 
     app.use(logger());
     app.use(cookieParser());
     app.use(bodyParser());
 
     return new Promise((resolve) => {
-        app.listen(config.port, err => {
+        app.listen(appConfig.port, appConfig.host, err => {
             if (err) {
                 log.error(err);
                 process.exit(1);
