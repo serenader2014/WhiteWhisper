@@ -28,27 +28,6 @@ function dependencyCheck() {
     process.exit(exitsCode.DEPENDENCIES_MISSING);
 }
 
-function mongodbCheck() {
-    const mongoose = require('mongoose');
-    const env = process.env.NODE_ENV || config.env;
-    const {
-        user,
-        password,
-        host,
-        port,
-        database,
-    } = config[env].db;
-    const auth = user && password ? `${user}:${password}@` : '';
-    const dbUrl = `mongodb://${auth}${host}:${port}/${database}`;
-
-    return mongoose.connect(dbUrl, err => {
-        if (err) {
-            console.error(`connect to mongoDB failed: ${err.message}`);
-            process.exit(exitsCode.DB_CONNECT_FAIL);
-        }
-    });
-}
-
 function envCheck() {
     const env = process.env.NODE_ENV || config.env;
 
@@ -61,5 +40,4 @@ function envCheck() {
 export default function startUpCheck() {
     dependencyCheck();
     envCheck();
-    return mongodbCheck();
 }

@@ -1,2 +1,3 @@
 require('babel-core/register');
-require('../utils/startup-check').default().then(require('../index.js').default);
+require('../utils/startup-check').default();
+require('../index.js').default;
