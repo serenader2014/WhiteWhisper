@@ -1,19 +1,17 @@
-import schemas from './schemas';
 import knex from './connection';
 
-function createTable(tableName, schema) {
+export default function createTable(tableName, schema) {
     return knex.schema.createTableIfNotExists(tableName, table => {
         Object.keys(schema).forEach(key => {
             let column;
             const columnSpec = schema[key];
 
-            // creation distinguishes between text with fieldtype, string with maxlength and all others
             if (columnSpec.type === 'text' && columnSpec.hasOwnProperty('fieldtype')) {
-                column = table[columnSpec.type](columnname, columnSpec.fieldtype);
+                column = table[columnSpec.type](key, columnSpec.fieldtype);
             } else if (columnSpec.type === 'string' && columnSpec.hasOwnProperty('maxlength')) {
-                column = table[columnSpec.type](columnname, columnSpec.maxlength);
+                column = table[columnSpec.type](key, columnSpec.maxlength);
             } else {
-                column = table[columnSpec.type](columnname);
+                column = table[columnSpec.type](key);
             }
 
             if (columnSpec.hasOwnProperty('nullable') && columnSpec.nullable === true) {
@@ -37,15 +35,6 @@ function createTable(tableName, schema) {
             if (columnSpec.hasOwnProperty('defaultTo')) {
                 column.defaultTo(columnSpec.defaultTo);
             }
-
         });
     });
-}
-
-export default () => {
-    return Object.keys(schemas).reduce((promise, schema) => {
-        return promise().then(() => {
-            return createTable(schema, schemas[schema]);
-        });
-    }, Promise.resolve);
 }

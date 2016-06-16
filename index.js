@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import express from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
@@ -9,9 +8,7 @@ import log from './utils/logger';
 import init from './utils/init';
 import config from './config';
 
-global.Promise = Promise;
-
-export default init().then(() => {
+export default () => init().then(() => {
     const app = express();
     const appConfig = config[process.NODE_ENV || 'development'];
 

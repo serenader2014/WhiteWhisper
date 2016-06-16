@@ -7,8 +7,10 @@ const config = {
     trustProxy: true,
     development: {
         db: {
+            connection: {
+                filename: './content/db/dev.sqlite',
+            },
             client: 'sqlite3',
-            filename: './content/db/dev.sqlite',
         },
         host: 'localhost',
         port: 10010,
@@ -16,7 +18,9 @@ const config = {
     test: {
         db: {
             client: 'sqlite3',
-            filename: './content/db/test.sqlite',
+            connection: {
+                filename: './content/db/test.sqlite',
+            },
         },
         host: 'localhost',
         port: 10011,
@@ -24,7 +28,9 @@ const config = {
     production: {
         db: {
             client: 'sqlite3',
-            filename: './content/db/prod.sqlite',
+            connection: {
+                filename: './content/db/prod.sqlite',
+            },
         },
         host: 'localhost',
         port: 10012,

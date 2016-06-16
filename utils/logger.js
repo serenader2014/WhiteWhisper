@@ -1,8 +1,8 @@
 /* eslint no-console: 0 */
 import chalk from 'chalk';
 const log = {
-    info(message) {
-        const start = `Info    -->   ${message} \n`;
+    info(...args) {
+        const start = `Info    -->   ${args.join('\n')} \n`;
         console.log(chalk.gray(start));
     },
     error(err) {
@@ -19,8 +19,8 @@ const log = {
         console.log(chalk.bold.bgWhite.red(start));
         console.log(chalk.bold.bgWhite.red(stack));
     },
-    success(message) {
-        const start = `Success -->  \n ${message} \n`;
+    success(...args) {
+        const start = `Success -->  \n ${args.join('\n')} \n`;
         console.log(chalk.green(start));
     },
 };
