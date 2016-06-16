@@ -7,24 +7,24 @@ const config = {
     trustProxy: true,
     development: {
         db: {
-            type: 'sqlite3',
-            filename: 'whitewhisperdev',
+            client: 'sqlite3',
+            filename: './content/db/dev.sqlite',
         },
         host: 'localhost',
         port: 10010,
     },
     test: {
         db: {
-            type: 'sqlite3',
-            filename: 'whitewhispertest',
+            client: 'sqlite3',
+            filename: './content/db/test.sqlite',
         },
         host: 'localhost',
         port: 10011,
     },
     production: {
         db: {
-            type: 'sqlite3',
-            filename: 'whitewhisper',
+            client: 'sqlite3',
+            filename: './content/db/prod.sqlite',
         },
         host: 'localhost',
         port: 10012,

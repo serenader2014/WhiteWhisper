@@ -1,5 +1,4 @@
 import Promise from 'bluebird';
-import mongoose from 'mongoose';
 import express from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
@@ -12,13 +11,14 @@ import config from './config';
 
 global.Promise = Promise;
 
-export default init.then(() => {
+export default init().then(() => {
     const app = express();
     const appConfig = config[process.NODE_ENV || 'development'];
 
     app.use(logger());
     app.use(cookieParser());
     app.use(bodyParser());
+    app.use(validator());
 
     return new Promise((resolve) => {
         app.listen(appConfig.port, appConfig.host, err => {

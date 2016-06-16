@@ -1,25 +1,5 @@
-import mongoose from 'mongoose';
+import bookshelf from '../db/bookshelf';
 
-const Schema = mongoose.Schema;
-const SettingSchema = new Schema({
-    blogName: String,
-    blogDescription: String,
-    blogLogo: String,
-    blogFavicon: String,
-    allowRegister: Boolean,
-    theme: String,
-    pageSize: Number,
-    updatedAt: Date,
-    updatedBy: {
-        username: String,
-        id: Schema.Types.ObjectId,
-        image: String,
-    },
-    background: String,
-    hasInitialized: Boolean,
-    defaultPermission: String,
-    language: String,
-    plugins: Array,
+const Setting = bookshelf.Model.extend({
+    tableName: 'setting',
 });
-
-export default mongoose.model('Setting', SettingSchema);
