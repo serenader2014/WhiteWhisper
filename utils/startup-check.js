@@ -40,23 +40,7 @@ function envCheck() {
     }
 }
 
-function folderCheck() {
-    const folderList = ['/content/db'];
-
-    return folderList.reduce((promise, folder) => {
-        const dir = path.join(config.appRoot, folder);
-        return promise.then(() => fs.statAsync(dir))
-            .catch(err => {
-                if (err.code === 'ENOENT') {
-                    logger.info(`Create folder: ${folder}`);
-                    return fs.mkdirAsync(dir);
-                }
-            });
-    }, Promise.resolve());
-}
-
 export default function startUpCheck() {
     dependencyCheck();
     envCheck();
-    return folderCheck();
 }
