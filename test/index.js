@@ -28,7 +28,7 @@ describe('Begin api server test', () => {
         this.timeout(20000);
         return resetDB().then(() => {
             require('../utils/startup-check').default();
-            require('../index.js').default();
+            return require('../index.js').default();
         });
     });
 
