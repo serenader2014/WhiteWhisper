@@ -1,59 +1,24 @@
-import  bcrypt    from 'bcrypt-nodejs';
 import  _         from 'lodash';
 import  User      from '../model/user';
 import  get       from '../helper/get-data';
 
 export default {
     model: User,
-    get(...args) {
-        return get.apply(User, args);
-    },
     create(options) {
-        const user = new User();
-        _.extend(user, options);
+        const user = {
+            ...options,
+            email: options.email,
+            username: options.username || this.email.split('@')[0],
+            slug: options.slug || this.username,
+            password: User.generatePassword(password),
+            status: options.status || 'active',
+            language: options.language || 'en_US',
+            created_at: options.created_at || new Date(),
+            created_by: options.created_by || 0,
+        };
 
-        return user.save();
+        return User.create(user);
     },
-    update(id, options) {
-        const obj = {};
-        _.extend(obj, options);
-
-        return User.findByIdAndUpdateAsync(id, obj);
-    },
-    delete(id) {
-        return User.findByIdAndRemoveAsync(id);
-    },
-    check(username, email) {
-        return User.findAsync({ $or: [{ username }, { email }] });
-    },
-    getById(id) {
-        return this.get({ _id: id }, 1, 1);
-    },
-    getByEmail(email) {
-        return this.get({ email }, 1, 1);
-    },
-    getByUsername(username) {
-        return this.get({ username });
-    },
-    getAll(amount, page) {
-        return this.get({}, amount, page);
-    },
-    login(email, ip) {
-        return this.get({ email }, 1, 1).then((data) => {
-            const user = data.data[0];
-            user.log.push({
-                date: new Date(),
-                type: 2,
-                user: user.email,
-                data: ip,
-            });
-            return user.save();
-        });
-    },
-    generatePassword(password) {
-        return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-    },
-    validatePassword(pwd1, pwd2) {
-        return bcrypt.compareSync(pwd1, pwd2);
-    },
+    byEmail: User.byEmail,
+    checkIfExist: User.checkIfExist,
 };

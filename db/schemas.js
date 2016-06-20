@@ -51,7 +51,7 @@ export default {
         bio: { type: str, maxlength: 200, nullable: true },
         website: { type: text, maxlength: 2000, nullable: true, validations: {isEmptyOrURL: true} },
         location: { type: text, maxlength: 65535, nullable: true },
-        social_key: { type: str, maxlength: 150, nullable: false, unique: true },
+        social_key: { type: str, maxlength: 150, nullable: true, unique: true },
         social_value: { type: text, maxlength: 65535, nullable: true },
         status: { type: str, maxlength: 150, nullable: false, defaultTo: 'active' },
         language: { type: str, maxlength: 6, nullable: false, defaultTo: 'en_US' },
