@@ -29,6 +29,6 @@ export default () => init().then(() => {
     app.use(notFound());
 
     return app.listenAsync(appConfig.port, appConfig.host)
-        .then(() => log.info(`App listening on ${appConfig.host}:${appConfig.port}`))
+        .then(() => log.info(`App is listening on ${appConfig.host}:${appConfig.port}`))
         .catch(e => {log.error(e); process.exit(1);});
 });

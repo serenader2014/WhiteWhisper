@@ -9,6 +9,10 @@ const app         = express();
 // app.use('/admin', express.static(resolve(__dirname, '../../client/build')));
 // app.use('/', frontend);
 
+app.get('/', (req, res) => {
+    res.status(200).send('ok');
+});
+
 export default function () {
     return app;
 }
