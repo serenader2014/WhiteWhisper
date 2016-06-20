@@ -14,7 +14,7 @@ const {
     },
 } = config[process.NODE_ENV || 'development'];
 
-const modelList = ['setting', 'post'];
+const modelList = ['setting', 'post', 'user', 'category'];
 
 export default () => modelList.reduce((promise, model) => {
     return promise.then(() => {

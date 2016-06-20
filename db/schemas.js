@@ -39,5 +39,36 @@ export default {
         publishedAt: { type: dateTime, nullable: true },
         publishedBy: { type: int, nullable: true },
         featured: { type: bool, nullable: false, defaultTo: false },
+    },
+    user: {
+        id: { type: increments, nullable: false, primary: true },
+        username: { type: str, maxlength: 150, nullable: false },
+        slug: { type: str, maxlength: 150, nullable: false, unique: true },
+        password: { type: str, maxlength: 60, nullable: false },
+        email: { type: str, maxlength: 254, nullable: false, unique: true },
+        image: { type: text, maxlength: 2000, nullable: true },
+        cover: { type: text, maxlength: 2000, nullable: true },
+        bio: { type: str, maxlength: 200, nullable: true },
+        website: { type: text, maxlength: 2000, nullable: true, validations: {isEmptyOrURL: true} },
+        location: { type: text, maxlength: 65535, nullable: true },
+        social_key: { type: str, maxlength: 150, nullable: false, unique: true },
+        social_value: { type: text, maxlength: 65535, nullable: true },
+        status: { type: str, maxlength: 150, nullable: false, defaultTo: 'active' },
+        language: { type: str, maxlength: 6, nullable: false, defaultTo: 'en_US' },
+        tour: { type: text, maxlength: 65535, nullable: true },
+        last_login: { type: dateTime, nullable: true },
+        created_at: { type: dateTime, nullable: false },
+        created_by: { type: int, nullable: false },
+        updated_at: { type: dateTime, nullable: true },
+        updated_by: { type: int, nullable: true }
+    },
+    category: {
+        name: { type: str, unique: true, nullable: false, maxlength: 150 },
+        slug: { type: str, maxlength: 150, nullable: false, unique: true },
+        image: { type: text, maxlength: 2000, nullable: true },
+        created_at: { type: dateTime, nullable: false },
+        created_by: { type: int, nullable: false },
+        updated_at: { type: dateTime, nullable: true },
+        updated_by: { type: int, nullable: false }
     }
 };
