@@ -1,9 +1,11 @@
 import express         from 'express';
+import jwt from 'jsonwebtoken';
 import apiController   from '../controller/api';
 // import brute           from '../middleware/brute';
 // import checkPermission from '../middleware/check-permission';
 // import checkId         from '../middleware/check-id';
-const api                = express();
+const api = express();
+
 
 api.route('/login')
     .post(apiController.login);
@@ -14,8 +16,21 @@ api.route('/register')
 api.route('/logout')
     .all(apiController.logout);
 
-// api.route('/user')
-//     .get(apiController.user.getInfo);
+api.use((req, res, next) => {
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+    if (token) {
+        jwt.verify(token, config.secret, (err, decoded) => {
+            req.user = decoded;
+            next();
+        });
+    } else {
+
+    }
+});
+
+api.route('/i')
+    .get(apiController.getUserInfo);
 
 // api.route('/post')
 //     .get(checkPermission('post', 'get'), apiController.post.list)

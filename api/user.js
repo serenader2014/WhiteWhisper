@@ -1,6 +1,5 @@
-import  _         from 'lodash';
-import  User      from '../model/user';
-import  get       from '../helper/get-data';
+import  _ from 'lodash';
+import User from '../model/user';
 
 export default {
     model: User,
@@ -8,17 +7,19 @@ export default {
         const user = {
             ...options,
             email: options.email,
-            username: options.username || this.email.split('@')[0],
-            slug: options.slug || this.username,
-            password: User.generatePassword(password),
+            username: options.username || options.email.split('@')[0],
+            slug: options.slug || options.username || options.email.split('@')[0],
+            password: User.generatePassword.bind(User)(options.password),
             status: options.status || 'active',
             language: options.language || 'en_US',
             created_at: options.created_at || new Date(),
             created_by: options.created_by || 0,
         };
 
-        return User.create(user);
+
+        return User.create.bind(User)(user);
     },
-    byEmail: User.byEmail,
-    checkIfExist: User.checkIfExist,
+    byEmail: User.byEmail.bind(User),
+    checkIfExist: User.checkIfExist.bind(User),
+    validatePassword: User.validatePassword.bind(User),
 };

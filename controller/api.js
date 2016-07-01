@@ -1,13 +1,13 @@
+import jwt from 'jsonwebtoken';
 import _              from 'lodash';
-import jwt            from 'jsonwebtoken';
 // import userApi        from '../api/user';
 // import permissionApi  from '../api/permission';
 // import post           from './post';
 // import category       from './category';
 // import user           from './user';
 // import captcha        from './captcha';
-import log            from '../utils/logger';
-import User from '../model/user';
+import logger            from '../utils/logger';
+import User from '../api/user';
 
 import result from '../utils/result';
 
@@ -33,9 +33,23 @@ const login = (req, res) => {
 
     const { email, password } = req.body;
 
-    User.checkIfExist({email, password}).then(data => {
-        res.send(data);
-    })
+    User.checkIfExist({email}).then(user => {
+        if (!user) {
+            return result.login.userNotExist({email});
+        }
+        return User.validatePassword(password, user.get('password')).then(res => {
+            if (!res) {
+                return result.login.passwordIncorrect(password);
+            }
+            const token = jwt.sign(_.pick(user.attributes, ['id', 'email', 'username']), config.secret, {
+                expiresIn: 86400,
+            });
+            return result(_.extend(user.omit('password'), {token}), '登录成功！');
+        });
+    }).then(data => res.json(data)).catch(err => {
+        logger.error(err);
+        res.json(result.common.serverError(err));
+    });
 
     // userApi.getByEmail(email).then(data => {
     //     if (!data.total) {
@@ -80,50 +94,16 @@ const register = (req, res) => {
 
     User.byEmail(email).then(user => {
         if (user) {
-            res.json(result.register.emailTaken());
-            return;
+            return result.register.emailTaken();
         }
 
-        User.create(email, password).then(user => {
-            res.send(user);
+        return User.create({email, password}).then(user =>{
+            return result(_.pick(user, ['email', 'username', 'id']), '注册成功');
         });
+    }).then(data => res.json(data), err => {
+        logger.error(err);
+        res.status(502).json(result.common.serverError(err));
     });
-
-    // permissionApi.get({ name: config.defaultBlogConfig.defaultUserPermission }, 1, 1).then(data => {
-    //     if (!data.total) {
-    //         return Promise.reject(errorCode.getError('权限'));
-    //     }
-    //     return data.data[0];
-    // }).then(permission => {
-    //     userApi.getByEmail(email).then(findResult => {
-    //         if (findResult.total) {
-    //             res.json(errorCode.emailExist());
-    //             return;
-    //         }
-    //         userApi.create({
-    //             email,
-    //             username: email,
-    //             auth    : {
-    //                 local: {
-    //                     email,
-    //                     password: userApi.generatePassword(password),
-    //                 },
-    //             },
-    //             status    : 'active',
-    //             permission: {
-    //                 profileName: permission.name,
-    //                 id         : permission._id,
-    //             },
-    //             log: [{
-    //                 date: new Date(),
-    //                 type: 1,
-    //                 user: email,
-    //             }],
-    //         }).then(resultUser =>
-    //             res.json(successCode('注册成功！', _.pick(resultUser, ['_id', 'email', 'username'])))
-    //         );
-    //     });
-    // }, error => res.json(error));
 };
 
 const logout = (req, res) => {
@@ -135,4 +115,8 @@ const logout = (req, res) => {
     }
 };
 
-export default { login, register, logout };
+const getUserInfo = (req, res) => {
+    res.json(req.user);
+};
+
+export default { login, register, logout, getUserInfo };
