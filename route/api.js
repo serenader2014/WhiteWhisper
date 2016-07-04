@@ -7,14 +7,11 @@ import apiController   from '../controller/api';
 const api = express();
 
 
-api.route('/login')
-    .post(apiController.login);
+api.route('/auth')
+    .post(apiController.auth);
 
 api.route('/register')
     .post(apiController.register);
-
-api.route('/logout')
-    .all(apiController.logout);
 
 api.use((req, res, next) => {
     const token = req.body.token || req.query.token || req.headers['x-access-token'];

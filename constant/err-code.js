@@ -2,6 +2,7 @@
 export const common = {
     formInvalid: '00001',
     serverError: '01000',
+    permissionDeny: '00002',
 };
 
 // 1
