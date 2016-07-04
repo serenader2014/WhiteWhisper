@@ -33,13 +33,15 @@ const auth = (req, res) => {
 
     const { email, password } = req.body;
 
-    User.checkIfExist({ email }).then(user => {
-        if (!user) {
-            return result.login.userNotExist({ email });
-        }
-        return user.validatePassword(password).then(data => {
-            if (!data) {
-                return result.login.passwordIncorrect(password);
+    (async () => {
+        try {
+            const user = await User.checkIfExist({ email });
+            if (!user) {
+                return res.json(result.login.userNotExist({ email }));
+            }
+            const validatePassword = await user.validatePassword(password);
+            if (!validatePassword) {
+                return res.json(result.login.passwordIncorrect(password));
             }
             const token = jwt.sign(_.pick(user.attributes, [
                 'id',
@@ -48,14 +50,13 @@ const auth = (req, res) => {
             ]), config.secret, {
                 expiresIn: 86400,
             });
-            return user.login().then(() => {
-                return result(_.extend(user.omit('password'), { token }), '登录成功！')
-            });
-        });
-    }).then(data => res.json(data)).catch(err => {
-        logger.error(err);
-        res.json(result.common.serverError(err));
-    });
+            await user.login();
+            return res.json(result(_.extend(user.omit('password'), { token }), '登录成功！'));
+        } catch (err) {
+            logger.error(err);
+            return res.json(result.common.serverError(err));
+        }
+    })();
 };
 
 const register = (req, res) => {
@@ -83,17 +84,20 @@ const register = (req, res) => {
         return;
     }
 
-    User.byEmail(email).then(user => {
-        if (user) {
-            return result.register.emailTaken();
-        }
+    (async () => {
+        try {
+            const user = await User.byEmail(email);
 
-        return User.create({ email, password })
-            .then(newUser => result(_.pick(newUser, ['email', 'username', 'id']), '注册成功'));
-    }).then(data => res.json(data), err => {
-        logger.error(err);
-        res.status(502).json(result.common.serverError(err));
-    });
+            if (user) {
+                return res.json(result.register.emailTaken());
+            }
+            const newUser = await User.create({ email, password });
+            return res.json(result(_.pick(newUser, ['email', 'username', 'id']), '注册成功'));
+        } catch (err) {
+            logger.error(err);
+            return res.status(502).json(result.common.serverError(err));
+        }
+    })();
 };
 
 const getUserInfo = (req, res) => {
