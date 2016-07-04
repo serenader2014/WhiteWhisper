@@ -6,13 +6,6 @@ import apiController from '../controller/api';
 // import checkId         from '../middleware/check-id';
 const api = express();
 
-
-api.route('/auth')
-    .post(apiController.auth);
-
-api.route('/register')
-    .post(apiController.register);
-
 api.use((req, res, next) => {
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -22,8 +15,16 @@ api.use((req, res, next) => {
             req.user = decoded;
             next();
         });
+    } else {
+        next();
     }
 });
+
+api.route('/auth')
+    .post(apiController.auth);
+
+api.route('/register')
+    .post(apiController.register);
 
 api.route('/i')
     .get(apiController.getUserInfo);

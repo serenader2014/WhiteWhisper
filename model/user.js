@@ -1,6 +1,5 @@
 import bookshelf from '../db/bookshelf';
 import bcrypt from 'bcrypt-nodejs';
-import result from '../utils/result';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
@@ -17,8 +16,8 @@ const User = bookshelf.Model.extend({
         return this.forge()
             .query(queryBuilder => {
                 queryBuilder
-                    .where('email', obj.email)
-                    .orWhere('username', obj.username);
+                    .where('email', obj.email || '')
+                    .orWhere('username', obj.username || '');
             })
             .fetch();
     },
@@ -30,7 +29,7 @@ const User = bookshelf.Model.extend({
     create(user) {
         return this.forge(user)
             .save();
-    }
+    },
 });
 
 export default User;
