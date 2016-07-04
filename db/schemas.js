@@ -29,7 +29,8 @@ export default {
         text: { type: text, nullable: true, fieldtype: 'medium' },
         html: { type: text, nullable: true, fieldtype: 'medium' },
         image: { type: text, nullable: true },
-        status: { type: str, nullable: false, defaultTo: 'draft' }, // 'published', 'unpublished', 'deleted', 'draft'
+        // 'published', 'unpublished', 'deleted', 'draft'
+        status: { type: str, nullable: false, defaultTo: 'draft' },
         category: { type: int, nullable: false },
         url: { type: str, nullable: false, unique: true },
         createdAt: { type: dateTime, nullable: false },
@@ -49,7 +50,7 @@ export default {
         image: { type: text, maxlength: 2000, nullable: true },
         cover: { type: text, maxlength: 2000, nullable: true },
         bio: { type: str, maxlength: 200, nullable: true },
-        website: { type: text, maxlength: 2000, nullable: true, validations: {isEmptyOrURL: true} },
+        website: { type: text, maxlength: 2000, nullable: true, validations: { isEmptyOrURL: true } },
         location: { type: text, maxlength: 65535, nullable: true },
         social_key: { type: str, maxlength: 150, nullable: true, unique: true },
         social_value: { type: text, maxlength: 65535, nullable: true },
@@ -60,7 +61,7 @@ export default {
         created_at: { type: dateTime, nullable: false },
         created_by: { type: int, nullable: false },
         updated_at: { type: dateTime, nullable: true },
-        updated_by: { type: int, nullable: true }
+        updated_by: { type: int, nullable: true },
     },
     category: {
         name: { type: str, unique: true, nullable: false, maxlength: 150 },
@@ -69,6 +70,6 @@ export default {
         created_at: { type: dateTime, nullable: false },
         created_by: { type: int, nullable: false },
         updated_at: { type: dateTime, nullable: true },
-        updated_by: { type: int, nullable: false }
-    }
+        updated_by: { type: int, nullable: false },
+    },
 };

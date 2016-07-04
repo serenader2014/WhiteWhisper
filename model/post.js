@@ -1,6 +1,7 @@
 import bookshelf from '../db/bookshelf';
 
-const Post = bookshelf.Model.extend({
-    tableName: 'post',
-});
-export default Post;
+export default class Post extends bookshelf.Model {
+    get tableName() {
+        return 'post';
+    }
+}

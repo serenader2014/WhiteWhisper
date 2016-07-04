@@ -1,7 +1,7 @@
 import bookshelf from '../db/bookshelf';
 
-const Setting = bookshelf.Model.extend({
-    tableName: 'setting',
-});
-
-export default Setting;
+export default class Setting extends bookshelf.Model {
+    get tableName() {
+        return 'setting';
+    }
+}

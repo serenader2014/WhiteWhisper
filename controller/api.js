@@ -37,7 +37,7 @@ const auth = (req, res) => {
         if (!user) {
             return result.login.userNotExist({ email });
         }
-        return User.validatePassword(password, user.get('password')).then(data => {
+        return user.validatePassword(password).then(data => {
             if (!data) {
                 return result.login.passwordIncorrect(password);
             }
@@ -48,7 +48,9 @@ const auth = (req, res) => {
             ]), config.secret, {
                 expiresIn: 86400,
             });
-            return result(_.extend(user.omit('password'), { token }), '登录成功！');
+            return user.login().then(() => {
+                return result(_.extend(user.omit('password'), { token }), '登录成功！')
+            });
         });
     }).then(data => res.json(data)).catch(err => {
         logger.error(err);
