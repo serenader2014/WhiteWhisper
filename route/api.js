@@ -1,6 +1,6 @@
-import express         from 'express';
+import express from 'express';
 import jwt from 'jsonwebtoken';
-import apiController   from '../controller/api';
+import apiController from '../controller/api';
 // import brute           from '../middleware/brute';
 // import checkPermission from '../middleware/check-permission';
 // import checkId         from '../middleware/check-id';
@@ -18,11 +18,10 @@ api.use((req, res, next) => {
 
     if (token) {
         jwt.verify(token, config.secret, (err, decoded) => {
+            /* eslint-disable no-param-reassign */
             req.user = decoded;
             next();
         });
-    } else {
-
     }
 });
 
