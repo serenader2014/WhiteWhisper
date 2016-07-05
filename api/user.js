@@ -17,8 +17,14 @@ export default {
 
         return User.create.bind(User)(user);
     },
-    byEmail: User.byEmail.bind(User),
+    byEmail(email) {
+        return User.query({ email });
+    },
+    byId(id) {
+        return User.query({ id });
+    },
+    byUsername(username) {
+        return User.query({ username });
+    },
     checkIfExist: User.checkIfExist.bind(User),
-    byId: User.byId.bind(User),
-    byUsername: User.byUsername.bind(User),
 };

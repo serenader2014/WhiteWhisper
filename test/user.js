@@ -1,5 +1,6 @@
 import 'should';
 import request from 'supertest';
+import _ from 'lodash';
 import config from '../config';
 import { generateUser } from './utils';
 import * as errCode from '../constant/err-code';
@@ -8,18 +9,19 @@ const appUrl = `${config.test.host}:${config.test.port}`;
 const userInfoUrl = '/api/user/';
 const authUrl = '/api/auth';
 const registerUrl = '/api/register';
-const myselfInfoUrl = '/api/i';
 
 describe('User system test', () => {
-    let user = generateUser();
+    let user1 = generateUser();
+    let user2 = generateUser();
     let token = null;
     it('Should create a user first', done => {
         request(appUrl)
             .post(registerUrl)
-            .send(user)
+            .send(user1)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
+                user1 = _.extend({}, user1, res.body.data);
                 done();
             });
     });
@@ -27,7 +29,7 @@ describe('User system test', () => {
     it('Should auth the user', done => {
         request(appUrl)
             .post(authUrl)
-            .send(user)
+            .send(user1)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
@@ -36,34 +38,35 @@ describe('User system test', () => {
             });
     });
 
-    it('Should get myself info', done => {
-        request(appUrl)
-            .get(`${myselfInfoUrl}?token=${token}`)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                user = res.body.data.user;
-                done();
-            });
-    });
-
     it('Should get a user\'s info', done => {
         request(appUrl)
-            .get(`${userInfoUrl}${user.id}?token=${token}`)
+            .get(`${userInfoUrl}${user1.id}?token=${token}`)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
-                res.body.data.email.should.equal(user.email);
+                res.body.data.email.should.equal(user1.email);
                 done();
             });
     });
 
     it('Should get a user\'s info without token', done => {
         request(appUrl)
-            .get(`${userInfoUrl}${user.id}`)
+            .get(`${userInfoUrl}${user1.id}`)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(errCode.common.permissionDeny);
+                done();
+            });
+    });
+
+    it('Should create a new user', done => {
+        request(appUrl)
+            .post(registerUrl)
+            .send(user2)
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(0);
+                user2 = res.body.data;
                 done();
             });
     });
@@ -77,11 +80,33 @@ describe('User system test', () => {
             language: 'zh-cn',
         };
         request(appUrl)
-            .put(`${userInfoUrl}${user.id}?token=${token}`)
+            .put(`${userInfoUrl}${user1.id}?token=${token}`)
             .send(newUserInfo)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
+                done();
+            });
+    });
+
+    it('Should try to update user info using an existing username', done => {
+        request(appUrl)
+            .put(`${userInfoUrl}${user1.id}?token=${token}`)
+            .send({ username: user2.username })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(errCode.user.usernameTaken);
+                done();
+            });
+    });
+
+    it('Should try to update other user\'s userinfo', done => {
+        request(appUrl)
+            .put(`${userInfoUrl}${user2.id}?token=${token}`)
+            .send({ username: 'newusername' })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(errCode.user.noPermission);
                 done();
             });
     });

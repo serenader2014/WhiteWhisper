@@ -22,21 +22,9 @@ export default class User extends bookshelf.Model {
             .fetch();
     }
 
-    static byEmail(email) {
+    static query(queryObject) {
         return this.forge()
-            .query('where', 'email', '=', email)
-            .fetch();
-    }
-
-    static byId(id) {
-        return this.forge()
-            .query('where', 'id', '=', id)
-            .fetch();
-    }
-
-    static byUsername(name) {
-        return this.forge()
-            .query('where', 'username', name)
+            .query('where', queryObject)
             .fetch();
     }
 
