@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import User from '../model/user';
 
 export default {
@@ -20,4 +19,6 @@ export default {
     },
     byEmail: User.byEmail.bind(User),
     checkIfExist: User.checkIfExist.bind(User),
+    byId: User.byId.bind(User),
+    byUsername: User.byUsername.bind(User),
 };

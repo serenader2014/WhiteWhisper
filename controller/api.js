@@ -1,23 +1,31 @@
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
-// import userApi        from '../api/user';
+// import post from './post';
+import logger from '../utils/logger';
+import User from '../api/user';
+import result from '../utils/result';
+import unidecode from 'unidecode';
 // import permissionApi  from '../api/permission';
-// import post           from './post';
 // import category       from './category';
 // import user           from './user';
 // import captcha        from './captcha';
-import logger from '../utils/logger';
-import User from '../api/user';
-
-import result from '../utils/result';
 
 const auth = (req, res) => {
-    req.checkBody('email', 'Email 不是合格的邮箱地址。')
-        .notEmpty().withMessage('Email 为空。')
-        .isEmail();
-    req.checkBody('password', '密码为空。')
-        .isLength(6, 16).withMessage('密码必须由6到16个字符组成。')
-        .notEmpty();
+    req.checkBody({
+        email: {
+            notEmpty: true,
+            isEmail: {
+                errorMessage: 'Email 不是合格的邮箱地址。',
+            },
+        },
+        password: {
+            notEmpty: true,
+            isLength: {
+                options: [{ min: 6, max: 20 }],
+                errorMessage: '密码必须由6到16个字符组成。',
+            },
+        },
+    });
 
     const errors = req.validationErrors();
 
@@ -65,12 +73,21 @@ const register = (req, res) => {
         password,
     } = req.body;
 
-    req.checkBody('email', 'Email 不是合格的邮箱地址。')
-        .notEmpty().withMessage('Email 为空。')
-        .isEmail();
-    req.checkBody('password', '密码为空。')
-        .isLength(6, 16).withMessage('密码必须由6到16个字符组成。')
-        .notEmpty();
+    req.checkBody({
+        email: {
+            notEmpty: true,
+            isEmail: {
+                errorMessage: 'Email 不是合格的邮箱地址。',
+            },
+        },
+        password: {
+            notEmpty: true,
+            isLength: {
+                options: [{ min: 6, max: 20 }],
+                errorMessage: '密码必须由6到16个字符组成。',
+            },
+        },
+    });
 
     const errors = req.validationErrors();
 
@@ -100,12 +117,99 @@ const register = (req, res) => {
     })();
 };
 
-const getUserInfo = (req, res) => {
-    if (req.user) {
-        res.json(result({ user: req.user }));
-    } else {
-        res.json(result.common.permissionDeny());
-    }
+const getMyself = (req, res) => {
+    res.json(result({ user: req.user }));
 };
 
-export default { auth, register, getUserInfo };
+const getUserInfo = (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+        return res.json(result.common.formInvalid({ id: 'id不能为空' }));
+    }
+    return (async () => {
+        try {
+            const user = await User.byId(id);
+            if (!user) {
+                return res.json(result.user.userNotExist({ id }));
+            }
+            return res.json(result(_.pick(user.attributes, [
+                'email',
+                'id',
+                'username',
+                'bio',
+                'website',
+                'location',
+            ])));
+        } catch (e) {
+            logger.error(e);
+            return res.json(result.common.serverError(e));
+        }
+    })();
+};
+
+const updateUserInfo = (req, res) => {
+    const id = req.params.id;
+    req.checkBody({
+        username: {
+            isLength: {
+                options: [{ min: 4, max: 20 }],
+                errorMessage: '用户名长度最长为20个字符，最短为4个字符',
+            },
+        },
+    });
+
+    const errors = req.validationErrors();
+
+    if (errors) {
+        return res.json(result.common.formInvalid(errors));
+    }
+    const newUserInfo = _.pick(req.body, [
+        'username',
+        'image',
+        'cover',
+        'bio',
+        'website',
+        'location',
+        'language',
+    ]);
+    if (!id) {
+        return res.json(result.common.formInvalid({ id: 'id不能为空' }));
+    }
+    return (async () => {
+        try {
+            const user = await User.byId(id);
+            if (!user) {
+                return res.json(result.user.userNotExist({ id }));
+            }
+            if (user.id !== req.user.id) {
+                return res.json(result.user.noPermission());
+            }
+            if (newUserInfo.username) {
+                const ifExist = await User.byUsername(newUserInfo.username);
+                if (ifExist) {
+                    return res.json(result.user.usernameTaken({ username: newUserInfo.username }));
+                }
+                newUserInfo.slug = unidecode(newUserInfo.username)
+                    .toLowerCase()
+                    .replace(/(\s)|(\W)/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/(^-)|(-$)/, '');
+            }
+            newUserInfo.updated_at = new Date();
+            newUserInfo.updated_by = req.user.id;
+            for (const i of Object.keys(newUserInfo)) {
+                user.set(i, newUserInfo[i]);
+            }
+            const newUser = await user.save();
+            return res.json(result({ user: newUser.omit('password') }, '修改资料成功'));
+        } catch (e) {
+            logger.error(e);
+            return res.json(result.common.serverError(e));
+        }
+    })();
+};
+
+const deleteUser = (req, res) => {
+
+};
+export default { auth, register, getMyself, getUserInfo, updateUserInfo, deleteUser };

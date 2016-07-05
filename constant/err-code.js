@@ -23,3 +23,10 @@ export const register = {
     usernameTaken: '20005',
     emailTaken: '20006',
 };
+
+// 3
+export const user = {
+    userNotExist: '30001',
+    usernameTaken: '30002',
+    noPermission: '30003',
+}

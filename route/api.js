@@ -1,5 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import authCheck from '../middleware/auth-check';
 import apiController from '../controller/api';
 // import brute           from '../middleware/brute';
 // import checkPermission from '../middleware/check-permission';
@@ -27,11 +28,18 @@ api.route('/register')
     .post(apiController.register);
 
 api.route('/i')
-    .get(apiController.getUserInfo);
+    .all(authCheck())
+    .get(apiController.getMyself);
+
+api.route('/user/:id')
+    .all(authCheck())
+    .get(apiController.getUserInfo)
+    .put(apiController.updateUserInfo)
+    .delete(apiController.deleteUser);
 
 // api.route('/post')
-//     .get(checkPermission('post', 'get'), apiController.post.list)
-//     .post(checkPermission('post', 'post'), apiController.post.create);
+//     .get(apiController.post.list)
+//     .post(apiController.post.create);
 
 // api.route('/post/:id')
 //     .all(checkId())

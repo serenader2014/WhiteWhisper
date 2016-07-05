@@ -12,26 +12,31 @@ const dbDir = path.join(config.appRoot, config.test.db.connection.filename);
 const appUrl = `${config.test.host}:${config.test.port}`;
 
 
-function resetDB() {
-    return fs.statAsync(dbDir).then(stat => stat.isFile() && fs.unlinkAsync(dbDir)).catch(e => {
+async function resetDB() {
+    try {
+        const stat = await fs.statAsync(dbDir);
+        if (stat.isFile()) {
+            await fs.unlinkAsync(dbDir);
+        }
+    } catch (e) {
         if (e.code === 'ENOENT') {
             return;
         }
         throw e;
-    });
+    }
 }
 
 process.NODE_ENV = 'test';
 
 describe('Begin api server test', () => {
     /* eslint-disable func-names */
-    before(function () {
+    before(async function () {
         this.timeout(20000);
-        return resetDB().then(() => {
-            /* eslint-disable global-require */
-            require('../utils/startup-check').default();
-            return require('../index.js').default();
-        });
+
+        await resetDB();
+        /* eslint-disable global-require */
+        require('../utils/startup-check').default();
+        await require('../index.js').default();
     });
 
     describe('Check if server is running or not', () => {

@@ -28,6 +28,18 @@ export default class User extends bookshelf.Model {
             .fetch();
     }
 
+    static byId(id) {
+        return this.forge()
+            .query('where', 'id', '=', id)
+            .fetch();
+    }
+
+    static byUsername(name) {
+        return this.forge()
+            .query('where', 'username', name)
+            .fetch();
+    }
+
     static create(user) {
         return this.forge(user)
             .save();

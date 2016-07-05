@@ -1,6 +1,7 @@
 import 'should';
 import request from 'supertest';
 import config from '../config.js';
+import { generateUser } from './utils';
 
 import * as errCode from '../constant/err-code';
 
@@ -9,19 +10,6 @@ const appUrl = `${config.test.host}:${config.test.port}`;
 const registerUrl = '/api/register';
 const authUrl = '/api/auth';
 const userInfoUrl = '/api/i';
-
-function randomString(length) {
-    if (length < 1) return '';
-    const str = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
-    return `${str[Math.round(Math.random() * length)]}${randomString(length - 1)}`;
-}
-
-function generateUser() {
-    return {
-        email: `${randomString(5)}@domain.com`,
-        password: randomString(10),
-    };
-}
 
 describe('User system', () => {
     let token = null;
