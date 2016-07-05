@@ -1,6 +1,6 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import authCheck from '../middleware/auth-check';
+import saveUser from '../middleware/save-user-to-request';
 import * as authController from '../controller/auth';
 import * as userController from '../controller/user';
 // import brute           from '../middleware/brute';
@@ -8,19 +8,7 @@ import * as userController from '../controller/user';
 // import checkId         from '../middleware/check-id';
 const api = express();
 
-api.use((req, res, next) => {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-    if (token) {
-        jwt.verify(token, config.secret, (err, decoded) => {
-            /* eslint-disable no-param-reassign */
-            req.user = decoded;
-            next();
-        });
-    } else {
-        next();
-    }
-});
+api.use(saveUser());
 
 api.route('/auth')
     .post(authController.auth);
