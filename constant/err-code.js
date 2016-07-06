@@ -29,4 +29,5 @@ export const user = {
     userNotExist: '30001',
     usernameTaken: '30002',
     noPermission: '30003',
+    passwordIncorrect: '30004',
 };

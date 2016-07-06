@@ -2,10 +2,10 @@ import express from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import validator from 'express-validator';
 
 import notFound from './middleware/404';
 import responseTime from './middleware/response-time';
+import requestValidator from './middleware/req-validator';
 
 import route from './route';
 
@@ -22,7 +22,7 @@ export default () => init().then(() => {
     app.use(cookieParser());
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
-    app.use(validator());
+    app.use(requestValidator());
 
     app.use(responseTime());
     app.use(route());

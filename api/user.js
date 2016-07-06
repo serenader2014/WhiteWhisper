@@ -27,4 +27,5 @@ export default {
         return User.query({ username });
     },
     checkIfExist: User.checkIfExist.bind(User),
+    generatePassword: User.generatePassword.bind(User),
 };

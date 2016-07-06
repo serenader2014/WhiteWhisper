@@ -79,8 +79,7 @@ export const updateUserInfo = (req, res) => {
                 }
                 newUserInfo.slug = unidecode(newUserInfo.username)
                     .toLowerCase()
-                    .replace(/(\s)|(\W)/g, '-')
-                    .replace(/-+/g, '-')
+                    .replace(/(\s+)|(\W+)/g, '-')
                     .replace(/(^-)|(-$)/, '');
             }
             newUserInfo.updated_at = new Date();
@@ -97,6 +96,61 @@ export const updateUserInfo = (req, res) => {
     })();
 };
 
-export const deleteUser = (req, res) => {
+export const changePassword = (req, res) => {
+    const id = req.params.id;
+    const {
+        oldPassword,
+        newPassword,
+    } = req.body;
 
+    req.checkBody({
+        oldPassword: {
+            notEmpty: true,
+            isPassword: {
+                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+            },
+        },
+        newPassword: {
+            notEmpty: true,
+            isPassword: {
+                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+            },
+        },
+        repeatPassword: {
+            notEmpty: true,
+            isEqual: {
+                options: [newPassword],
+                errorMessage: '两次输入的密码不一致',
+            },
+            isPassword: {
+                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+            },
+        },
+    });
+
+    const errors = req.validationErrors();
+
+    if (errors) {
+        return res.json(result.common.formInvalid(errors));
+    }
+
+    return (async () => {
+        try {
+            const user = await User.byId(id);
+            if (!user) {
+                return res.json(result.user.userNotExist({ id }));
+            }
+            const isPasswordCorrect = await user.validatePassword(oldPassword);
+            if (!isPasswordCorrect) {
+                return res.json(result.user.passwordIncorrect(oldPassword));
+            }
+            const password = User.generatePassword(newPassword);
+            user.set('password', password);
+            const newUser = await user.save();
+            return res.json(result(newUser.omit('password'), '更改密码成功'));
+        } catch (e) {
+            logger.error(e);
+            return res.json(result.common.serverError(e));
+        }
+    })();
 };

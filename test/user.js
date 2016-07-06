@@ -2,7 +2,7 @@ import 'should';
 import request from 'supertest';
 import _ from 'lodash';
 import config from '../config';
-import { generateUser } from './utils';
+import { generateUser, generatePassword } from './utils';
 import * as errCode from '../constant/err-code';
 
 const appUrl = `${config.test.host}:${config.test.port}`;
@@ -107,6 +107,22 @@ describe('User system test', () => {
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(errCode.user.noPermission);
+                done();
+            });
+    });
+
+    it('Should change password', done => {
+        const newPassword = generatePassword(16);
+        request(appUrl)
+            .post(`${userInfoUrl}${user1.id}/change-password?token=${token}`)
+            .send({
+                newPassword,
+                repeatPassword: newPassword,
+                oldPassword: user1.password,
+            })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(0);
                 done();
             });
     });

@@ -14,19 +14,13 @@ export const auth = (req, res) => {
         },
         password: {
             notEmpty: true,
-            isLength: {
-                options: [{ min: 6, max: 20 }],
-                errorMessage: '密码必须由6到16个字符组成。',
+            isPassword: {
+                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
             },
         },
     });
 
     const errors = req.validationErrors();
-
-    if (req.user) {
-        res.json(result.login.alreadyLogin(_.pick(req.user, ['_id', 'email', 'username'])));
-        return;
-    }
 
     if (errors) {
         res.json(result.common.formInvalid(errors));
@@ -66,7 +60,6 @@ export const register = (req, res) => {
         email,
         password,
     } = req.body;
-
     req.checkBody({
         email: {
             notEmpty: true,
@@ -76,9 +69,8 @@ export const register = (req, res) => {
         },
         password: {
             notEmpty: true,
-            isLength: {
-                options: [{ min: 6, max: 20 }],
-                errorMessage: '密码必须由6到16个字符组成。',
+            isPassword: {
+                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
             },
         },
     });

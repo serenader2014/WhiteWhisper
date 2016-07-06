@@ -23,8 +23,11 @@ api.route('/i')
 api.route('/user/:id')
     .all(authCheck())
     .get(userController.getUserInfo)
-    .put(userController.updateUserInfo)
-    .delete(userController.deleteUser);
+    .put(userController.updateUserInfo);
+
+api.route('/user/:id/change-password')
+    .all(authCheck())
+    .post(userController.changePassword);
 
 // api.route('/post')
 //     .get(apiController.post.list)
