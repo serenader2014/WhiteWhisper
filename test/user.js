@@ -66,7 +66,7 @@ describe('User system test', () => {
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
-                user2 = res.body.data;
+                user2 = _.extend({}, user2, res.body.data);
                 done();
             });
     });
@@ -106,7 +106,7 @@ describe('User system test', () => {
             .send({ username: 'newusername' })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.user.noPermission);
+                res.body.code.should.equal(errCode.common.permissionDeny);
                 done();
             });
     });
@@ -114,7 +114,7 @@ describe('User system test', () => {
     it('Should change password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/change-password?token=${token}`)
+            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -123,6 +123,69 @@ describe('User system test', () => {
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
+                done();
+            });
+    });
+
+    it('Should try to change other user\'s password', done => {
+        const newPassword = generatePassword(16);
+        request(appUrl)
+            .post(`${userInfoUrl}${user2.id}/password?token=${token}`)
+            .send({
+                newPassword,
+                repeatPassword: newPassword,
+                oldPassword: user2.password,
+            })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(errCode.common.permissionDeny);
+                done();
+            });
+    });
+
+    it('Should send inconsistent password', done => {
+        const newPassword = generatePassword(16);
+        request(appUrl)
+            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .send({
+                newPassword,
+                repeatPassword: user1.password,
+                oldPassword: user1.password,
+            })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(errCode.common.formInvalid);
+                done();
+            });
+    });
+
+    it('Should try to use a insecure password', done => {
+        request(appUrl)
+            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .send({
+                newPassword: '12345678',
+                repeatPassword: '12345678',
+                oldPassword: user1.password,
+            })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(errCode.common.formInvalid);
+                done();
+            });
+    });
+
+    it('Should use a wrong password', done => {
+        const newPassword = generatePassword(16);
+        request(appUrl)
+            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .send({
+                newPassword,
+                repeatPassword: newPassword,
+                oldPassword: user2.password,
+            })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(errCode.user.passwordIncorrect);
                 done();
             });
     });

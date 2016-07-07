@@ -1,5 +1,6 @@
 import express from 'express';
-import authCheck from '../middleware/auth-check';
+import checkToken from '../middleware/check-token';
+import checkOwner from '../middleware/check-owner';
 import saveUser from '../middleware/save-user-to-request';
 import * as authController from '../controller/auth';
 import * as userController from '../controller/user';
@@ -17,16 +18,18 @@ api.route('/register')
     .post(authController.register);
 
 api.route('/i')
-    .all(authCheck())
+    .all(checkToken())
     .get(userController.getMyself);
 
 api.route('/user/:id')
-    .all(authCheck())
+    .all(checkToken())
     .get(userController.getUserInfo)
+    .all(checkOwner())
     .put(userController.updateUserInfo);
 
-api.route('/user/:id/change-password')
-    .all(authCheck())
+api.route('/user/:id/password')
+    .all(checkToken())
+    .all(checkOwner())
     .post(userController.changePassword);
 
 // api.route('/post')
