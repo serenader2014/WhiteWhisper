@@ -14,10 +14,14 @@ export function generatePassword(length) {
     function randomKey(str) {
         return str[Math.floor(Math.random() * str.length)];
     }
-    return new Array(length)
-        .fill('')
-        .map(() => randomKey(type[Math.floor(Math.random() * 4)]))
-        .join('');
+
+    return type.reduce((arr, item) => arr.concat(randomKey(item)), [])
+        .concat(
+            new Array(length - type.length)
+            .fill('')
+            .map(() => randomKey(type[Math.floor(Math.random() * type.length)]))
+        )
+        .sort(() => Math.random() > 0.5).join('');
 }
 
 export function generateUser() {
