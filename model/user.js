@@ -8,10 +8,6 @@ export default class User extends bookshelf.Model {
         return 'user';
     }
 
-    static generatePassword(password) {
-        return crypt.hashSync(password, crypt.genSaltSync(8), null);
-    }
-
     static checkIfExist(obj) {
         return this.forge()
             .query(queryBuilder => {

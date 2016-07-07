@@ -6,19 +6,17 @@ function result(data, msg) {
         code: 0,
         msg,
         data,
-    }
+    };
 }
 
 Object.keys(errorCode).forEach(type => {
     result[type] = {};
     Object.keys(errorCode[type]).forEach(item => {
-        result[type][item] = function (data) {
-            return {
-                code: errorCode[type][item],
-                msg: message[errorCode[type][item]],
-                data,
-            };
-        };
+        result[type][item] = data => ({
+            code: errorCode[type][item],
+            msg: message[errorCode[type][item]],
+            data,
+        });
     });
 });
 

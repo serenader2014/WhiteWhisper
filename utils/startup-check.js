@@ -1,5 +1,4 @@
 /* eslint-disable global-require, no-console */
-import path from 'path';
 import pkg from '../package.json';
 import logger from './logger';
 import config from '../config';
