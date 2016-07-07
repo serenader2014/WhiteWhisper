@@ -66,12 +66,6 @@ export const updateUserInfo = (req, res) => {
     return (async () => {
         try {
             const user = await User.byId(id);
-            if (!user) {
-                return res.json(result.user.userNotExist({ id }));
-            }
-            if (user.id !== req.user.id) {
-                return res.json(result.user.noPermission());
-            }
             if (newUserInfo.username) {
                 const ifExist = await User.byUsername(newUserInfo.username);
                 if (ifExist) {
@@ -137,15 +131,14 @@ export const changePassword = (req, res) => {
     return (async () => {
         try {
             const user = await User.byId(id);
-            if (!user) {
-                return res.json(result.user.userNotExist({ id }));
-            }
             const isPasswordCorrect = await user.validatePassword(oldPassword);
             if (!isPasswordCorrect) {
                 return res.json(result.user.passwordIncorrect(oldPassword));
             }
             const password = User.generatePassword(newPassword);
             user.set('password', password);
+            user.set('updated_by', user.id);
+            user.set('updated_at', new Date());
             const newUser = await user.save();
             return res.json(result(newUser.omit('password'), '更改密码成功'));
         } catch (e) {
