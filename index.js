@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
 import notFound from './middleware/404';
-import responseTime from './middleware/response-time';
+import setExtraHeaders from './middleware/set-extra-headers';
 import requestValidator from './middleware/req-validator';
 
 import route from './route';
@@ -24,7 +24,7 @@ export default () => init().then(() => {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(requestValidator());
 
-    app.use(responseTime());
+    app.use(setExtraHeaders());
     app.use(route());
     app.use(notFound());
 
