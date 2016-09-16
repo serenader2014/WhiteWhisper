@@ -31,3 +31,8 @@ export const user = {
     noPermission: '30003',
     passwordIncorrect: '30004',
 };
+
+// 4
+export const category = {
+    nameTaken: '40001',
+};

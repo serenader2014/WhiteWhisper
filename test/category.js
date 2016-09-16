@@ -1,14 +1,12 @@
 import 'should';
 import request from 'supertest';
-import { generateUser, appUrl } from './utils';
+import { appUrl, generateUser } from './utils';
 
-import * as errCode from '../constant/err-code';
-
-const registerUrl = '/api/register';
+const categoryUrl = '/api/category';
 const authUrl = '/api/auth';
-const userInfoUrl = '/api/i';
+const registerUrl = '/api/register';
 
-describe('User system', () => {
+describe('Category test', () => {
     let token = null;
     const user1 = generateUser();
     it('Should create a new user', done => {
@@ -34,23 +32,13 @@ describe('User system', () => {
             });
     });
 
-    it('Should show the current user info', done => {
+    it('should create a category', done => {
         request(appUrl)
-            .get(`${userInfoUrl}?token=${token}`)
+            .post(`${categoryUrl}?token=${token}`)
+            .send({ name: 'new category' })
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
-                done();
-            });
-    });
-
-    it('Try to register again when user has already auth', done => {
-        request(appUrl)
-            .post(`${registerUrl}?token=${token}`)
-            .send(generateUser())
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(errCode.login.alreadyLogin);
                 done();
             });
     });

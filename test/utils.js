@@ -1,3 +1,5 @@
+import config from '../config.js';
+
 export function randomString(length) {
     if (length < 1) return '';
     const str = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
@@ -30,3 +32,5 @@ export function generateUser() {
         password: generatePassword(16),
     };
 }
+
+export const appUrl = `${config.test.host}:${config.test.port}`;

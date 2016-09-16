@@ -1,11 +1,9 @@
 import 'should';
 import request from 'supertest';
 import _ from 'lodash';
-import config from '../config';
-import { generateUser, generatePassword } from './utils';
+import { generateUser, generatePassword, appUrl } from './utils';
 import * as errCode from '../constant/err-code';
 
-const appUrl = `${config.test.host}:${config.test.port}`;
 const userInfoUrl = '/api/user/';
 const authUrl = '/api/auth';
 const registerUrl = '/api/register';

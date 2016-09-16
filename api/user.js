@@ -1,22 +1,22 @@
 import User from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
+import _ from 'lodash';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
 export default {
     model: User,
     create(options) {
-        const user = {
-            ...options,
-            email: options.email,
-            username: options.username || options.email,
-            slug: options.slug || options.username || options.email,
-            password: this.generatePassword(options.password),
-            status: options.status || 'active',
-            language: options.language || 'en_US',
-            created_at: options.created_at || new Date(),
-            created_by: options.created_by || 0,
+        const defaultOption = {
+            status: 'active',
+            language: 'en_US',
+            created_at: new Date(),
+            created_by: 0,
         };
+        const user = _.extend({}, defaultOption, options);
+        user.password = this.generatePassword(user.password);
+        user.username = user.username || user.email;
+        user.slug = user.slug || user.username || user.email;
 
         return User.create.bind(User)(user);
     },
@@ -28,6 +28,9 @@ export default {
     },
     byUsername(username) {
         return User.query({ username });
+    },
+    bySlug(slug) {
+        return User.query({ slug });
     },
     checkIfExist: User.checkIfExist.bind(User),
     generatePassword(password) {

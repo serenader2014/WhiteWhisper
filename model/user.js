@@ -1,5 +1,6 @@
 import bookshelf from '../db/bookshelf';
 import bcrypt from 'bcrypt-nodejs';
+import Post from './post';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
@@ -27,6 +28,10 @@ export default class User extends bookshelf.Model {
     static create(user) {
         return this.forge(user)
             .save();
+    }
+
+    posts() {
+        return this.hasMany(Post);
     }
 
     validatePassword(password) {

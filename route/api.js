@@ -4,6 +4,8 @@ import checkOwner from '../middleware/check-owner';
 import saveUser from '../middleware/save-user-to-request';
 import * as authController from '../controller/auth';
 import * as userController from '../controller/user';
+import * as postController from '../controller/post';
+import * as categoryController from '../controller/category';
 // import brute           from '../middleware/brute';
 // import checkPermission from '../middleware/check-permission';
 // import checkId         from '../middleware/check-id';
@@ -32,9 +34,9 @@ api.route('/user/:id/password')
     .all(checkOwner())
     .post(userController.changePassword);
 
-// api.route('/post')
-//     .get(apiController.post.list)
-//     .post(apiController.post.create);
+api.route('/post')
+    .get(postController.list)
+    .post(postController.create);
 
 // api.route('/post/:id')
 //     .all(checkId())
@@ -42,9 +44,10 @@ api.route('/user/:id/password')
 //     .put(checkPermission('post', 'put'), apiController.post.update)
 //     .delete(checkPermission('post', 'delete'), apiController.post.delete);
 
-// api.route('/category')
-//     .get(checkPermission('category', 'get'), apiController.category.list)
-//     .post(checkPermission('category', 'post'), apiController.category.create);
+api.route('/category')
+    .get(categoryController.list)
+    .all(checkToken())
+    .post(categoryController.create);
 
 // api.route('/category/:id')
 //     .all(checkId())

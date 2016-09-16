@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
 import notFound from './middleware/404';
-import setExtraHeaders from './middleware/set-extra-headers';
+import setExtraHaders from './middleware/set-extra-headers';
 import requestValidator from './middleware/req-validator';
 
 import route from './route';
@@ -24,11 +24,14 @@ export default () => init().then(() => {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(requestValidator());
 
-    app.use(setExtraHeaders());
+    app.use(setExtraHaders());
     app.use(route());
     app.use(notFound());
 
     return app.listenAsync(appConfig.port, appConfig.host)
-        .then(() => log.info(`App is listening on ${appConfig.host}:${appConfig.port}`))
+        .then(() => {
+            log.info(`App is running on ${env} mode`);
+            log.info(`App is listening on ${appConfig.host}:${appConfig.port}`);
+        })
         .catch(e => { log.error(e); process.exit(1); });
 });

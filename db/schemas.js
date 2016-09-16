@@ -70,6 +70,6 @@ export default {
         created_at: { type: dateTime, nullable: false },
         created_by: { type: int, nullable: false },
         updated_at: { type: dateTime, nullable: true },
-        updated_by: { type: int, nullable: false },
+        updated_by: { type: int, nullable: true },
     },
 };

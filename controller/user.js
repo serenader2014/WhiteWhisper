@@ -1,9 +1,9 @@
-import unidecode from 'unidecode';
 import _ from 'lodash';
 
 import result from '../utils/result';
 import User from '../api/user';
 import logger from '../utils/logger';
+import generateSlug from '../utils/generate-slug';
 
 export const getMyself = (req, res) => {
     res.json(result({ user: req.user }));
@@ -71,10 +71,7 @@ export const updateUserInfo = (req, res) => {
                 if (ifExist) {
                     return res.json(result.user.usernameTaken({ username: newUserInfo.username }));
                 }
-                newUserInfo.slug = unidecode(newUserInfo.username)
-                    .toLowerCase()
-                    .replace(/(\s+)|(\W+)/g, '-')
-                    .replace(/(^-)|(-$)/, '');
+                newUserInfo.slug = await generateSlug(newUserInfo.username, 'user');
             }
             newUserInfo.updated_at = new Date();
             newUserInfo.updated_by = req.user.id;
