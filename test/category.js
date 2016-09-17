@@ -83,4 +83,14 @@ describe('Category test', () => {
                 done();
             });
     });
+
+    it('should delete the category', done => {
+        request(appUrl)
+            .delete(`${categoryUrl}/${category1.id}?token=${token}`)
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
 });

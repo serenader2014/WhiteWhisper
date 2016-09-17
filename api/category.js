@@ -5,6 +5,18 @@ import generateSlug from '../utils/generate-slug';
 
 export const model = Category;
 
+export function bySlug(slug) {
+    return Category.query({ slug });
+}
+
+export function byName(name) {
+    return Category.query({ name });
+}
+
+export function byId(id) {
+    return Category.query({ id });
+}
+
 export async function create(options, user) {
     const defaultOptions = {
         created_at: new Date(),
@@ -19,7 +31,7 @@ export async function update(category, newCategory, currentUser) {
     const finalObject = _.pick(newCategory, ['name', 'image']);
 
     if (finalObject.name) {
-        const isExist = await this.byName(finalObject.name);
+        const isExist = await byName(finalObject.name);
         if (isExist) {
             return Promise.reject(result.category.nameTaken());
         }
@@ -36,16 +48,15 @@ export async function update(category, newCategory, currentUser) {
     return category.save();
 }
 
-export function bySlug(slug) {
-    return Category.query({ slug });
-}
+export async function del(id) {
+    const target = await byId(id);
 
-export function byName(name) {
-    return Category.query({ name });
-}
+    if (!target) {
+        return false;
+    }
 
-export function byId(id) {
-    return Category.query({ id });
+    await target.destroy();
+    return true;
 }
 
 export const checkIfExist = Category.checkIfExist.bind(Category);

@@ -74,11 +74,25 @@ export function info(req, res) {
             }
             return res.json(result(category));
         } catch (e) {
+            logger.error(e);
             return res.json(result.common.serverError(e));
         }
     })();
 }
 
-export function del() {
+export function del(req, res) {
+    const { id } = req.params;
 
+    return (async () => {
+        try {
+            const isSuccess = await Category.del(id);
+            if (!isSuccess) {
+                return res.json(result.category.notFound(id));
+            }
+            return res.json(result());
+        } catch (e) {
+            logger.error(e);
+            return res.json(result.common.serverError(e));
+        }
+    })();
 }
