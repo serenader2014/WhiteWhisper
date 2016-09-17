@@ -64,6 +64,7 @@ export default {
         updated_by: { type: int, nullable: true },
     },
     category: {
+        id: { type: increments, nullable: false, primary: true },
         name: { type: str, unique: true, nullable: false, maxlength: 150 },
         slug: { type: str, maxlength: 150, nullable: false, unique: true },
         image: { type: text, maxlength: 2000, nullable: true },

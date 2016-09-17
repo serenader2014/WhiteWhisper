@@ -50,15 +50,7 @@ export const updateUserInfo = (req, res) => {
     if (errors) {
         return res.json(result.common.formInvalid(errors));
     }
-    const newUserInfo = _.pick(req.body, [
-        'username',
-        'image',
-        'cover',
-        'bio',
-        'website',
-        'location',
-        'language',
-    ]);
+
     if (!id) {
         return res.json(result.common.formInvalid({ id: 'id不能为空' }));
     }
@@ -66,8 +58,8 @@ export const updateUserInfo = (req, res) => {
         try {
             const user = await User.byId(id);
             try {
-                const newUser = await User.update(user, newUserInfo, req.user);
-                return res.json(result({ user: newUser.omit('password') }, '修改资料成功'));
+                const newUser = await User.update(user, req.body, req.user);
+                return res.json(result(newUser.omit('password'), '修改资料成功'));
             } catch (e) {
                 return res.json(e);
             }

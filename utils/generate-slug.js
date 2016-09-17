@@ -4,11 +4,15 @@ import Post from '../api/post';
 import Category from '../api/category';
 import crypto from 'crypto';
 
-export default async function (text, type) {
+export default async function (text, type, hasHash) {
     const originalSlug = unidecode(text)
         .toLowerCase()
         .replace(/(\s+)|(\W+)/g, '-')
         .replace(/(^-)|(-$)/, '');
+
+    if (!hasHash) {
+        return originalSlug;
+    }
 
     const md5 = crypto.createHash('md5');
     md5.update(originalSlug + new Date().getTime().toString());

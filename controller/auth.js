@@ -23,13 +23,12 @@ export const auth = (req, res) => {
     const errors = req.validationErrors();
 
     if (errors) {
-        res.json(result.common.formInvalid(errors));
-        return;
+        return res.json(result.common.formInvalid(errors));
     }
 
     const { email, password } = req.body;
 
-    (async () => {
+    return (async () => {
         try {
             const user = await User.checkIfExist({ email });
             if (!user) {
@@ -78,16 +77,16 @@ export const register = (req, res) => {
     const errors = req.validationErrors();
 
     if (errors) {
-        res.json(result.common.formInvalid(errors));
-        return;
+        return res.json(result.common.formInvalid(errors));
     }
 
     if (req.user) {
-        res.json(result.login.alreadyLogin(_.pick(req.user, ['_id', 'email', 'username'])));
-        return;
+        return res.json(result.login.alreadyLogin(_.pick(req.user, [
+            '_id', 'email', 'username',
+        ])));
     }
 
-    (async () => {
+    return (async () => {
         try {
             const user = await User.byEmail(email);
 

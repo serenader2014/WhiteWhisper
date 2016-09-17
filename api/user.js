@@ -2,13 +2,13 @@ import User from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
 import _ from 'lodash';
 import generateSlug from '../utils/generate-slug';
-import  result from '../utils/result';
+import result from '../utils/result';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
 export default {
     model: User,
-    create(options) {
+    create: async function create(options) {
         const defaultOption = {
             status: 'active',
             language: 'en_US',
@@ -18,7 +18,7 @@ export default {
         const user = _.extend({}, defaultOption, options);
         user.password = this.generatePassword(user.password);
         user.username = user.username || user.email;
-        user.slug = user.slug || user.username || user.email;
+        user.slug = await generateSlug(user.username, 'user', false);
 
         return User.create.bind(User)(user);
     },
@@ -47,7 +47,7 @@ export default {
                     username: finalObject.username,
                 }));
             }
-            finalObject.slug = await generateSlug(finalObject.username, 'user');
+            finalObject.slug = await generateSlug(finalObject.username, 'user', false);
         }
 
         if (finalObject.password) {

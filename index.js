@@ -18,7 +18,9 @@ export default () => init().then(() => {
     const env = process.NODE_ENV || 'development';
     const appConfig = config[env];
 
-    app.use(logger(env === 'development' ? 'dev' : 'combined'));
+    if (env !== 'test') {
+        app.use(logger(env === 'development' ? 'dev' : 'combined'));
+    }
     app.use(cookieParser());
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
