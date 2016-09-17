@@ -13,7 +13,8 @@ import log from './utils/logger';
 import init from './utils/init';
 import config from './config';
 
-export default () => init().then(() => {
+export default async () => {
+    await init();
     const app = Promise.promisifyAll(express());
     const env = process.NODE_ENV || 'development';
     const appConfig = config[env];
@@ -30,10 +31,14 @@ export default () => init().then(() => {
     app.use(route());
     app.use(notFound());
 
-    return app.listenAsync(appConfig.port, appConfig.host)
-        .then(() => {
-            log.info(`App is running on ${env} mode`);
-            log.info(`App is listening on ${appConfig.host}:${appConfig.port}`);
-        })
-        .catch(e => { log.error(e); process.exit(1); });
-});
+    try {
+        await app.listenAsync(appConfig.port, appConfig.host);
+        log.info(`App is running on ${env} mode`);
+        log.info(`App is listening on ${appConfig.host}:${appConfig.port}`);
+    } catch (e) {
+        log.error(e);
+        process.exit(1);
+    }
+
+    return app;
+};
