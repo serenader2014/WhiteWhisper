@@ -1,5 +1,6 @@
 import 'should';
 import request from 'supertest';
+import * as result from '../constant/err-code';
 import { appUrl, generateUser } from './utils';
 
 const categoryUrl = '/api/category';
@@ -39,6 +40,17 @@ describe('Category test', () => {
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
+                done();
+            });
+    });
+
+    it('should try to create duplicate category', done => {
+        request(appUrl)
+            .post(`${categoryUrl}?token=${token}`)
+            .send({ name: 'new category' })
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(result.category.nameTaken);
                 done();
             });
     });

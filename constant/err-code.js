@@ -35,4 +35,5 @@ export const user = {
 // 4
 export const category = {
     nameTaken: '40001',
+    notFound: '40002',
 };

@@ -3,7 +3,6 @@ import _ from 'lodash';
 import result from '../utils/result';
 import User from '../api/user';
 import logger from '../utils/logger';
-import generateSlug from '../utils/generate-slug';
 
 export const getMyself = (req, res) => {
     res.json(result({ user: req.user }));
@@ -66,20 +65,12 @@ export const updateUserInfo = (req, res) => {
     return (async () => {
         try {
             const user = await User.byId(id);
-            if (newUserInfo.username) {
-                const ifExist = await User.byUsername(newUserInfo.username);
-                if (ifExist) {
-                    return res.json(result.user.usernameTaken({ username: newUserInfo.username }));
-                }
-                newUserInfo.slug = await generateSlug(newUserInfo.username, 'user');
+            try {
+                const newUser = await User.update(user, newUserInfo, req.user);
+                return res.json(result({ user: newUser.omit('password') }, '修改资料成功'));
+            } catch (e) {
+                return res.json(e);
             }
-            newUserInfo.updated_at = new Date();
-            newUserInfo.updated_by = req.user.id;
-            for (const i of Object.keys(newUserInfo)) {
-                user.set(i, newUserInfo[i]);
-            }
-            const newUser = await user.save();
-            return res.json(result({ user: newUser.omit('password') }, '修改资料成功'));
         } catch (e) {
             logger.error(e);
             return res.json(result.common.serverError(e));
@@ -132,12 +123,12 @@ export const changePassword = (req, res) => {
             if (!isPasswordCorrect) {
                 return res.json(result.user.passwordIncorrect(oldPassword));
             }
-            const password = User.generatePassword(newPassword);
-            user.set('password', password);
-            user.set('updated_by', user.id);
-            user.set('updated_at', new Date());
-            const newUser = await user.save();
-            return res.json(result(newUser.omit('password'), '更改密码成功'));
+            try {
+                const newUser = await User.update(user, { password: newPassword }, req.user);
+                return res.json(result(newUser.omit('password'), '更改密码成功'));
+            } catch (e) {
+                return res.json(e);
+            }
         } catch (e) {
             logger.error(e);
             return res.json(result.common.serverError(e));

@@ -1,6 +1,8 @@
 import User from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
 import _ from 'lodash';
+import generateSlug from '../utils/generate-slug';
+import  result from '../utils/result';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
@@ -19,6 +21,47 @@ export default {
         user.slug = user.slug || user.username || user.email;
 
         return User.create.bind(User)(user);
+    },
+    update: async function update(user, newUser, currentUser) {
+        const finalObject = _.pick(newUser, [
+            'username',
+            'password',
+            'email',
+            'image',
+            'cover',
+            'bio',
+            'website',
+            'location',
+            'social_value',
+            'social_key',
+            'status',
+            'language',
+            'tour',
+            'last_login',
+        ]);
+
+        if (finalObject.username) {
+            const ifExist = await this.byUsername(finalObject.username);
+            if (ifExist) {
+                return Promise.reject(result.user.usernameTaken({
+                    username: finalObject.username,
+                }));
+            }
+            finalObject.slug = await generateSlug(finalObject.username, 'user');
+        }
+
+        if (finalObject.password) {
+            finalObject.password = this.generatePassword(finalObject.password);
+        }
+
+        finalObject.updated_at = new Date();
+        finalObject.updated_by = currentUser.id;
+
+        for (const i of Object.keys(finalObject)) {
+            user.set(i, finalObject[i]);
+        }
+
+        return user.save();
     },
     byEmail(email) {
         return User.query({ email });

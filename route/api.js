@@ -49,11 +49,11 @@ api.route('/category')
     .all(checkToken())
     .post(categoryController.create);
 
-// api.route('/category/:id')
-//     .all(checkId())
-//     .get(checkPermission('category', 'get'), apiController.category.getCategory)
-//     .put(checkPermission('category', 'put'), apiController.category.update)
-//     .delete(checkPermission('category', 'delete'), apiController.category.delete);
+api.route('/category/:id')
+    .get(categoryController.info)
+    .all(checkToken())
+    .put(categoryController.update)
+    .delete(categoryController.del);
 
 // api.route('/captcha')
 //     .get(apiController.captcha.generate)
