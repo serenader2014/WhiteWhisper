@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import logger from '../utils/logger';
-import User from '../api/user';
+import * as User from '../api/user';
 import result from '../utils/result';
 
 export const auth = (req, res) => {

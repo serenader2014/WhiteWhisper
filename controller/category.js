@@ -1,4 +1,4 @@
-import Category from '../api/category';
+import * as Category from '../api/category';
 import result from '../utils/result';
 import logger from '../utils/logger';
 

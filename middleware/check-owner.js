@@ -1,4 +1,4 @@
-import User from '../api/user';
+import * as User from '../api/user';
 import logger from '../utils/logger';
 import result from '../utils/result';
 

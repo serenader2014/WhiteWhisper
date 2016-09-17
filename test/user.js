@@ -8,7 +8,7 @@ const userInfoUrl = '/api/user/';
 const authUrl = '/api/auth';
 const registerUrl = '/api/register';
 
-describe('User system test', () => {
+describe('User test', () => {
     let user1 = generateUser();
     let user2 = generateUser();
     let token = null;

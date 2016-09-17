@@ -1,14 +1,14 @@
 const str = 'string';
-const num = 'number';
+// const num = 'number';
 const int = 'integer';
 const text = 'text';
-const float = 'float';
+// const float = 'float';
 const increments = 'increments';
 const bool = 'boolean';
-const date = 'date';
+// const date = 'date';
 const dateTime = 'dateTime';
-const time = 'time';
-const timestamp = 'timestamp';
+// const time = 'time';
+// const timestamp = 'timestamp';
 
 export default {
     setting: {

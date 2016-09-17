@@ -8,7 +8,7 @@ const registerUrl = '/api/register';
 const authUrl = '/api/auth';
 const userInfoUrl = '/api/i';
 
-describe('User system', () => {
+describe('Auth test', () => {
     let token = null;
     const user1 = generateUser();
     it('Should create a new user', done => {

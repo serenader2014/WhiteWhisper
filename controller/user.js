@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import result from '../utils/result';
-import User from '../api/user';
+import * as User from '../api/user';
 import logger from '../utils/logger';
 
 export const getMyself = (req, res) => {

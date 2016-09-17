@@ -11,6 +11,6 @@ export function list(req, res) {
     })();
 }
 
-export function create() {
+export function create(req, res) {
 
 }
