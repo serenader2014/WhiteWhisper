@@ -187,4 +187,13 @@ describe('User test', () => {
                 done();
             });
     });
+
+    it('should list users', done => {
+        request(appUrl)
+            .get('/api/user')
+            .end((req, res) => {
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
 });

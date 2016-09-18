@@ -1,4 +1,4 @@
-import User from '../model/user';
+import User, { Users } from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
 import _ from 'lodash';
 import generateSlug from '../utils/generate-slug';
@@ -27,6 +27,10 @@ export function byEmail(email) {
 
 export function bySlug(slug) {
     return User.query({ slug });
+}
+
+export function list() {
+    return Users.forge().fetch();
 }
 
 export async function create(options) {

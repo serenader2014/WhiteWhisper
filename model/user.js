@@ -43,3 +43,7 @@ export default class User extends bookshelf.Model {
         return this.save();
     }
 }
+
+export const Users = bookshelf.Collection.extend({
+    model: User,
+});

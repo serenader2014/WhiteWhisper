@@ -1,40 +1,38 @@
 import _ from 'lodash';
 
 import result from '../utils/result';
-import * as User from '../api/user';
+import * as userApi from '../api/user';
 import logger from '../utils/logger';
 
-export const getMyself = (req, res) => {
+export function getMyself(req, res) {
     res.json(result({ user: req.user }));
-};
+}
 
-export const getUserInfo = (req, res) => {
+export async function getUserInfo(req, res) {
     const id = req.params.id;
     if (!id) {
         return res.json(result.common.formInvalid({ id: 'id不能为空' }));
     }
-    return (async () => {
-        try {
-            const user = await User.byId(id);
-            if (!user) {
-                return res.json(result.user.userNotExist({ id }));
-            }
-            return res.json(result(_.pick(user.attributes, [
-                'email',
-                'id',
-                'username',
-                'bio',
-                'website',
-                'location',
-            ])));
-        } catch (e) {
-            logger.error(e);
-            return res.json(result.common.serverError(e));
+    try {
+        const user = await userApi.byId(id);
+        if (!user) {
+            return res.json(result.user.userNotExist({ id }));
         }
-    })();
-};
+        return res.json(result(_.pick(user.attributes, [
+            'email',
+            'id',
+            'username',
+            'bio',
+            'website',
+            'location',
+        ])));
+    } catch (e) {
+        logger.error(e);
+        return res.json(result.common.serverError(e));
+    }
+}
 
-export const updateUserInfo = (req, res) => {
+export async function updateUserInfo(req, res) {
     const id = req.params.id;
     req.checkBody({
         username: {
@@ -54,23 +52,21 @@ export const updateUserInfo = (req, res) => {
     if (!id) {
         return res.json(result.common.formInvalid({ id: 'id不能为空' }));
     }
-    return (async () => {
+    try {
+        const user = await userApi.byId(id);
         try {
-            const user = await User.byId(id);
-            try {
-                const newUser = await User.update(user, req.body, req.user);
-                return res.json(result(newUser.omit('password'), '修改资料成功'));
-            } catch (e) {
-                return res.json(e);
-            }
+            const newUser = await userApi.update(user, req.body, req.user);
+            return res.json(result(newUser.omit('password'), '修改资料成功'));
         } catch (e) {
-            logger.error(e);
-            return res.json(result.common.serverError(e));
+            return res.json(e);
         }
-    })();
-};
+    } catch (e) {
+        logger.error(e);
+        return res.json(result.common.serverError(e));
+    }
+}
 
-export const changePassword = (req, res) => {
+export async function changePassword(req, res) {
     const id = req.params.id;
     const {
         oldPassword,
@@ -110,13 +106,13 @@ export const changePassword = (req, res) => {
 
     return (async () => {
         try {
-            const user = await User.byId(id);
+            const user = await userApi.byId(id);
             const isPasswordCorrect = await user.validatePassword(oldPassword);
             if (!isPasswordCorrect) {
                 return res.json(result.user.passwordIncorrect(oldPassword));
             }
             try {
-                const newUser = await User.update(user, { password: newPassword }, req.user);
+                const newUser = await userApi.update(user, { password: newPassword }, req.user);
                 return res.json(result(newUser.omit('password'), '更改密码成功'));
             } catch (e) {
                 return res.json(e);
@@ -126,4 +122,14 @@ export const changePassword = (req, res) => {
             return res.json(result.common.serverError(e));
         }
     })();
-};
+}
+
+export async function list(req, res) {
+    try {
+        const collection = await userApi.list();
+        res.json(result(collection.toJSON()));
+    } catch (e) {
+        logger.error(e);
+        res.json(result.common.serverError(e));
+    }
+}

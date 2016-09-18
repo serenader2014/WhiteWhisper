@@ -23,6 +23,9 @@ api.route('/i')
     .all(checkToken())
     .get(userController.getMyself);
 
+api.route('/user')
+    .get(userController.list);
+
 api.route('/user/:id')
     .all(checkToken())
     .get(userController.getUserInfo)
