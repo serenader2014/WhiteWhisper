@@ -40,11 +40,12 @@ export const registerUrl = '/api/register';
 
 export async function registerUser() {
     const targetUser = generateUserInfo();
-    const result = await request({
+    let result = await request({
         path: registerUrl,
         method: 'POST',
         data: targetUser,
     });
+    result = JSON.parse(result);
     if (result.code !== 0) {
         return Promise.reject();
     }
@@ -53,11 +54,12 @@ export async function registerUser() {
 
 export async function generateNewUser() {
     const user = await registerUser();
-    const result = await request({
+    let result = await request({
         path: authUrl,
         method: 'POST',
         data: user,
     });
+    result = JSON.parse(result);
 
     if (result.code !== 0) {
         return Promise.reject();

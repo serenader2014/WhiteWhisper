@@ -19,7 +19,6 @@ export default function request(options) {
                 result += chunk;
             });
             res.on('end', () => {
-                result = JSON.parse(result);
                 resolve(result);
             });
         });
