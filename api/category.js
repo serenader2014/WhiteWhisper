@@ -1,4 +1,4 @@
-import Category from '../model/category';
+import Category, { Categories } from '../model/category';
 import _ from 'lodash';
 import result from '../utils/result';
 import generateSlug from '../utils/generate-slug';
@@ -15,6 +15,10 @@ export function byName(name) {
 
 export function byId(id) {
     return Category.query({ id });
+}
+
+export function list() {
+    return Categories.forge().fetch();
 }
 
 export async function create(options, user) {

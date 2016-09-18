@@ -31,3 +31,7 @@ export default class Category extends bookshelf.Model {
         return this.hasMany(Post);
     }
 }
+
+export const Categories = bookshelf.Collection.extend({
+    model: Category,
+});

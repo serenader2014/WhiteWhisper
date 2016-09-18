@@ -58,6 +58,17 @@ describe('Category test', () => {
             });
     });
 
+    it('should list the categories', done => {
+        request(appUrl)
+            .get(`${categoryUrl}`)
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(0);
+                res.body.data.length.should.equal(1);
+                done();
+            });
+    });
+
     it('should get category info', done => {
         request(appUrl)
             .get(`${categoryUrl}/${category1.id}`)

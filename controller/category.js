@@ -2,8 +2,15 @@ import * as categoryApi from '../api/category';
 import result from '../utils/result';
 import logger from '../utils/logger';
 
-export function list() {
+export async function list(req, res) {
+    try {
+        const categories = await categoryApi.list();
 
+        return res.json(result(categories.toJSON()));
+    } catch (e) {
+        logger.error(e);
+        return res.json(result.common.serverError(e));
+    }
 }
 
 export async function create(req, res) {
