@@ -1,5 +1,5 @@
 import config from '../config.js';
-import { request } from 'http';
+import request from '../utils/request';
 
 export function randomString(length) {
     if (length < 1) return '';
@@ -38,67 +38,29 @@ export const appUrl = `${config.test.host}:${config.test.port}`;
 export const authUrl = '/api/auth';
 export const registerUrl = '/api/register';
 
-export function registerUser() {
+export async function registerUser() {
     const targetUser = generateUserInfo();
-    return new Promise((resolve, reject) => {
-        const registerRequest = request({
-            hostname: config.test.host,
-            port: config.test.port,
-            path: registerUrl,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }, res => {
-            let result = '';
-            res.on('data', chunk => {
-                result += chunk;
-            });
-            res.on('end', () => {
-                result = JSON.parse(result);
-                if (result.code === 0) {
-                    resolve({ ...result.data, ...targetUser });
-                }
-            });
-        });
-
-        registerRequest.on('error', e => {
-            reject(e);
-        });
-        registerRequest.write(JSON.stringify(targetUser));
-        registerRequest.end();
+    const result = await request({
+        path: registerUrl,
+        method: 'POST',
+        data: targetUser,
     });
+    if (result.code !== 0) {
+        return Promise.reject();
+    }
+    return { ...result.data, ...targetUser };
 }
 
 export async function generateNewUser() {
     const user = await registerUser();
-    return new Promise((resolve, reject) => {
-        const loginRequest = request({
-            hostname: config.test.host,
-            port: config.test.port,
-            path: authUrl,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }, res => {
-            let result = '';
-            res.on('data', chunk => {
-                result += chunk;
-            });
-            res.on('end', () => {
-                result = JSON.parse(result);
-                if (result.code === 0) {
-                    resolve({ ...user, token: result.data.token });
-                }
-            });
-        });
-
-        loginRequest.on('error', e => {
-            reject(e);
-        });
-
-        loginRequest.write(JSON.stringify(user));
-        loginRequest.end();
+    const result = await request({
+        path: authUrl,
+        method: 'POST',
+        data: user,
     });
+
+    if (result.code !== 0) {
+        return Promise.reject();
+    }
+    return { ...user, token: result.data.token };
 }
