@@ -193,6 +193,7 @@ describe('User test', () => {
             .get('/api/user')
             .end((req, res) => {
                 res.body.code.should.equal(0);
+                console.log(res.body);
                 done();
             });
     });

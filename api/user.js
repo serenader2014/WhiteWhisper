@@ -1,8 +1,9 @@
-import User, { Users } from '../model/user';
+import User from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
 import _ from 'lodash';
 import generateSlug from '../utils/generate-slug';
 import result from '../utils/result';
+import Pagination from '../db/pagination';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
@@ -29,8 +30,8 @@ export function bySlug(slug) {
     return User.query({ slug });
 }
 
-export function list() {
-    return Users.forge().fetch();
+export function list(...args) {
+    return new Pagination(User).list(...args);
 }
 
 export async function create(options) {

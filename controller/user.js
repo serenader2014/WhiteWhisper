@@ -126,8 +126,8 @@ export async function changePassword(req, res) {
 
 export async function list(req, res) {
     try {
-        const collection = await userApi.list();
-        res.json(result(collection.toJSON()));
+        const list = await userApi.list({});
+        res.json(result(list));
     } catch (e) {
         logger.error(e);
         res.json(result.common.serverError(e));

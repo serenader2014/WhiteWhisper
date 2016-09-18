@@ -1,4 +1,7 @@
 import bookshelf from 'bookshelf';
 import knex from './connection';
 
-export default bookshelf(knex);
+const blogBookshelf = bookshelf(knex);
+blogBookshelf.plugin('pagination');
+
+export default blogBookshelf;

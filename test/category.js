@@ -9,9 +9,8 @@ const categoryUrl = '/api/category';
 describe('Category test', () => {
     let user = null;
 
-    before(async function before(done) {
+    before(async function before() {
         user = await generateNewUser();
-        done();
     });
 
     let category1 = null;
