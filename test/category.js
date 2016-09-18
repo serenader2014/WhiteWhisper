@@ -43,7 +43,7 @@ describe('Category test', () => {
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);
-                res.body.data.length.should.equal(1);
+                res.body.data.pagination.rowCount.should.equal(1);
                 done();
             });
     });

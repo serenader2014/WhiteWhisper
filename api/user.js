@@ -1,7 +1,7 @@
 import User from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
 import _ from 'lodash';
-import generateSlug from '../utils/generate-slug';
+import Slug from '../utils/slug';
 import result from '../utils/result';
 import Pagination from '../db/pagination';
 
@@ -44,7 +44,7 @@ export async function create(options) {
     const user = _.extend({}, defaultOption, options);
     user.password = await generatePassword(user.password);
     user.username = user.username || user.email;
-    user.slug = await generateSlug(user.username, 'user', false);
+    user.slug = await new Slug('user', false).digest(user.username);
 
     return User.create.bind(User)(user);
 }
@@ -74,7 +74,7 @@ export async function update(user, newUser, currentUser) {
                 username: finalObject.username,
             }));
         }
-        finalObject.slug = await generateSlug(finalObject.username, 'user', false);
+        finalObject.slug = await new Slug('user', false).digest(finalObject.username);
     }
 
     if (finalObject.password) {

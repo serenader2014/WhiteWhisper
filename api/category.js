@@ -1,7 +1,8 @@
-import Category, { Categories } from '../model/category';
+import Category from '../model/category';
 import _ from 'lodash';
 import result from '../utils/result';
-import generateSlug from '../utils/generate-slug';
+import Slug from '../utils/slug';
+import Pagination from '../db/pagination';
 
 export const model = Category;
 
@@ -17,8 +18,8 @@ export function byId(id) {
     return Category.query({ id });
 }
 
-export function list() {
-    return Categories.forge().fetch();
+export function list(...args) {
+    return new Pagination(Category).list(...args);
 }
 
 export async function create(options, user) {
@@ -27,7 +28,7 @@ export async function create(options, user) {
         created_by: user.id,
     };
     const category = _.extend({}, defaultOptions, options);
-    category.slug = await generateSlug(category.name, 'category', false);
+    category.slug = await new Slug('category', false).digest(category.name);
     return Category.create.bind(Category)(category);
 }
 
@@ -39,7 +40,7 @@ export async function update(category, newCategory, currentUser) {
         if (isExist) {
             return Promise.reject(result.category.nameTaken());
         }
-        finalObject.slug = await generateSlug(finalObject.name, 'category', false);
+        finalObject.slug = await new Slug('category', false).digest(finalObject.name);
     }
 
     finalObject.updated_at = new Date();

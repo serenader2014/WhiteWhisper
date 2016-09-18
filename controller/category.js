@@ -4,9 +4,8 @@ import logger from '../utils/logger';
 
 export async function list(req, res) {
     try {
-        const categories = await categoryApi.list();
-
-        return res.json(result(categories.toJSON()));
+        const categories = await categoryApi.list({});
+        return res.json(result(categories));
     } catch (e) {
         logger.error(e);
         return res.json(result.common.serverError(e));
