@@ -48,7 +48,9 @@ export default class Slug {
                 : `${slug}${count ? `${-count}` : ''}`;
             const isExist = await this.checkIfExist(slug);
 
-            if (isExist) return this.digest(text, this.hasHash ? null : (count || 1));
+            const c = count ? count + 1 : 1;
+
+            if (isExist) return this.digest(text, this.hasHash ? null : c);
 
             return slug;
         })();
