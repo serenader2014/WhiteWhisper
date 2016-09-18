@@ -1,50 +1,32 @@
 import 'should';
 import request from 'supertest';
 import _ from 'lodash';
-import { generateUserInfo, generatePassword, appUrl } from './utils';
+import {
+    appUrl,
+    generatePassword,
+    registerUser,
+    generateNewUser,
+} from './utils';
 import * as errCode from '../constant/err-code';
 
 const userInfoUrl = '/api/user/';
-const authUrl = '/api/auth';
-const registerUrl = '/api/register';
 
 describe('User test', () => {
-    let user1 = generateUserInfo();
-    let user2 = generateUserInfo();
-    let token = null;
-    it('Should create a user first', done => {
-        request(appUrl)
-            .post(registerUrl)
-            .send(user1)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                user1 = _.extend({}, user1, res.body.data);
-                done();
-            });
-    });
+    let user1 = null;
+    let user2 = null;
 
-    it('Should auth the user', done => {
-        request(appUrl)
-            .post(authUrl)
-            .send(user1)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                token = res.body.data.token;
-                done();
-            });
-    });
-
-    it('Should get a user\'s info', done => {
-        request(appUrl)
-            .get(`${userInfoUrl}${user1.id}?token=${token}`)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                res.body.data.email.should.equal(user1.email);
-                done();
-            });
+    it('Should get a user\'s info', async () => {
+        user1 = await generateNewUser();
+        return new Promise(resolve => {
+            request(appUrl)
+                .get(`${userInfoUrl}${user1.id}?token=${user1.token}`)
+                .end((err, res) => {
+                    if (err) throw err;
+                    res.body.code.should.equal(0);
+                    res.body.data.email.should.equal(user1.email);
+                    resolve();
+                });
+        });
     });
 
     it('Should get a user\'s info without token', done => {
@@ -57,19 +39,8 @@ describe('User test', () => {
             });
     });
 
-    it('Should create a new user', done => {
-        request(appUrl)
-            .post(registerUrl)
-            .send(user2)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                user2 = _.extend({}, user2, res.body.data);
-                done();
-            });
-    });
-
-    it('Should update user info', done => {
+    it('Should update user info', async () => {
+        user2 = await generateNewUser();
         const newUserInfo = {
             username: '新的用户名',
             bio: 'I love you from the first moment I saw you.',
@@ -77,19 +48,23 @@ describe('User test', () => {
             location: 'Guangdong, China',
             language: 'zh-cn',
         };
-        request(appUrl)
-            .put(`${userInfoUrl}${user1.id}?token=${token}`)
-            .send(newUserInfo)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                done();
-            });
+        return new Promise(resolve => {
+            request(appUrl)
+                .put(`${userInfoUrl}${user2.id}?token=${user2.token}`)
+                .send(newUserInfo)
+                .end((err, res) => {
+                    if (err) throw err;
+                    res.body.code.should.equal(0);
+                    res.body.data.username.should.equal(newUserInfo.username);
+                    user2 = _.extend({}, user2, newUserInfo);
+                    resolve();
+                });
+        });
     });
 
     it('Should try to update user info using an existing username', done => {
         request(appUrl)
-            .put(`${userInfoUrl}${user1.id}?token=${token}`)
+            .put(`${userInfoUrl}${user1.id}?token=${user1.token}`)
             .send({ username: user2.username })
             .end((err, res) => {
                 if (err) throw err;
@@ -100,7 +75,7 @@ describe('User test', () => {
 
     it('Should try to update other user\'s userinfo', done => {
         request(appUrl)
-            .put(`${userInfoUrl}${user2.id}?token=${token}`)
+            .put(`${userInfoUrl}${user2.id}?token=${user1.token}`)
             .send({ username: 'newusername' })
             .end((err, res) => {
                 if (err) throw err;
@@ -112,7 +87,7 @@ describe('User test', () => {
     it('Should change password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -128,7 +103,7 @@ describe('User test', () => {
     it('Should try to change other user\'s password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user2.id}/password?token=${token}`)
+            .post(`${userInfoUrl}${user2.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -144,7 +119,7 @@ describe('User test', () => {
     it('Should send inconsistent password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: user1.password,
@@ -159,7 +134,7 @@ describe('User test', () => {
 
     it('Should try to use a insecure password', done => {
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword: '12345678',
                 repeatPassword: '12345678',
@@ -175,7 +150,7 @@ describe('User test', () => {
     it('Should use a wrong password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${token}`)
+            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -190,10 +165,28 @@ describe('User test', () => {
 
     it('should list users', done => {
         request(appUrl)
-            .get('/api/user')
+            .get(userInfoUrl)
             .end((req, res) => {
                 res.body.code.should.equal(0);
                 done();
             });
+    });
+
+    it('should show users list pagination', async () => {
+        await registerUser();
+        await registerUser();
+        await registerUser();
+        await registerUser();
+        await registerUser();
+
+        return new Promise((resolve) => {
+            request(appUrl)
+                .get(`${userInfoUrl}?page=2&pageSize=4`)
+                .end((req, res) => {
+                    res.body.code.should.equal(0);
+                    res.body.data.pagination.rowCount.should.greaterThan(4);
+                    resolve();
+                });
+        });
     });
 });

@@ -29,7 +29,7 @@ export function generatePassword(length) {
 
 export function generateUserInfo() {
     return {
-        email: `${randomString(5)}@domain.com`,
+        email: `${randomString(8)}@domain.com`,
         password: generatePassword(16),
     };
 }

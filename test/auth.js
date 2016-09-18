@@ -1,11 +1,9 @@
 import 'should';
 import request from 'supertest';
-import { generateUserInfo, appUrl } from './utils';
+import { generateUserInfo, appUrl, registerUrl, authUrl } from './utils';
 
 import * as errCode from '../constant/err-code';
 
-const registerUrl = '/api/register';
-const authUrl = '/api/auth';
 const userInfoUrl = '/api/i';
 
 describe('Auth test', () => {

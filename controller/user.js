@@ -125,9 +125,22 @@ export async function changePassword(req, res) {
 }
 
 export async function list(req, res) {
+    const options = {};
+    let { pageSize, page } = req.query;
+    pageSize = parseInt(pageSize, 10);
+    page = parseInt(page, 10);
+
+    if (!isNaN(pageSize)) {
+        options.pageSize = pageSize;
+    }
+
+    if (!isNaN(page)) {
+        options.page = page;
+    }
+
     try {
-        const list = await userApi.list({});
-        res.json(result(list));
+        const users = await userApi.list(options);
+        res.json(result(users));
     } catch (e) {
         logger.error(e);
         res.json(result.common.serverError(e));
