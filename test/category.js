@@ -1,43 +1,23 @@
 import 'should';
 import request from 'supertest';
 import * as result from '../constant/err-code';
-import { appUrl, generateUser } from './utils';
+import { appUrl, generateNewUser } from './utils';
 import _ from 'lodash';
 
 const categoryUrl = '/api/category';
-const authUrl = '/api/auth';
-const registerUrl = '/api/register';
 
 describe('Category test', () => {
-    let token = null;
-    const user1 = generateUser();
-    it('Should create a new user', done => {
-        request(appUrl)
-            .post(registerUrl)
-            .send(user1)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                done();
-            });
-    });
+    let user = null;
 
-    it('Should auth the user', done => {
-        request(appUrl)
-            .post(authUrl)
-            .send(user1)
-            .end((err, res) => {
-                if (err) throw err;
-                res.body.code.should.equal(0);
-                token = res.body.data.token;
-                done();
-            });
+    before(async function before(done) {
+        user = await generateNewUser();
+        done();
     });
 
     let category1 = null;
     it('should create a category', done => {
         request(appUrl)
-            .post(`${categoryUrl}?token=${token}`)
+            .post(`${categoryUrl}?token=${user.token}`)
             .send({ name: 'new category' })
             .end((err, res) => {
                 if (err) throw err;
@@ -49,7 +29,7 @@ describe('Category test', () => {
 
     it('should try to create duplicate category', done => {
         request(appUrl)
-            .post(`${categoryUrl}?token=${token}`)
+            .post(`${categoryUrl}?token=${user.token}`)
             .send({ name: 'new category' })
             .end((err, res) => {
                 if (err) throw err;
@@ -83,7 +63,7 @@ describe('Category test', () => {
     it('should update the category', done => {
         const newName = 'hahhahaahha';
         request(appUrl)
-            .put(`${categoryUrl}/${category1.id}?token=${token}`)
+            .put(`${categoryUrl}/${category1.id}?token=${user.token}`)
             .send(_.extend({}, category1, {
                 name: newName,
             }))
@@ -97,7 +77,7 @@ describe('Category test', () => {
 
     it('should delete the category', done => {
         request(appUrl)
-            .delete(`${categoryUrl}/${category1.id}?token=${token}`)
+            .delete(`${categoryUrl}/${category1.id}?token=${user.token}`)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);

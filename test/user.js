@@ -1,7 +1,7 @@
 import 'should';
 import request from 'supertest';
 import _ from 'lodash';
-import { generateUser, generatePassword, appUrl } from './utils';
+import { generateUserInfo, generatePassword, appUrl } from './utils';
 import * as errCode from '../constant/err-code';
 
 const userInfoUrl = '/api/user/';
@@ -9,8 +9,8 @@ const authUrl = '/api/auth';
 const registerUrl = '/api/register';
 
 describe('User test', () => {
-    let user1 = generateUser();
-    let user2 = generateUser();
+    let user1 = generateUserInfo();
+    let user2 = generateUserInfo();
     let token = null;
     it('Should create a user first', done => {
         request(appUrl)
