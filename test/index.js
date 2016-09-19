@@ -1,13 +1,17 @@
 /* jshint mocha:true */
 
+process.NODE_ENV = 'test';
+
+
 import path from 'path';
-import config from '../config';
 import 'should';
 import request from 'supertest';
 
 global.Promise = require('bluebird');
 global.fs = Promise.promisifyAll(require('fs'));
 
+/* eslint-disable global-require */
+const config = require('../config').default;
 const dbDir = path.join(config.appRoot, config.test.db.connection.filename);
 const appUrl = `${config.test.host}:${config.test.port}`;
 
@@ -26,15 +30,12 @@ async function resetDB() {
     }
 }
 
-process.NODE_ENV = 'test';
-
 describe('Begin api server test', () => {
     /* eslint-disable func-names */
     before(async function () {
         this.timeout(20000);
 
         await resetDB();
-        /* eslint-disable global-require */
         require('../utils/startup-check').default();
         await require('../index.js').default();
     });
