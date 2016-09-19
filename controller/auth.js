@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import logger from '../utils/logger';
 import * as userApi from '../api/user';

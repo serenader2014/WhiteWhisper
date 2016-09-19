@@ -5,7 +5,7 @@ const env = config.env;
 
 export default function request(options) {
     return new Promise((resolve, reject) => {
-        const req = r({
+        const requestOptions = {
             hostname: config[env].host,
             port: config[env].port,
             headers: {
@@ -13,16 +13,27 @@ export default function request(options) {
             },
             method: 'GET',
             ...options,
-        }, res => {
+        };
+        const req = r(requestOptions, res => {
             let result = '';
             res.on('data', chunk => {
                 result += chunk;
             });
             res.on('end', () => {
-                resolve(result);
+                resolve({
+                    request: requestOptions,
+                    response: {
+                        headers: res.headers,
+                        status: res.statusCode,
+                        body: result,
+                    },
+                    toJSON() {
+                        return JSON.parse(result);
+                    },
+                });
             });
         });
-        req.write(JSON.stringify(options.data));
+        req.write(JSON.stringify(options.data || ''));
         req.on('error', e => {
             reject(e);
         });

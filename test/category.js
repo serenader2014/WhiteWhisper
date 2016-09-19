@@ -1,10 +1,8 @@
 import 'should';
 import request from 'supertest';
 import * as result from '../constant/err-code';
-import { appUrl, generateNewUser } from './utils';
+import { appUrl, categoryUrl, generateNewUser, createCategory } from './utils';
 import _ from 'lodash';
-
-const categoryUrl = '/api/category';
 
 describe('Category test', () => {
     let user = null;
@@ -82,5 +80,26 @@ describe('Category test', () => {
                 res.body.code.should.equal(0);
                 done();
             });
+    });
+
+    it('should list the categories', async () => {
+        await createCategory();
+        await createCategory();
+        await createCategory();
+        await createCategory();
+        await createCategory();
+
+        return new Promise(resolve => {
+            request(appUrl)
+                .get(`${categoryUrl}?pageSize=4`)
+                .end((err, res) => {
+                    if (err) throw err;
+                    res.body.code.should.equal(0);
+                    res.body.data.pagination.rowCount.should.equal(5);
+                    res.body.data.pagination.pageCount.should.equal(2);
+                    res.body.data.data.length.should.equal(4);
+                    resolve();
+                });
+        });
     });
 });

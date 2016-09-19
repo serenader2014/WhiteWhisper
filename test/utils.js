@@ -37,15 +37,16 @@ export function generateUserInfo() {
 export const appUrl = `${config.test.host}:${config.test.port}`;
 export const authUrl = '/api/auth';
 export const registerUrl = '/api/register';
+export const categoryUrl = '/api/category';
+
 
 export async function registerUser() {
     const targetUser = generateUserInfo();
-    let result = await request({
+    const result = (await request({
         path: registerUrl,
         method: 'POST',
         data: targetUser,
-    });
-    result = JSON.parse(result);
+    })).toJSON();
     if (result.code !== 0) {
         return Promise.reject();
     }
@@ -54,15 +55,30 @@ export async function registerUser() {
 
 export async function generateNewUser() {
     const user = await registerUser();
-    let result = await request({
+    const result = (await request({
         path: authUrl,
         method: 'POST',
         data: user,
-    });
-    result = JSON.parse(result);
+    })).toJSON();
 
     if (result.code !== 0) {
         return Promise.reject();
     }
     return { ...user, token: result.data.token };
+}
+
+export async function createCategory() {
+    const name = randomString(8);
+    const user = await generateNewUser();
+    const result = (await request({
+        path: `${categoryUrl}?token=${user.token}`,
+        method: 'POST',
+        data: { name },
+    })).toJSON();
+
+    if (result.code !== 0) {
+        return Promise.reject();
+    }
+
+    return result;
 }

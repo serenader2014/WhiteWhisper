@@ -3,8 +3,22 @@ import result from '../utils/result';
 import logger from '../utils/logger';
 
 export async function list(req, res) {
+    let { pageSize, page } = req.query;
+    const queryObject = {};
+
+    pageSize = parseInt(pageSize, 10);
+    page = parseInt(page, 10);
+
+    if (!isNaN(pageSize)) {
+        queryObject.pageSize = pageSize;
+    }
+
+    if (!isNaN(page)) {
+        queryObject.page = page;
+    }
+
     try {
-        const categories = await categoryApi.list({});
+        const categories = await categoryApi.list(queryObject);
         return res.json(result(categories));
     } catch (e) {
         logger.error(e);
