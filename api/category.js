@@ -29,7 +29,7 @@ export async function create(options, user) {
     };
     const category = _.extend({}, defaultOptions, options);
     category.slug = await new Slug('category', false).digest(category.name);
-    return Category.create.bind(Category)(category);
+    return Category.create(category);
 }
 
 export async function update(category, newCategory, currentUser) {

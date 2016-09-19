@@ -18,26 +18,6 @@ export function list() {
 
 }
 
-        // id: { type: increments, nullable: false, primary: true },
-        // title: { type: str, nullable: false },
-        // author: { type: int, nullable: false },
-        // slug: { type: str, nullable: false, unique: true },
-        // text: { type: text, nullable: true, fieldtype: 'medium' },
-        // html: { type: text, nullable: true, fieldtype: 'medium' },
-        // image: { type: text, nullable: true },
-        // // 'published', 'unpublished', 'deleted', 'draft'
-        // status: { type: str, nullable: false, defaultTo: 'draft' },
-        // category: { type: int, nullable: false },
-        // url: { type: str, nullable: false, unique: true },
-        // createdAt: { type: dateTime, nullable: false },
-        // createdBy: { type: int, nullable: false },
-        // updatedAt: { type: dateTime, nullable: true },
-        // updatedBy: { type: int, nullable: true },
-        // publishedAt: { type: dateTime, nullable: true },
-        // publishedBy: { type: int, nullable: true },
-        // featured: { type: bool, nullable: false, defaultTo: false },
-
-
 export async function create(options, user) {
     const defaultOptions = {
         title: 'Untitled',
@@ -63,7 +43,7 @@ export async function create(options, user) {
         post.published_by = user.id;
     }
 
-    const newPost = await Post.create.bind(Post)(post);
+    const newPost = await Post.create(post);
     return newPost;
 }
 

@@ -46,7 +46,7 @@ export async function create(options) {
     user.username = user.username || user.email;
     user.slug = await new Slug('user', false).digest(user.username);
 
-    return User.create.bind(User)(user);
+    return User.create(user);
 }
 
 export async function update(user, newUser, currentUser) {
