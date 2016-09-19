@@ -28,7 +28,7 @@ export default class Slug {
 
     generateHash(text) {
         const md5 = crypto.createHash('md5');
-        md5.update(text + new Date().getTime().toString());
+        md5.update(text);
         return md5.digest('hex');
     }
 
@@ -44,7 +44,7 @@ export default class Slug {
             let slug = this.generateUnidecode(text);
             const salt = new Date().getTime() + Math.floor(Math.random() * 10000);
             slug = this.hasHash ?
-                `${slug}-${this.generateHash(slug + salt)}`
+                `${slug}-${this.generateHash(slug + salt).substring(0, 8)}`
                 : `${slug}${count ? `${-count}` : ''}`;
             const isExist = await this.checkIfExist(slug);
 

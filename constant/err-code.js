@@ -37,3 +37,8 @@ export const category = {
     nameTaken: '40001',
     notFound: '40002',
 };
+
+// 5
+export const post = {
+    slugTaken: '50001',
+};

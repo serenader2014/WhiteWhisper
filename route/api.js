@@ -39,6 +39,7 @@ api.route('/user/:id/password')
 
 api.route('/post')
     .get(postController.list)
+    .all(checkToken())
     .post(postController.create);
 
 // api.route('/post/:id')

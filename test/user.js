@@ -5,7 +5,7 @@ import {
     appUrl,
     generatePassword,
     registerUser,
-    generateNewUser,
+    createUser,
 } from './utils';
 import * as errCode from '../constant/err-code';
 
@@ -16,7 +16,7 @@ describe('User test', () => {
     let user2 = null;
 
     it('Should get a user\'s info', async () => {
-        user1 = await generateNewUser();
+        user1 = await createUser();
         return new Promise(resolve => {
             request(appUrl)
                 .get(`${userInfoUrl}${user1.id}?token=${user1.token}`)
@@ -40,7 +40,7 @@ describe('User test', () => {
     });
 
     it('Should update user info', async () => {
-        user2 = await generateNewUser();
+        user2 = await createUser();
         const newUserInfo = {
             username: '新的用户名',
             bio: 'I love you from the first moment I saw you.',

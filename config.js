@@ -14,6 +14,7 @@ const config = {
         },
         host: 'localhost',
         port: 10010,
+        protocol: 'http://',
     },
     test: {
         db: {
@@ -24,6 +25,7 @@ const config = {
         },
         host: 'localhost',
         port: 10011,
+        protocol: 'http://',
     },
     production: {
         db: {
@@ -34,6 +36,7 @@ const config = {
         },
         host: 'localhost',
         port: 10012,
+        protocol: 'http://',
     },
 };
 global.config = config;

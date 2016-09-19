@@ -38,6 +38,7 @@ export const appUrl = `${config.test.host}:${config.test.port}`;
 export const authUrl = '/api/auth';
 export const registerUrl = '/api/register';
 export const categoryUrl = '/api/category';
+export const postUrl = '/api/post';
 
 
 export async function registerUser() {
@@ -53,7 +54,7 @@ export async function registerUser() {
     return { ...result.data, ...targetUser };
 }
 
-export async function generateNewUser() {
+export async function createUser() {
     const user = await registerUser();
     const result = (await request({
         path: authUrl,
@@ -67,11 +68,15 @@ export async function generateNewUser() {
     return { ...user, token: result.data.token };
 }
 
-export async function createCategory() {
+export async function createCategory(token) {
+    let realToken = token;
     const name = randomString(8);
-    const user = await generateNewUser();
+    if (!realToken) {
+        const user = await createUser();
+        realToken = user.token;
+    }
     const result = (await request({
-        path: `${categoryUrl}?token=${user.token}`,
+        path: `${categoryUrl}?token=${realToken}`,
         method: 'POST',
         data: { name },
     })).toJSON();
@@ -80,5 +85,5 @@ export async function createCategory() {
         return Promise.reject();
     }
 
-    return result;
+    return result.data;
 }

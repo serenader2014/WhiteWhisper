@@ -1,14 +1,14 @@
 import 'should';
 import request from 'supertest';
 import * as result from '../constant/err-code';
-import { appUrl, categoryUrl, generateNewUser, createCategory } from './utils';
+import { appUrl, categoryUrl, createUser, createCategory } from './utils';
 import _ from 'lodash';
 
 describe('Category test', () => {
     let user = null;
 
     before(async function before() {
-        user = await generateNewUser();
+        user = await createUser();
     });
 
     let category1 = null;
