@@ -1,6 +1,8 @@
 import bookshelf from '../db/bookshelf';
 import bcrypt from 'bcrypt-nodejs';
 import Post from './post';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
@@ -40,6 +42,13 @@ export default class User extends bookshelf.Model {
 
     login() {
         this.set('last_login', new Date());
-        return this.save();
+        const token = jwt.sign(_.pick(this.attributes, [
+            'id',
+            'email',
+            'username',
+        ]), config.secret, {
+            expiresIn: 86400,
+        });
+        return this.save().then(() => token);
     }
 }

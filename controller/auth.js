@@ -37,14 +37,8 @@ export async function auth(req, res) {
         if (!validatePassword) {
             return res.json(result.login.passwordIncorrect(password));
         }
-        const token = jwt.sign(_.pick(user.attributes, [
-            'id',
-            'email',
-            'username',
-        ]), config.secret, {
-            expiresIn: 86400,
-        });
-        await user.login();
+
+        const token = await user.login();
         return res.json(result(_.extend(user.omit('password'), { token }), '登录成功！'));
     } catch (err) {
         logger.error(err);

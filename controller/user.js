@@ -104,24 +104,22 @@ export async function changePassword(req, res) {
         return res.json(result.common.formInvalid(errors));
     }
 
-    return (async () => {
-        try {
-            const user = await userApi.byId(id);
-            const isPasswordCorrect = await user.validatePassword(oldPassword);
-            if (!isPasswordCorrect) {
-                return res.json(result.user.passwordIncorrect(oldPassword));
-            }
-            try {
-                const newUser = await userApi.update(user, { password: newPassword }, req.user);
-                return res.json(result(newUser.omit('password'), '更改密码成功'));
-            } catch (e) {
-                return res.json(e);
-            }
-        } catch (e) {
-            logger.error(e);
-            return res.json(result.common.serverError(e));
+    try {
+        const user = await userApi.byId(id);
+        const isPasswordCorrect = await user.validatePassword(oldPassword);
+        if (!isPasswordCorrect) {
+            return res.json(result.user.passwordIncorrect(oldPassword));
         }
-    })();
+        try {
+            const newUser = await userApi.update(user, { password: newPassword }, req.user);
+            return res.json(result(newUser.omit('password'), '更改密码成功'));
+        } catch (e) {
+            return res.json(e);
+        }
+    } catch (e) {
+        logger.error(e);
+        return res.json(result.common.serverError(e));
+    }
 }
 
 export async function list(req, res) {
