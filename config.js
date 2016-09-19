@@ -1,10 +1,10 @@
 import pkg from './package.json';
 const config = {
     version: pkg.version,
-    env: 'development',
     secret: 'love music',
     appRoot: __dirname,
     trustProxy: true,
+    env: process.NODE_ENV || 'development',
     development: {
         db: {
             connection: {

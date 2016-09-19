@@ -16,7 +16,7 @@ import config from './config';
 export default async () => {
     await init();
     const app = Promise.promisifyAll(express());
-    const env = process.NODE_ENV || 'development';
+    const env = config.env;
     const appConfig = config[env];
 
     if (env !== 'test') {

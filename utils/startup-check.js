@@ -31,7 +31,7 @@ function dependencyCheck() {
 }
 
 function envCheck() {
-    const env = process.env.NODE_ENV || config.env;
+    const env = config.env;
 
     if (!config[env]) {
         console.error(`unable to find config for current env: ${env}`);

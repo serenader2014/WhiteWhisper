@@ -1,7 +1,7 @@
 import { request as r } from 'http';
 import config from '../config';
 
-const env = process.NODE_ENV || 'development';
+const env = config.env;
 
 export default function request(options) {
     return new Promise((resolve, reject) => {
