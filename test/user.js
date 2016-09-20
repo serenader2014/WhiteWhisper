@@ -3,13 +3,12 @@ import request from 'supertest';
 import _ from 'lodash';
 import {
     appUrl,
+    userUrl,
     generatePassword,
     registerUser,
     createUser,
 } from './utils';
 import * as errCode from '../constant/err-code';
-
-const userInfoUrl = '/api/user/';
 
 describe('User test', () => {
     let user1 = null;
@@ -19,7 +18,7 @@ describe('User test', () => {
         user1 = await createUser();
         return new Promise(resolve => {
             request(appUrl)
-                .get(`${userInfoUrl}${user1.id}?token=${user1.token}`)
+                .get(`${userUrl}/${user1.id}?token=${user1.token}`)
                 .end((err, res) => {
                     if (err) throw err;
                     res.body.code.should.equal(0);
@@ -31,7 +30,7 @@ describe('User test', () => {
 
     it('Should get a user\'s info without token', done => {
         request(appUrl)
-            .get(`${userInfoUrl}${user1.id}`)
+            .get(`${userUrl}/${user1.id}`)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(errCode.common.permissionDeny);
@@ -50,7 +49,7 @@ describe('User test', () => {
         };
         return new Promise(resolve => {
             request(appUrl)
-                .put(`${userInfoUrl}${user2.id}?token=${user2.token}`)
+                .put(`${userUrl}/${user2.id}?token=${user2.token}`)
                 .send(newUserInfo)
                 .end((err, res) => {
                     if (err) throw err;
@@ -64,7 +63,7 @@ describe('User test', () => {
 
     it('Should try to update user info using an existing username', done => {
         request(appUrl)
-            .put(`${userInfoUrl}${user1.id}?token=${user1.token}`)
+            .put(`${userUrl}/${user1.id}?token=${user1.token}`)
             .send({ username: user2.username })
             .end((err, res) => {
                 if (err) throw err;
@@ -75,7 +74,7 @@ describe('User test', () => {
 
     it('Should try to update other user\'s userinfo', done => {
         request(appUrl)
-            .put(`${userInfoUrl}${user2.id}?token=${user1.token}`)
+            .put(`${userUrl}/${user2.id}?token=${user1.token}`)
             .send({ username: 'newusername' })
             .end((err, res) => {
                 if (err) throw err;
@@ -87,7 +86,7 @@ describe('User test', () => {
     it('Should change password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
+            .post(`${userUrl}/${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -103,7 +102,7 @@ describe('User test', () => {
     it('Should try to change other user\'s password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user2.id}/password?token=${user1.token}`)
+            .post(`${userUrl}/${user2.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -119,7 +118,7 @@ describe('User test', () => {
     it('Should send inconsistent password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
+            .post(`${userUrl}/${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: user1.password,
@@ -134,7 +133,7 @@ describe('User test', () => {
 
     it('Should try to use a insecure password', done => {
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
+            .post(`${userUrl}/${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword: '12345678',
                 repeatPassword: '12345678',
@@ -150,7 +149,7 @@ describe('User test', () => {
     it('Should use a wrong password', done => {
         const newPassword = generatePassword(16);
         request(appUrl)
-            .post(`${userInfoUrl}${user1.id}/password?token=${user1.token}`)
+            .post(`${userUrl}/${user1.id}/password?token=${user1.token}`)
             .send({
                 newPassword,
                 repeatPassword: newPassword,
@@ -165,7 +164,7 @@ describe('User test', () => {
 
     it('should list users', done => {
         request(appUrl)
-            .get(userInfoUrl)
+            .get(userUrl)
             .end((req, res) => {
                 res.body.code.should.equal(0);
                 done();
@@ -181,7 +180,7 @@ describe('User test', () => {
 
         return new Promise((resolve) => {
             request(appUrl)
-                .get(`${userInfoUrl}?page=2&pageSize=4`)
+                .get(`${userUrl}?page=2&pageSize=4`)
                 .end((req, res) => {
                     res.body.code.should.equal(0);
                     res.body.data.pagination.rowCount.should.greaterThan(4);

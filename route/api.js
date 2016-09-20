@@ -23,21 +23,21 @@ api.route('/i')
     .all(checkToken())
     .get(userController.getMyself);
 
-api.route('/user')
+api.route('/users')
     .get(userController.list);
 
-api.route('/user/:id')
+api.route('/users/:id')
     .all(checkToken())
     .get(userController.getUserInfo)
     .all(checkOwner())
     .put(userController.updateUserInfo);
 
-api.route('/user/:id/password')
+api.route('/users/:id/password')
     .all(checkToken())
     .all(checkOwner())
     .post(userController.changePassword);
 
-api.route('/post')
+api.route('/posts')
     .get(postController.list)
     .all(checkToken())
     .post(postController.create);
@@ -48,12 +48,12 @@ api.route('/post')
 //     .put(checkPermission('post', 'put'), apiController.post.update)
 //     .delete(checkPermission('post', 'delete'), apiController.post.delete);
 
-api.route('/category')
+api.route('/categories')
     .get(categoryController.list)
     .all(checkToken())
     .post(categoryController.create);
 
-api.route('/category/:id')
+api.route('/categories/:id')
     .get(categoryController.info)
     .all(checkToken())
     .put(categoryController.update)
