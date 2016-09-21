@@ -18,6 +18,7 @@ const {
 const api = express();
 
 api.use(saveUser());
+api.options('*', (req, res) => res.send('ok'));
 
 api.route('/auth')
     .post(authControllers.auth)
@@ -41,7 +42,8 @@ api.route('/users/:id')
     .get(userControllers.getUserInfo)
     .all(checkOwner())
     .put(userControllers.updateUserInfo)
-    .all(methodNotAllowed(['GET', 'PUT']));
+    .patch(userControllers.updateUserInfo)
+    .all(methodNotAllowed(['GET', 'PUT', 'PATCH']));
 
 api.route('/users/:id/password')
     .all(checkToken())
@@ -71,8 +73,9 @@ api.route('/categories/:id')
     .get(categoryControllers.info)
     .all(checkToken())
     .put(categoryControllers.update)
+    .patch(categoryControllers.update)
     .delete(categoryControllers.del)
-    .all(methodNotAllowed(['GET', 'PUT', 'DELETE']));
+    .all(methodNotAllowed(['GET', 'PUT', 'DELETE', 'PATCH']));
 
 // api.route('/captcha')
 //     .get(apiController.captcha.generate)
