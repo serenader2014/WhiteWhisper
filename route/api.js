@@ -2,45 +2,49 @@ import express from 'express';
 import checkToken from '../middleware/check-token';
 import checkOwner from '../middleware/check-owner';
 import saveUser from '../middleware/save-user-to-request';
-import * as authController from '../controller/auth';
-import * as userController from '../controller/user';
-import * as postController from '../controller/post';
-import * as categoryController from '../controller/category';
+import controllers from '../controller';
+
 // import brute           from '../middleware/brute';
 // import checkPermission from '../middleware/check-permission';
 // import checkId         from '../middleware/check-id';
+const {
+    authControllers,
+    userControllers,
+    postControllers,
+    categoryControllers,
+} = controllers;
 const api = express();
 
 api.use(saveUser());
 
 api.route('/auth')
-    .post(authController.auth);
+    .post(authControllers.auth);
 
 api.route('/register')
-    .post(authController.register);
+    .post(authControllers.register);
 
 api.route('/i')
     .all(checkToken())
-    .get(userController.getMyself);
+    .get(userControllers.getMyself);
 
 api.route('/users')
-    .get(userController.list);
+    .get(userControllers.list);
 
 api.route('/users/:id')
     .all(checkToken())
-    .get(userController.getUserInfo)
+    .get(userControllers.getUserInfo)
     .all(checkOwner())
-    .put(userController.updateUserInfo);
+    .put(userControllers.updateUserInfo);
 
 api.route('/users/:id/password')
     .all(checkToken())
     .all(checkOwner())
-    .post(userController.changePassword);
+    .post(userControllers.changePassword);
 
 api.route('/posts')
-    .get(postController.list)
+    .get(postControllers.list)
     .all(checkToken())
-    .post(postController.create);
+    .post(postControllers.create);
 
 // api.route('/post/:id')
 //     .all(checkId())
@@ -49,15 +53,15 @@ api.route('/posts')
 //     .delete(checkPermission('post', 'delete'), apiController.post.delete);
 
 api.route('/categories')
-    .get(categoryController.list)
+    .get(categoryControllers.list)
     .all(checkToken())
-    .post(categoryController.create);
+    .post(categoryControllers.create);
 
 api.route('/categories/:id')
-    .get(categoryController.info)
+    .get(categoryControllers.info)
     .all(checkToken())
-    .put(categoryController.update)
-    .delete(categoryController.del);
+    .put(categoryControllers.update)
+    .delete(categoryControllers.del);
 
 // api.route('/captcha')
 //     .get(apiController.captcha.generate)

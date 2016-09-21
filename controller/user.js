@@ -1,24 +1,23 @@
 import _ from 'lodash';
 
-import result from '../utils/result';
 import * as userApi from '../api/user';
 import logger from '../utils/logger';
 
-export function getMyself(req, res) {
-    res.json(result({ user: req.user }));
+export function getMyself(req, result, done) {
+    done(result({ user: req.user }));
 }
 
-export async function getUserInfo(req, res) {
+export async function getUserInfo(req, result, done) {
     const id = req.params.id;
     if (!id) {
-        return res.json(result.common.formInvalid({ id: 'id不能为空' }));
+        return done(result.error.common.formInvalid({ id: 'id不能为空' }));
     }
     try {
         const user = await userApi.byId(id);
         if (!user) {
-            return res.json(result.user.userNotExist({ id }));
+            return done(result.error.user.notFound({ id }));
         }
-        return res.json(result(_.pick(user.attributes, [
+        return done(result(_.pick(user.attributes, [
             'email',
             'id',
             'username',
@@ -28,11 +27,11 @@ export async function getUserInfo(req, res) {
         ])));
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }
 
-export async function updateUserInfo(req, res) {
+export async function updateUserInfo(req, result, done) {
     const id = req.params.id;
     req.checkBody({
         username: {
@@ -46,27 +45,27 @@ export async function updateUserInfo(req, res) {
     const errors = req.validationErrors();
 
     if (errors) {
-        return res.json(result.common.formInvalid(errors));
+        return done(result.error.common.formInvalid(errors));
     }
 
     if (!id) {
-        return res.json(result.common.formInvalid({ id: 'id不能为空' }));
+        return done(result.error.common.formInvalid({ id: 'id不能为空' }));
     }
     try {
         const user = await userApi.byId(id);
         try {
             const newUser = await userApi.update(user, req.body, req.user);
-            return res.json(result(newUser.omit('password'), '修改资料成功'));
+            return done(result(newUser.omit('password'), '修改资料成功'));
         } catch (e) {
-            return res.json(e);
+            return done(e);
         }
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }
 
-export async function changePassword(req, res) {
+export async function changePassword(req, result, done) {
     const id = req.params.id;
     const {
         oldPassword,
@@ -101,28 +100,28 @@ export async function changePassword(req, res) {
     const errors = req.validationErrors();
 
     if (errors) {
-        return res.json(result.common.formInvalid(errors));
+        return done(result.error.common.formInvalid(errors));
     }
 
     try {
         const user = await userApi.byId(id);
         const isPasswordCorrect = await user.validatePassword(oldPassword);
         if (!isPasswordCorrect) {
-            return res.json(result.user.passwordIncorrect(oldPassword));
+            return done(result.error.user.passwordIncorrect(oldPassword));
         }
         try {
             const newUser = await userApi.update(user, { password: newPassword }, req.user);
-            return res.json(result(newUser.omit('password'), '更改密码成功'));
+            return done(result(newUser.omit('password'), '更改密码成功'));
         } catch (e) {
-            return res.json(e);
+            return done(e);
         }
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }
 
-export async function list(req, res) {
+export async function list(req, result, done) {
     const options = {};
     let { pageSize, page } = req.query;
     pageSize = parseInt(pageSize, 10);
@@ -138,9 +137,9 @@ export async function list(req, res) {
 
     try {
         const users = await userApi.list(options);
-        res.json(result(users));
+        done(result(users));
     } catch (e) {
         logger.error(e);
-        res.json(result.common.serverError(e));
+        done(result.error.common.serverError(e));
     }
 }

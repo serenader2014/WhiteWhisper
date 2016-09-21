@@ -15,7 +15,7 @@ export default class Pagination {
             }).orderBy(order).fetchPage({ pageSize, page });
 
             return {
-                data: collection.toJSON(),
+                list: collection.toJSON(),
                 pagination: collection.pagination,
             };
         })();

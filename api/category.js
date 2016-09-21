@@ -1,8 +1,8 @@
 import Category from '../model/category';
 import _ from 'lodash';
-import result from '../utils/result';
 import Slug from '../utils/slug';
 import Pagination from '../db/pagination';
+import getResponseMsg from '../utils/get-response-msg';
 
 export const model = Category;
 
@@ -38,7 +38,7 @@ export async function update(category, newCategory, currentUser) {
     if (finalObject.name) {
         const isExist = await byName(finalObject.name);
         if (isExist) {
-            return Promise.reject(result.category.nameTaken());
+            return Promise.reject(getResponseMsg().error.category.nameUsed(finalObject.name));
         }
         finalObject.slug = await new Slug('category', false).digest(finalObject.name);
     }

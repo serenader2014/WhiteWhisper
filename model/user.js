@@ -46,6 +46,7 @@ export default class User extends bookshelf.Model {
             'id',
             'email',
             'username',
+            'language',
         ]), config.secret, {
             expiresIn: 86400,
         });

@@ -11,10 +11,12 @@ import route from './route';
 
 import log from './utils/logger';
 import init from './utils/init';
+import loadLocale from './utils/load-locale';
 import config from './config';
 
 export default async () => {
     await init();
+    await loadLocale();
     const app = Promise.promisifyAll(express());
     const env = config.env;
     const appConfig = config[env];

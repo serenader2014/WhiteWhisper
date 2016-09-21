@@ -1,8 +1,7 @@
 import 'should';
 import request from 'supertest';
 import { generateUserInfo, appUrl, registerUrl, authUrl } from './utils';
-
-import * as errCode from '../constant/err-code';
+import responseMsg from '../constant/response-msg';
 
 const userInfoUrl = '/api/i';
 
@@ -48,7 +47,7 @@ describe('Auth test', () => {
             .send(generateUserInfo())
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.login.alreadyLogin);
+                res.body.code.should.equal(responseMsg.error.user.alreadyLogin.code);
                 done();
             });
     });

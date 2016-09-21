@@ -1,8 +1,8 @@
 import 'should';
 import request from 'supertest';
-import * as result from '../constant/err-code';
-import { appUrl, categoryUrl, createUser, createCategory } from './utils';
 import _ from 'lodash';
+import { appUrl, categoryUrl, createUser, createCategory } from './utils';
+import responseMsg from '../constant/response-msg';
 
 describe('Category test', () => {
     let user = null;
@@ -30,7 +30,7 @@ describe('Category test', () => {
             .send({ name: 'new category' })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(result.category.nameTaken);
+                res.body.code.should.equal(responseMsg.error.category.nameUsed.code);
                 done();
             });
     });
@@ -97,7 +97,7 @@ describe('Category test', () => {
                     res.body.code.should.equal(0);
                     res.body.data.pagination.rowCount.should.equal(5);
                     res.body.data.pagination.pageCount.should.equal(2);
-                    res.body.data.data.length.should.equal(4);
+                    res.body.data.list.length.should.equal(4);
                     resolve();
                 });
         });

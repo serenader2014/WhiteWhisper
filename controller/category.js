@@ -1,8 +1,7 @@
 import * as categoryApi from '../api/category';
-import result from '../utils/result';
 import logger from '../utils/logger';
 
-export async function list(req, res) {
+export async function list(req, result, done) {
     let { pageSize, page } = req.query;
     const queryObject = {};
 
@@ -19,14 +18,14 @@ export async function list(req, res) {
 
     try {
         const categories = await categoryApi.list(queryObject);
-        return res.json(result(categories));
+        return done(result(categories));
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return (result.error.common.serverError(e));
     }
 }
 
-export async function create(req, res) {
+export async function create(req, result, done) {
     const { name } = req.body;
 
     req.checkBody({
@@ -38,73 +37,73 @@ export async function create(req, res) {
     const errors = req.validationErrors();
 
     if (errors) {
-        return res.json(result.common.formInvalid(errors));
+        return done(result.error.common.formInvalid(errors));
     }
 
     try {
         const isExist = await categoryApi.checkIfExist({ name });
         if (isExist) {
-            return res.json(result.category.nameTaken(name));
+            return done(result.error.category.nameUsed(name));
         }
 
         const category = await categoryApi.create({ name }, req.user);
 
-        return res.json(result(category));
+        return done(result(category));
     } catch (e) {
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }
 
-export async function update(req, res) {
+export async function update(req, result, done) {
     const { id } = req.params;
 
     try {
         const category = await categoryApi.byId(id);
 
         if (!category) {
-            return res.json(result.category.notFound(id));
+            return done(result.error.category.notFound(id));
         }
 
         try {
             const newCategory = await categoryApi.update(category, req.body, req.user);
 
-            return res.json(result(newCategory));
+            return done(result(newCategory));
         } catch (e) {
-            return res.json(e);
+            return done(e);
         }
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }
 
-export async function info(req, res) {
+export async function info(req, result, done) {
     const { id } = req.params;
 
     try {
         const category = await categoryApi.byId(id);
 
         if (!category) {
-            return res.json(result.category.notFound(id));
+            return done(result.error.category.notFound(id));
         }
-        return res.json(result(category));
+        return done(result(category));
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }
 
-export async function del(req, res) {
+export async function del(req, result, done) {
     const { id } = req.params;
 
     try {
         const isSuccess = await categoryApi.del(id);
         if (!isSuccess) {
-            return res.json(result.category.notFound(id));
+            return done(result.error.category.notFound(id));
         }
-        return res.json(result());
+        return done(result());
     } catch (e) {
         logger.error(e);
-        return res.json(result.common.serverError(e));
+        return done(result.error.common.serverError(e));
     }
 }

@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import logger from '../utils/logger';
 import * as userApi from '../api/user';
-import result from '../utils/result';
 
-export async function auth(req, res) {
+export async function auth(req, result, done) {
     req.checkBody({
         email: {
             notEmpty: true,
@@ -22,7 +21,7 @@ export async function auth(req, res) {
     const errors = req.validationErrors();
 
     if (errors) {
-        return res.json(result.common.formInvalid(errors));
+        return done(result.error.common.formInvalid(errors));
     }
 
     const { email, password } = req.body;
@@ -30,22 +29,22 @@ export async function auth(req, res) {
     try {
         const user = await userApi.checkIfExist({ email });
         if (!user) {
-            return res.json(result.login.userNotExist({ email }));
+            return done(result.error.user.notFound({ email }));
         }
         const validatePassword = await user.validatePassword(password);
         if (!validatePassword) {
-            return res.json(result.login.passwordIncorrect(password));
+            return done(result.error.user.passwordIncorrect(password));
         }
 
         const token = await user.login();
-        return res.json(result(_.extend(user.omit('password'), { token }), '登录成功！'));
+        return done(result(_.extend(user.omit('password'), { token }), '登录成功！'));
     } catch (err) {
         logger.error(err);
-        return res.json(result.common.serverError(err));
+        return done(result.error.common.serverError(err));
     }
 }
 
-export async function register(req, res) {
+export async function register(req, result, done) {
     const {
         email,
         password,
@@ -68,11 +67,11 @@ export async function register(req, res) {
     const errors = req.validationErrors();
 
     if (errors) {
-        return res.json(result.common.formInvalid(errors));
+        return done(result.error.common.formInvalid(errors));
     }
 
     if (req.user) {
-        return res.json(result.login.alreadyLogin(_.pick(req.user, [
+        return done(result.error.user.alreadyLogin(_.pick(req.user, [
             '_id', 'email', 'username',
         ])));
     }
@@ -81,12 +80,12 @@ export async function register(req, res) {
         const user = await userApi.byEmail(email);
 
         if (user) {
-            return res.json(result.register.emailTaken());
+            return done(result.error.user.emailUsed());
         }
         const newUser = await userApi.create({ email, password });
-        return res.json(result(newUser.omit('password'), '注册成功'));
+        return done(result(newUser.omit('password'), '注册成功'));
     } catch (err) {
         logger.error(err);
-        return res.status(502).json(result.common.serverError(err));
+        return done(502).json(result.error.common.serverError(err));
     }
 }

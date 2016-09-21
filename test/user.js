@@ -8,7 +8,7 @@ import {
     registerUser,
     createUser,
 } from './utils';
-import * as errCode from '../constant/err-code';
+import responseMsg from '../constant/response-msg';
 
 describe('User test', () => {
     let user1 = null;
@@ -33,7 +33,7 @@ describe('User test', () => {
             .get(`${userUrl}/${user1.id}`)
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.common.permissionDeny);
+                res.body.code.should.equal(responseMsg.error.common.unauthorized.code);
                 done();
             });
     });
@@ -67,7 +67,7 @@ describe('User test', () => {
             .send({ username: user2.username })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.user.usernameTaken);
+                res.body.code.should.equal(responseMsg.error.user.usernameUsed.code);
                 done();
             });
     });
@@ -78,7 +78,7 @@ describe('User test', () => {
             .send({ username: 'newusername' })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.common.permissionDeny);
+                res.body.code.should.equal(responseMsg.error.common.forbidden.code);
                 done();
             });
     });
@@ -110,7 +110,7 @@ describe('User test', () => {
             })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.common.permissionDeny);
+                res.body.code.should.equal(responseMsg.error.common.forbidden.code);
                 done();
             });
     });
@@ -126,7 +126,7 @@ describe('User test', () => {
             })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.common.formInvalid);
+                res.body.code.should.equal(responseMsg.error.common.formInvalid.code);
                 done();
             });
     });
@@ -141,7 +141,7 @@ describe('User test', () => {
             })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.common.formInvalid);
+                res.body.code.should.equal(responseMsg.error.common.formInvalid.code);
                 done();
             });
     });
@@ -157,7 +157,7 @@ describe('User test', () => {
             })
             .end((err, res) => {
                 if (err) throw err;
-                res.body.code.should.equal(errCode.user.passwordIncorrect);
+                res.body.code.should.equal(responseMsg.error.user.passwordIncorrect.code);
                 done();
             });
     });

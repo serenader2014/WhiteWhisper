@@ -2,8 +2,8 @@ import User from '../model/user';
 import bcrypt from 'bcrypt-nodejs';
 import _ from 'lodash';
 import Slug from '../utils/slug';
-import result from '../utils/result';
 import Pagination from '../db/pagination';
+import getResponseMsg from '../utils/get-response-msg';
 
 const crypt = Promise.promisifyAll(bcrypt);
 
@@ -37,7 +37,7 @@ export function list(...args) {
 export async function create(options) {
     const defaultOption = {
         status: 'active',
-        language: 'en_US',
+        language: 'zh',
         created_at: new Date(),
         created_by: 0,
     };
@@ -70,7 +70,7 @@ export async function update(user, newUser, currentUser) {
     if (finalObject.username) {
         const ifExist = await byUsername(finalObject.username);
         if (ifExist) {
-            return Promise.reject(result.user.usernameTaken({
+            return Promise.reject(getResponseMsg().error.user.usernameUsed({
                 username: finalObject.username,
             }));
         }

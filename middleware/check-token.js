@@ -1,11 +1,11 @@
-import result from '../utils/result';
+import wrap from '../utils/response-wrapper';
 
 export default function checkToken() {
-    return (req, res, next) => {
+    return wrap((req, result, done, res, next) => {
         if (req.user) {
             next();
         } else {
-            res.json(result.common.permissionDeny());
+            done(result.error.common.unauthorized());
         }
-    };
+    });
 }
