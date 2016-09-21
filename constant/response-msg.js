@@ -18,6 +18,10 @@ export default {
                 code: '00004',
                 status: 401,
             },
+            methodNotAllowed: {
+                code: '00005',
+                status: 405,
+            },
         },
 
         // 1

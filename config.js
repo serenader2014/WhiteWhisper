@@ -38,6 +38,11 @@ const config = {
         port: 10012,
         protocol: 'http://',
     },
+    get url() {
+        const conf = this[this.env];
+
+        return `${conf.protocol}${conf.host}:${conf.port}`;
+    },
 };
 global.config = config;
 export default config;

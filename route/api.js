@@ -2,6 +2,7 @@ import express from 'express';
 import checkToken from '../middleware/check-token';
 import checkOwner from '../middleware/check-owner';
 import saveUser from '../middleware/save-user-to-request';
+import methodNotAllowed from '../middleware/method-not-allowed';
 import controllers from '../controller';
 
 // import brute           from '../middleware/brute';
@@ -13,38 +14,46 @@ const {
     postControllers,
     categoryControllers,
 } = controllers;
+
 const api = express();
 
 api.use(saveUser());
 
 api.route('/auth')
-    .post(authControllers.auth);
+    .post(authControllers.auth)
+    .all(methodNotAllowed(['POST']));
 
 api.route('/register')
-    .post(authControllers.register);
+    .post(authControllers.register)
+    .all(methodNotAllowed(['POST']));
 
 api.route('/i')
     .all(checkToken())
-    .get(userControllers.getMyself);
+    .get(userControllers.getMyself)
+    .all(methodNotAllowed(['GET']));
 
 api.route('/users')
-    .get(userControllers.list);
+    .get(userControllers.list)
+    .all(methodNotAllowed(['GET']));
 
 api.route('/users/:id')
     .all(checkToken())
     .get(userControllers.getUserInfo)
     .all(checkOwner())
-    .put(userControllers.updateUserInfo);
+    .put(userControllers.updateUserInfo)
+    .all(methodNotAllowed(['GET', 'PUT']));
 
 api.route('/users/:id/password')
     .all(checkToken())
     .all(checkOwner())
-    .post(userControllers.changePassword);
+    .post(userControllers.changePassword)
+    .all(methodNotAllowed(['POST']));
 
 api.route('/posts')
     .get(postControllers.list)
     .all(checkToken())
-    .post(postControllers.create);
+    .post(postControllers.create)
+    .all(methodNotAllowed(['GET', 'POST']));
 
 // api.route('/post/:id')
 //     .all(checkId())
@@ -55,13 +64,15 @@ api.route('/posts')
 api.route('/categories')
     .get(categoryControllers.list)
     .all(checkToken())
-    .post(categoryControllers.create);
+    .post(categoryControllers.create)
+    .all(methodNotAllowed(['GET', 'POST']));
 
 api.route('/categories/:id')
     .get(categoryControllers.info)
     .all(checkToken())
     .put(categoryControllers.update)
-    .delete(categoryControllers.del);
+    .delete(categoryControllers.del)
+    .all(methodNotAllowed(['GET', 'PUT', 'DELETE']));
 
 // api.route('/captcha')
 //     .get(apiController.captcha.generate)

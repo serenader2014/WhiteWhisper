@@ -6,7 +6,10 @@ export default function responseWrapper(controller) {
             Object.keys(headers).forEach(header => {
                 res.set(header, headers[header]);
             });
-            res.status(msg.status || 200).json(msg);
+            /* eslint-disable no-param-reassign */
+            const status = msg.status || 200;
+            delete msg.status;
+            res.status(status).json(msg);
         }
         return controller(req, getResponseMsg(req.lang), done, res, next);
     };

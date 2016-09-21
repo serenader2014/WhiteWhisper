@@ -27,6 +27,7 @@ export default {
                 serverError: '内部服务错误',
                 forbidden: '禁止访问',
                 unauthorized: '未授权',
+                methodNotAllowed: 'HTTP Method 不被支持'
             },
         },
     },

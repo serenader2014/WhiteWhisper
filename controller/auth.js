@@ -84,7 +84,9 @@ export async function register(req, result, done) {
             return done(result.error.user.emailUsed());
         }
         const newUser = await userApi.create({ email, password });
-        return done(result(newUser.omit('password')));
+        return done(_.extend(result(newUser.omit('password')), { status: 201 }), {
+            Location: `${global.config.url}/api/v1/users/${newUser.id}`,
+        });
     } catch (err) {
         logger.error(err);
         return done(502).json(result.error.common.serverError(err));

@@ -1,9 +1,7 @@
 import 'should';
 import request from 'supertest';
-import { generateUserInfo, appUrl, registerUrl, authUrl } from './utils';
+import { generateUserInfo, appUrl, registerUrl, authUrl, mySelfUrl } from './utils';
 import responseMsg from '../constant/response-msg';
-
-const userInfoUrl = '/api/i';
 
 describe('Auth test', () => {
     let token = null;
@@ -33,7 +31,7 @@ describe('Auth test', () => {
 
     it('Should show the current user info', done => {
         request(appUrl)
-            .get(`${userInfoUrl}?token=${token}`)
+            .get(`${mySelfUrl}?token=${token}`)
             .end((err, res) => {
                 if (err) throw err;
                 res.body.code.should.equal(0);

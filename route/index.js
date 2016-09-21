@@ -3,7 +3,7 @@ import api from './api';
 import express from 'express';
 const app = express();
 
-app.use('/api', api);
+app.use('/api/v1', api);
 // app.use('/admin', express.static(resolve(__dirname, '../../client/build')));
 // app.use('/', frontend);
 

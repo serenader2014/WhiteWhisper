@@ -35,11 +35,12 @@ export function generateUserInfo() {
 }
 
 export const appUrl = `${config.test.host}:${config.test.port}`;
-export const authUrl = '/api/auth';
-export const registerUrl = '/api/register';
-export const categoryUrl = '/api/categories';
-export const userUrl = '/api/users';
-export const postUrl = '/api/posts';
+export const authUrl = '/api/v1/auth';
+export const registerUrl = '/api/v1/register';
+export const categoryUrl = '/api/v1/categories';
+export const userUrl = '/api/v1/users';
+export const postUrl = '/api/v1/posts';
+export const mySelfUrl = '/api/v1/i';
 
 
 export async function registerUser() {
