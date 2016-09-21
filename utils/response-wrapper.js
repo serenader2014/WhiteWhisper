@@ -8,7 +8,6 @@ export default function responseWrapper(controller) {
             });
             res.status(msg.status || 200).json(msg);
         }
-        const lang = (req.user && req.user.language) || 'zh';
-        return controller(req, getResponseMsg(lang), done, res, next);
+        return controller(req, getResponseMsg(req.lang), done, res, next);
     };
 }

@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import * as userApi from '../api/user';
 import logger from '../utils/logger';
+import getResponseMsg from '../utils/get-response-msg';
 
 export function getMyself(req, result, done) {
     done(result({ user: req.user }));
@@ -9,9 +10,6 @@ export function getMyself(req, result, done) {
 
 export async function getUserInfo(req, result, done) {
     const id = req.params.id;
-    if (!id) {
-        return done(result.error.common.formInvalid({ id: 'id不能为空' }));
-    }
     try {
         const user = await userApi.byId(id);
         if (!user) {
@@ -37,7 +35,7 @@ export async function updateUserInfo(req, result, done) {
         username: {
             isLength: {
                 options: [{ min: 4, max: 20 }],
-                errorMessage: '用户名长度最长为20个字符，最短为4个字符',
+                errorMessage: getResponseMsg(req.lang).error.user.usernameLength().msg,
             },
         },
     });
@@ -48,14 +46,11 @@ export async function updateUserInfo(req, result, done) {
         return done(result.error.common.formInvalid(errors));
     }
 
-    if (!id) {
-        return done(result.error.common.formInvalid({ id: 'id不能为空' }));
-    }
     try {
         const user = await userApi.byId(id);
         try {
             const newUser = await userApi.update(user, req.body, req.user);
-            return done(result(newUser.omit('password'), '修改资料成功'));
+            return done(result(newUser.omit('password')));
         } catch (e) {
             return done(e);
         }
@@ -76,23 +71,23 @@ export async function changePassword(req, result, done) {
         oldPassword: {
             notEmpty: true,
             isPassword: {
-                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+                errorMessage: getResponseMsg(req.lang).error.user.passwordFormat().msg,
             },
         },
         newPassword: {
             notEmpty: true,
             isPassword: {
-                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+                errorMessage: getResponseMsg(req.lang).error.user.passwordFormat().msg,
             },
         },
         repeatPassword: {
             notEmpty: true,
             isEqual: {
                 options: [newPassword],
-                errorMessage: '两次输入的密码不一致',
+                errorMessage: getResponseMsg(req.lang).error.user.passwordInconsist().msg,
             },
             isPassword: {
-                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+                errorMessage: getResponseMsg(req.lang).error.user.passwordFormat().msg,
             },
         },
     });
@@ -111,7 +106,7 @@ export async function changePassword(req, result, done) {
         }
         try {
             const newUser = await userApi.update(user, { password: newPassword }, req.user);
-            return done(result(newUser.omit('password'), '更改密码成功'));
+            return done(result(newUser.omit('password')));
         } catch (e) {
             return done(e);
         }

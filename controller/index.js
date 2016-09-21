@@ -19,7 +19,6 @@ Object.keys(controllerList).forEach(key => {
     Object.keys(controllers).forEach(controller => {
         /* eslint-disable no-param-reassign */
         map[key][controller] = wrap(controllers[controller]);
-        // controller = response(controller);
     });
 });
 

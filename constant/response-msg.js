@@ -49,6 +49,12 @@ export default {
             emailUsed: {
                 code: '10009',
             },
+            passwordInconsist: {
+                code: '10010',
+            },
+            emailFormat: {
+                code: '10011',
+            },
         },
 
         // 2

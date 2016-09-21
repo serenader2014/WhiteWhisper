@@ -9,10 +9,13 @@ export default function () {
                 /* eslint-disable no-param-reassign */
                 if (!err) {
                     req.user = decoded;
+                    req.lang = req.user.language || 'zh';
                 }
+                req.lang = 'zh';
                 next();
             });
         } else {
+            req.lang = 'zh';
             next();
         }
     };

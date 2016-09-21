@@ -1,19 +1,20 @@
 import _ from 'lodash';
 import logger from '../utils/logger';
 import * as userApi from '../api/user';
+import getResponseMsg from '../utils/get-response-msg';
 
 export async function auth(req, result, done) {
     req.checkBody({
         email: {
             notEmpty: true,
             isEmail: {
-                errorMessage: 'Email 不是合格的邮箱地址。',
+                errorMessage: getResponseMsg(req.lang).error.user.emailFormat().msg,
             },
         },
         password: {
             notEmpty: true,
             isPassword: {
-                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+                errorMessage: getResponseMsg(req.lang).error.user.passwordFormat().msg,
             },
         },
     });
@@ -37,7 +38,7 @@ export async function auth(req, result, done) {
         }
 
         const token = await user.login();
-        return done(result(_.extend(user.omit('password'), { token }), '登录成功！'));
+        return done(result(_.extend(user.omit('password'), { token })));
     } catch (err) {
         logger.error(err);
         return done(result.error.common.serverError(err));
@@ -53,13 +54,13 @@ export async function register(req, result, done) {
         email: {
             notEmpty: true,
             isEmail: {
-                errorMessage: 'Email 不是合格的邮箱地址。',
+                errorMessage: getResponseMsg(req.lang).error.user.emailFormat().msg,
             },
         },
         password: {
             notEmpty: true,
             isPassword: {
-                errorMessage: '密码必须由8位以上的至少包含一个字母一个数字以及一个特殊字符构成',
+                errorMessage: getResponseMsg(req.lang).error.user.passwordFormat().msg,
             },
         },
     });
@@ -83,7 +84,7 @@ export async function register(req, result, done) {
             return done(result.error.user.emailUsed());
         }
         const newUser = await userApi.create({ email, password });
-        return done(result(newUser.omit('password'), '注册成功'));
+        return done(result(newUser.omit('password')));
     } catch (err) {
         logger.error(err);
         return done(502).json(result.error.common.serverError(err));
