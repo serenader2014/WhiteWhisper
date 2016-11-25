@@ -4,7 +4,7 @@ const config = {
     secret: 'love music',
     appRoot: __dirname,
     trustProxy: true,
-    env: process.NODE_ENV || 'development',
+    env: process.env.NODE_ENV || 'development',
     development: {
         db: {
             connection: {
