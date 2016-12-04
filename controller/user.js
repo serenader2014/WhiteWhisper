@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import * as userApi from '../api/user';
 import logger from '../utils/logger';
 import getResponseMsg from '../utils/get-response-msg';
@@ -8,25 +6,46 @@ export function getMyself(req, result, done) {
     done(result({ user: req.user }));
 }
 
-export async function getUserInfo(req, result, done) {
-    const id = req.params.id;
+async function getInfo(type, value, req, result, done) {
+    let method;
+    switch (type) {
+        case 'id':
+            method = userApi.byId;
+            break;
+        case 'slug':
+            method = userApi.bySlug;
+            break;
+        case 'emai':
+        default:
+            method = userApi.byEmail;
+            break;
+    }
+
     try {
-        const user = await userApi.byId(id);
+        const user = await method(value);
         if (!user) {
-            return done(result.error.user.notFound({ id }));
+            return done(result.error.user.notFound({ [type]: value }));
         }
-        return done(result(_.pick(user.attributes, [
-            'email',
-            'id',
-            'username',
-            'bio',
-            'website',
-            'location',
-        ])));
+        return done(result(user.structure(req.user)));
     } catch (e) {
         logger.error(e);
         return done(result.error.common.serverError(e));
     }
+}
+
+export async function getUserInfo(req, result, done) {
+    const id = req.params.id;
+    getInfo('id', id, req, result, done);
+}
+
+export async function getUserInfoBySlug(req, result, done) {
+    const { slug } = req.params;
+    getInfo('slug', slug, req, result, done);
+}
+
+export async function getUserInfoByEmail(req, result, done) {
+    const { email } = req.params;
+    getInfo('email', email, req, result, done);
 }
 
 export async function updateUserInfo(req, result, done) {
@@ -50,7 +69,7 @@ export async function updateUserInfo(req, result, done) {
         const user = await userApi.byId(id);
         try {
             const newUser = await userApi.update(user, req.body, req.user);
-            return done(result(newUser.omit('password')));
+            return done(result(newUser.structure(req.user)));
         } catch (e) {
             return done(e);
         }
@@ -106,7 +125,7 @@ export async function changePassword(req, result, done) {
         }
         try {
             const newUser = await userApi.update(user, { password: newPassword }, req.user);
-            return done(result(newUser.omit('password')));
+            return done(result(newUser.structure(req.user)));
         } catch (e) {
             return done(e);
         }

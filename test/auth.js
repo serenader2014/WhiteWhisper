@@ -1,6 +1,6 @@
 import 'should';
 import request from 'supertest';
-import { generateUserInfo, appUrl, registerUrl, authUrl, mySelfUrl } from './utils';
+import { generateUserInfo, appUrl, userUrl, authUrl, mySelfUrl } from './utils';
 import responseMsg from '../constant/response-msg';
 
 describe('Auth test', () => {
@@ -8,7 +8,7 @@ describe('Auth test', () => {
     const user1 = generateUserInfo();
     it('Should create a new user', done => {
         request(appUrl)
-            .post(registerUrl)
+            .post(userUrl)
             .send(user1)
             .end((err, res) => {
                 if (err) throw err;
@@ -41,7 +41,7 @@ describe('Auth test', () => {
 
     it('Try to register again when user has already auth', done => {
         request(appUrl)
-            .post(`${registerUrl}?token=${token}`)
+            .post(`${userUrl}?token=${token}`)
             .send(generateUserInfo())
             .end((err, res) => {
                 if (err) throw err;

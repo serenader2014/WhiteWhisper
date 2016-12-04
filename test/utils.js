@@ -36,7 +36,6 @@ export function generateUserInfo() {
 
 export const appUrl = `${config.test.host}:${config.test.port}`;
 export const authUrl = '/api/v1/auth';
-export const registerUrl = '/api/v1/register';
 export const categoryUrl = '/api/v1/categories';
 export const userUrl = '/api/v1/users';
 export const postUrl = '/api/v1/posts';
@@ -46,7 +45,7 @@ export const mySelfUrl = '/api/v1/i';
 export async function registerUser() {
     const targetUser = generateUserInfo();
     const result = (await request({
-        path: registerUrl,
+        path: userUrl,
         method: 'POST',
         data: targetUser,
     })).toJSON();

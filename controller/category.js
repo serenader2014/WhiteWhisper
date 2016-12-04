@@ -48,7 +48,7 @@ export async function create(req, result, done) {
 
         const category = await categoryApi.create({ name }, req.user);
 
-        return done(result(category));
+        return done(result(category.structure(req.user)));
     } catch (e) {
         return done(result.error.common.serverError(e));
     }
@@ -67,7 +67,7 @@ export async function update(req, result, done) {
         try {
             const newCategory = await categoryApi.update(category, req.body, req.user);
 
-            return done(result(newCategory));
+            return done(result(newCategory.structure(req.user)));
         } catch (e) {
             return done(e);
         }
@@ -86,7 +86,7 @@ export async function info(req, result, done) {
         if (!category) {
             return done(result.error.category.notFound(id));
         }
-        return done(result(category));
+        return done(result(category.structure(req.user)));
     } catch (e) {
         logger.error(e);
         return done(result.error.common.serverError(e));

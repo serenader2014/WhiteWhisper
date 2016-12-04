@@ -6,6 +6,7 @@ import Pagination from '../db/pagination';
 import getResponseMsg from '../utils/get-response-msg';
 
 const crypt = Promise.promisifyAll(bcrypt);
+const userPagination = new Pagination(User);
 
 export const model = User;
 
@@ -31,7 +32,7 @@ export function bySlug(slug) {
 }
 
 export function list(...args) {
-    return new Pagination(User).list(...args);
+    return userPagination.list(...args);
 }
 
 export async function create(options) {

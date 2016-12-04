@@ -82,7 +82,8 @@ describe('Category test', () => {
             });
     });
 
-    it('should list the categories', async () => {
+    it('should list the categories', async function() {
+        this.timeout(20000);
         await createCategory();
         await createCategory();
         await createCategory();

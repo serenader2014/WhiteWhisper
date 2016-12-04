@@ -38,7 +38,7 @@ export async function auth(req, result, done) {
         }
 
         const token = await user.login();
-        return done(result(_.extend(user.omit('password'), { token })));
+        return done(result(_.extend(user.structure(req.user), { token })));
     } catch (err) {
         logger.error(err);
         return done(result.error.common.serverError(err));
@@ -84,7 +84,7 @@ export async function register(req, result, done) {
             return done(result.error.user.emailUsed());
         }
         const newUser = await userApi.create({ email, password });
-        return done(_.extend(result(newUser.omit('password')), { status: 201 }), {
+        return done(_.extend(result(newUser.structure(req.user)), { status: 201 }), {
             Location: `${global.config.url}/api/v1/users/${newUser.id}`,
         });
     } catch (err) {

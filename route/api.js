@@ -24,10 +24,6 @@ api.route('/auth')
     .post(authControllers.auth)
     .all(methodNotAllowed(['POST']));
 
-api.route('/register')
-    .post(authControllers.register)
-    .all(methodNotAllowed(['POST']));
-
 api.route('/i')
     .all(checkToken())
     .get(userControllers.getMyself)
@@ -35,7 +31,8 @@ api.route('/i')
 
 api.route('/users')
     .get(userControllers.list)
-    .all(methodNotAllowed(['GET']));
+    .post(authControllers.register)
+    .all(methodNotAllowed(['GET', 'POST']));
 
 api.route('/users/:id')
     .all(checkToken())
@@ -44,6 +41,16 @@ api.route('/users/:id')
     .put(userControllers.updateUserInfo)
     .patch(userControllers.updateUserInfo)
     .all(methodNotAllowed(['GET', 'PUT', 'PATCH']));
+
+api.route('/users/slug/:slug')
+    .all(checkToken())
+    .get(userControllers.getUserInfoBySlug)
+    .all(methodNotAllowed(['GET']));
+
+api.route('/users/email/:email')
+    .all(checkToken())
+    .get(userControllers.getUserInfoByEmail)
+    .all(methodNotAllowed(['GET']));
 
 api.route('/users/:id/password')
     .all(checkToken())
