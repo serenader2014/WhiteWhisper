@@ -150,7 +150,7 @@ export async function list(req, result, done) {
     }
 
     try {
-        const users = await userApi.list(options);
+        const users = await userApi.list(options, req.user);
         done(result(users));
     } catch (e) {
         logger.error(e);
