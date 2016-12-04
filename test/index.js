@@ -1,6 +1,6 @@
 /* jshint mocha:true */
 
-process.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test';
 
 
 import path from 'path';
