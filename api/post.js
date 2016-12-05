@@ -3,19 +3,24 @@ import _ from 'lodash';
 import Slug from '../utils/slug';
 import config from '../config';
 import marked from 'marked';
+import Pagination from '../db/pagination';
+
+const postPagination = new Pagination(Post);
 
 export const model = Post;
 
-export function byId() {
-
+export function byId(id) {
+    return Post.query({ id }, { withRelated: ['author', 'category'] });
 }
 
-export function bySlug() {
-
+export function bySlug(slug) {
+    return Post.query({ slug }, { withRelated: ['author', 'category'] });
 }
 
-export function list() {
-
+export function list(queryObject, user) {
+    return postPagination.list(queryObject, user, {
+        withRelated: ['author', 'category'],
+    });
 }
 
 export async function create(options, user) {

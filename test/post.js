@@ -48,4 +48,14 @@ describe('Post test', () => {
                 });
         });
     });
+
+    it('Should list the posts', done => {
+        request(appUrl)
+            .get(`${postUrl}`)
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(0);
+                done();
+            });
+    });
 });

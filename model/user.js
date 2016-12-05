@@ -21,10 +21,10 @@ export default class User extends bookshelf.Model {
             .fetch();
     }
 
-    static query(queryObject) {
+    static query(queryObject, options) {
         return this.forge()
             .query('where', queryObject)
-            .fetch();
+            .fetch(options);
     }
 
     static create(user) {
@@ -33,7 +33,7 @@ export default class User extends bookshelf.Model {
     }
 
     posts() {
-        return this.hasMany(Post);
+        return this.hasMany(Post, 'author');
     }
 
     validatePassword(password) {

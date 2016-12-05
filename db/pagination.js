@@ -8,11 +8,11 @@ export default class Pagination {
         pageSize = 10,
         order = '-id',
         queryBuilder = function qb() {},
-    }, currentUser) {
+    }, currentUser, options = {}) {
         return (async () => {
             const collection = await this.model.query(qb => {
                 queryBuilder(qb);
-            }).orderBy(order).fetchPage({ pageSize, page });
+            }).orderBy(order).fetchPage({ pageSize, page, ...options });
 
             return {
                 list: collection.reduce((arr, item) => {

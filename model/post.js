@@ -7,10 +7,10 @@ export default class Post extends bookshelf.Model {
         return 'post';
     }
 
-    static query(queryObject) {
+    static query(queryObject, options) {
         return this.forge()
             .query('where', queryObject)
-            .fetch();
+            .fetch(options);
     }
 
     static create(post) {
@@ -18,11 +18,11 @@ export default class Post extends bookshelf.Model {
             .save();
     }
 
-    user() {
-        return this.belongsTo(User);
+    author() {
+        return this.belongsTo(User, 'author');
     }
 
     category() {
-        return this.belongsTo(Category);
+        return this.belongsTo(Category, 'category');
     }
 }

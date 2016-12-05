@@ -21,13 +21,13 @@ export default class Category extends bookshelf.Model {
             .save();
     }
 
-    static query(queryObject) {
+    static query(queryObject, options) {
         return this.forge()
             .query('where', queryObject)
-            .fetch();
+            .fetch(options);
     }
 
     post() {
-        return this.hasMany(Post);
+        return this.hasMany(Post, 'category');
     }
 }

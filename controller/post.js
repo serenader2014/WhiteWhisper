@@ -1,15 +1,28 @@
 import * as postApi from '../api/post';
 import logger from '../utils/logger';
 
-export function list(req, result, done) {
-    (async () => {
-        try {
-            const posts = await postApi.list();
-            done(posts);
-        } catch (e) {
-            done(e);
-        }
-    })();
+export async function list(req, result, done) {
+    let { pageSize, page } = req.query;
+    const queryObject = {};
+
+    pageSize = parseInt(pageSize, 10);
+    page = parseInt(page, 10);
+
+    if (!isNaN(pageSize)) {
+        queryObject.pageSize = pageSize;
+    }
+
+    if (!isNaN(page)) {
+        queryObject.page = page;
+    }
+
+    try {
+        const posts = await postApi.list(queryObject, req.user);
+        return done(result(posts));
+    } catch (e) {
+        logger.error(e);
+        return (result.error.common.serverError(e));
+    }
 }
 
 export async function create(req, result, done) {

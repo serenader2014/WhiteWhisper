@@ -18,6 +18,7 @@ export default function (bookshelf) {
             Object.keys(structure).forEach((key) => {
                 const option = structure[key];
                 const accessControl = option.access;
+                const isRelatedData = option.related_data;
                 let allowed = false;
 
                 for (const i of accessControl) {
@@ -85,7 +86,10 @@ export default function (bookshelf) {
                     }
                 }
 
-                result[key] = allowed ? this.attributes[key] : null;
+                const actualData = isRelatedData
+                    ? this.related(key).structure(currentUser)
+                    : this.attributes[key];
+                result[key] = allowed ? actualData : null;
             });
             return result;
         }
