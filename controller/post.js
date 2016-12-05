@@ -43,9 +43,32 @@ export async function create(req, result, done) {
 
     try {
         const post = await postApi.create(req.body, req.user);
-        return done(result(post));
+        return done(result(post.structure()));
     } catch (e) {
         logger.error(e);
         return done(result.error.common.serverError(e));
     }
+}
+
+export async function info(req, result, done) {
+    const { id } = req.params;
+
+    try {
+        const post = await postApi.byId(id);
+        if (!post) {
+            return done(result.error.post.notFound({ id }));
+        }
+        return done(result(post.structure()));
+    } catch (e) {
+        logger.error(e);
+        return done(result.error.common.serverError(e));
+    }
+}
+
+export async function update() {
+
+}
+
+export async function del() {
+
 }

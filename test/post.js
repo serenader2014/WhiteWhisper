@@ -24,10 +24,13 @@ from the text my post.
 `;
 
 describe('Post test', () => {
+    let post;
+    let user;
+
     it('should create a new post', async () => {
-        const user = await createUser();
+        user = await createUser();
         const category = await createCategory(user.token);
-        const post = {
+        post = {
             title: 'Markdown 教程',
             text: markdown,
             category: category.id,
@@ -44,9 +47,21 @@ describe('Post test', () => {
                     res.body.code.should.equal(0);
                     res.body.data.title.should.equal(post.title);
                     res.body.data.html.should.equal(marked(markdown));
+                    post.id = res.body.data.id;
                     resolve();
                 });
         });
+    });
+
+    it('Should get post info', done => {
+        request(appUrl)
+            .get(`${postUrl}/${post.id}?token=${user.token}`)
+            .end((err, res) => {
+                if (err) throw err;
+                res.body.code.should.equal(0);
+                res.body.data.title.should.equal(post.title);
+                done();
+            });
     });
 
     it('Should list the posts', done => {

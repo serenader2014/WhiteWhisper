@@ -66,6 +66,9 @@ export default {
             slugUsed: {
                 code: '20001',
             },
+            notFound: {
+                code: '20002',
+            }
         },
 
         // 3

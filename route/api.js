@@ -64,11 +64,13 @@ api.route('/posts')
     .post(postControllers.create)
     .all(methodNotAllowed(['GET', 'POST']));
 
-// api.route('/post/:id')
-//     .all(checkId())
-//     .get(checkPermission('post', 'get'), apiController.post.getPost)
-//     .put(checkPermission('post', 'put'), apiController.post.update)
-//     .delete(checkPermission('post', 'delete'), apiController.post.delete);
+api.route('/posts/:id')
+    .all(checkToken())
+    .get(postControllers.info)
+    .put(postControllers.update)
+    .patch(postControllers.update)
+    .delete(postControllers.del)
+    .all(methodNotAllowed(['GET', 'PUT', 'DELETE', 'PATCH']));
 
 api.route('/categories')
     .get(categoryControllers.list)
