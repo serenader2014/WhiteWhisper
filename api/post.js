@@ -6,6 +6,7 @@ import marked from 'marked';
 import Pagination from '../db/pagination';
 
 const postPagination = new Pagination(Post);
+const postSlug = new Slug('post', true);
 
 export const model = Post;
 
@@ -39,7 +40,7 @@ export async function create(options, user) {
     ]));
     const currentConfig = config[config.env];
     const baseURL = `${currentConfig.host}:${currentConfig.port}`;
-    post.slug = await new Slug('post', true).digest(post.title);
+    post.slug = await postSlug.digest(post.title);
     post.url = `${currentConfig.protocol}${baseURL}/post/${post.slug}`;
     post.html = marked(post.text);
 

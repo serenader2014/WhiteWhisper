@@ -4,6 +4,9 @@ import Slug from '../utils/slug';
 import Pagination from '../db/pagination';
 import getResponseMsg from '../utils/get-response-msg';
 
+const categorySlug = new Slug('category', false);
+const categoryPagination = new Pagination(Category);
+
 export const model = Category;
 
 export function bySlug(slug) {
@@ -19,7 +22,7 @@ export function byId(id) {
 }
 
 export function list(...args) {
-    return new Pagination(Category).list(...args);
+    return categoryPagination.list(...args);
 }
 
 export async function create(options, user) {
@@ -28,7 +31,7 @@ export async function create(options, user) {
         created_by: user.id,
     };
     const category = _.extend({}, defaultOptions, options);
-    category.slug = await new Slug('category', false).digest(category.name);
+    category.slug = await categorySlug.digest(category.name);
     return Category.create(category);
 }
 
@@ -40,7 +43,7 @@ export async function update(category, newCategory, currentUser) {
         if (isExist) {
             return Promise.reject(getResponseMsg().error.category.nameUsed(finalObject.name));
         }
-        finalObject.slug = await new Slug('category', false).digest(finalObject.name);
+        finalObject.slug = await categorySlug.digest(finalObject.name);
     }
 
     finalObject.updated_at = new Date();

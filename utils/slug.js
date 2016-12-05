@@ -1,7 +1,4 @@
 import unidecode from 'unidecode';
-import * as User from '../api/user';
-import * as Post from '../api/post';
-import * as Category from '../api/category';
 import crypto from 'crypto';
 
 export default class Slug {
@@ -12,13 +9,14 @@ export default class Slug {
 
     checkIfExist(slug) {
         return (async () => {
+            /* eslint-disable global-require */
             switch (this.type) {
                 case 'user':
-                    return await User.bySlug(slug);
+                    return await require('../api/user').bySlug(slug);
                 case 'post':
-                    return await Post.bySlug(slug);
+                    return await require('../api/post').bySlug(slug);
                 case 'category':
-                    return await Category.bySlug(slug);
+                    return await require('../api/category').bySlug(slug);
                 default:
                     return Promise.reject(`slug type must be either \`user\`
                      or \`post\` or \`category\``);

@@ -7,6 +7,7 @@ import getResponseMsg from '../utils/get-response-msg';
 
 const crypt = Promise.promisifyAll(bcrypt);
 const userPagination = new Pagination(User);
+const userSlug = new Slug('user', false);
 
 export const model = User;
 
@@ -45,7 +46,7 @@ export async function create(options) {
     const user = _.extend({}, defaultOption, options);
     user.password = await generatePassword(user.password);
     user.username = user.username || user.email;
-    user.slug = await new Slug('user', false).digest(user.username);
+    user.slug = await userSlug.digest(user.username);
 
     return User.create(user);
 }
@@ -75,7 +76,7 @@ export async function update(user, newUser, currentUser) {
                 username: finalObject.username,
             }));
         }
-        finalObject.slug = await new Slug('user', false).digest(finalObject.username);
+        finalObject.slug = await userSlug.digest(finalObject.username);
     }
 
     if (finalObject.password) {
